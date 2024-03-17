@@ -1,0 +1,140 @@
+<html>
+    <head>
+        <title>Welcome to the World of Bella Sara</title>
+        <link rel="icon" href="./images/favicon.ico">
+        <link rel="stylesheet" href="./style.css">
+    </head>
+    <head> 
+        <meta charset="UTF-8" />
+        <title>Making your first Phaser 3 Game - Part 3</title>
+        <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
+        <style type="text/css">
+            body {
+                margin: 0;
+            }
+        </style>
+    </head>
+    <body style="text-align: center; margin-top: 100px;">
+        <div>
+            <script type="text/javascript">
+
+                var config = {
+                    type: Phaser.AUTO,
+                    width: 853,
+                    height: 501,
+                    scene: {
+                        preload: preload,
+                        create: create
+                    }
+                };
+                
+        
+                var game = new Phaser.Game(config);
+        
+                function preload ()
+                {
+                    this.load.image('stable', './images/stable/stable-bg.png');
+                    this.load.spritesheet('shovel', './images/stable/shovel.png', { frameWidth: 77, frameHeight: 195 });
+                    this.load.spritesheet('straw1', './images/stable/straw1.png', { frameWidth: 216, frameHeight: 143 });
+                    this.load.spritesheet('straw2', './images/stable/straw2.png', { frameWidth: 180, frameHeight: 126 });
+                    this.load.spritesheet('straw3', './images/stable/straw3.png', { frameWidth: 236, frameHeight: 150 });
+                    this.load.spritesheet('trough', './images/stable/trough.png', { frameWidth: 263, frameHeight: 167 });
+                    this.load.spritesheet('horse', './images/stable/horse.png', { frameWidth: 528, frameHeight: 475 });
+                    
+                    this.load.audio('background_music', ['./stable_soundtrack.mp3']);
+
+                }
+        
+                function create ()
+                {
+                    const backgroundMusic = this.sound.add('background_music');
+                    backgroundMusic.loop = true; 
+                    backgroundMusic.play();
+
+                    this.add.image(427, 251, 'stable');
+
+                    const straw2 = this.add.sprite(481, 387, 'straw2', 0).setInteractive({ pixelPerfect: true });
+                    const straw1 = this.add.sprite(315, 380, 'straw1', 0).setInteractive({ pixelPerfect: true });
+                    const straw3 = this.add.sprite(632, 376, 'straw3', 0).setInteractive({ pixelPerfect: true });
+
+                    const shovel = this.add.sprite(759, 272, 'shovel', 0).setInteractive({ pixelPerfect: true });
+
+                    // variables
+                    this.input.topOnly = false; // allow objects to be interacted with, even when under others
+                    const hand = {
+                        empty: 'empty',
+                        shovel: 'shovel',
+                        fork: 'fork',
+                        fork_filled: 'fork_filled',
+                        brush: 'brush',
+                        small_brush: 'small_brush',
+                        hoofpick: 'hoofpick',
+                        apple: 'apple',
+                        grain: 'grain'
+                    }
+                    let handcurrent = hand.empty;
+                    let waterfilled = false;
+
+                    // trough
+                    const trough = this.add.sprite(181, 418, 'trough', 0).setInteractive({ pixelPerfect: true });
+                    this.anims.create({
+                        key: 'fill_water',
+                        frames: this.anims.generateFrameNumbers('trough', { frames: [ 1, 2, 3 ] }),
+                        frameRate: 8
+                    });
+
+                    // horse
+                    const horse = this.add.sprite(370, 220, 'horse', 0)
+                    this.anims.create({
+                        key: 'drink_water',
+                        frames: this.anims.generateFrameNumbers('horse', { frames: [ 0, 1, 0 ] }),
+                        frameRate: 1,
+                        delay: 250
+                    });
+
+                    // drink water
+                    trough.on('pointerdown', function (pointer)
+                    {
+                        if (!waterfilled && handcurrent === hand.empty) {
+                            waterfilled = true;
+                            this.play('fill_water');
+                            horse.play('drink_water');
+                        }
+                    });
+                    // trough.on('pointermove', function (pointer) {
+                    //     if (!waterfilled && handcurrent === hand.empty){
+                    //         this.preFX.addGlow(0xffffff, 0, 0, false);
+                    //     }
+                    // });
+
+                    
+                    shovel.on('pointerdown', function (pointer)
+                    {
+                        if (handcurrent === hand.empty) {
+                            handcurrent = hand.shovel;
+                            this.setFrame(1)
+                        }
+                        else if (handcurrent === hand.shovel) {
+                            handcurrent = hand.empty;
+                            this.setFrame(0)
+                        }
+                    });
+
+                    function clean_straw(straw) {
+                        console.log(handcurrent + straw.frame.name)
+                        if (handcurrent === hand.shovel && straw.frame.name === 0) {
+                            straw.setFrame(1);
+                        }
+                    }
+
+                    straw1.on('pointerdown', function (pointer) {clean_straw(straw1)});
+                    straw2.on('pointerdown', function (pointer) {clean_straw(straw2)});
+                    straw3.on('pointerdown', function (pointer) {clean_straw(straw3)});
+
+                }
+        
+            </script>
+        </div>
+
+    </body>
+</html>

@@ -2,6 +2,8 @@ References:
 - https://www.youtube.com/watch?v=uaQ2FjKgHKQ&t=627s - has music off
 - https://www.youtube.com/watch?v=DVlLQOMo2Ow - has some of the animations (played all animations available in menu for classic horses) and shows the whole screen
 - https://codeshack.io/images-sprite-sheet-generator/ to make sprite sheets from individual images
+- https://www.joshmorony.com/how-to-create-animations-in-phaser-with-a-texture-atlas/
+  - https://www.leshylabs.com/apps/sstool/
 
 Progress:
 - [ ] basic functionality

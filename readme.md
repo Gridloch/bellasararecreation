@@ -1,3 +1,44 @@
 References:
 - https://www.youtube.com/watch?v=uaQ2FjKgHKQ&t=627s - has music off
-- https://www.youtube.com/watch?v=DVlLQOMo2Ow - has some of the animations (played all available in menu for classic horses) and shows the whole screen
+- https://www.youtube.com/watch?v=DVlLQOMo2Ow - has some of the animations (played all animations available in menu for classic horses) and shows the whole screen
+- https://codeshack.io/images-sprite-sheet-generator/ to make sprite sheets from individual images
+
+Progress:
+- [ ] basic functionality
+  - [x] drink water
+  - [x] remove dirty straw
+  - [x] add new straw
+  - [ ] brush
+  - [ ] small brush
+  - [ ] hoofpick
+  - [x] food
+  - [ ] apple
+  - [ ] click card for positive message
+  - [ ] click horseshoe for good luck
+  - [ ] music on/off
+  - [ ] track hunger, cleanliness, happiness
+  - [ ] glow to show which objects can be interacted with
+- [ ] animations
+  - *horse animations should be made to work with the body in parts (using spine) to make adding multiple horses easier*
+  - [ ] eye blink
+  - [ ] idle
+  - [ ] drink
+  - [ ] rear
+- [ ] textures
+  - [ ] horse
+    - [ ] cleanliness stages (see if this can be overlaid on top of horse)
+    - [ ] peter
+    - [ ] any other land horses in the wiki
+  - [ ] items
+    - [ ] ...?
+- [ ] sounds
+  - [x] background music
+  - [ ] horse movement
+  - [ ] pour water and drink
+  - [ ] pick up grain
+  - [ ] pour grain
+  - [ ] pick up apple
+  - [ ] feed apple
+  - [x] use shovel
+  - [ ] pick up straw
+  - [ ] place straw

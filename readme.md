@@ -15,7 +15,7 @@ Progress:
   - [ ] apple
   - [ ] click card for positive message
   - [ ] click horseshoe for good luck
-  - [ ] music on/off
+  - [x] music on/off
   - [ ] track hunger, cleanliness, happiness
   - [ ] glow to show which objects can be interacted with
 - [ ] animations

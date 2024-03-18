@@ -18,6 +18,7 @@
         <div>
             <script type="text/javascript">
 
+                play_music = true;
                 hand = {
                     empty: 'empty',
                     shovel: 'shovel',
@@ -36,6 +37,8 @@
                 shovel_held_sprite = null
                 fork_held_sprite = null
                 grain_held_sprite = null
+                brush_held_sprite = null
+                hoofpick_held_sprite = null
 
                 class Example extends Phaser.Scene
                 {
@@ -64,6 +67,8 @@
                         this.load.spritesheet('hoofpick', './images/stable/hoofpick.png', { frameWidth: 21, frameHeight: 68 });
                         this.load.spritesheet('horse', './images/stable/horse.png', { frameWidth: 528, frameHeight: 475 });
                         
+                        this.load.spritesheet('music_button', './images/stable/music.png', { frameWidth: 36, frameHeight: 36 });
+
                         this.load.audio('background_music', ['./stable_soundtrack.mp3']);
                         this.load.audio('shovel_sound', ['./shovel_sound.mp3']);
                     }
@@ -75,6 +80,7 @@
                         backgroundMusic.play();
 
                         this.add.image(427, 251, 'stable');
+                        const music_button = this.add.sprite(832, 480, 'music_button', 0).setInteractive({ pixelPerfect: true });
 
                         const straw2 = this.add.sprite(481, 387, 'straw2', 0).setInteractive();
                         const straw1 = this.add.sprite(315, 380, 'straw1', 0).setInteractive();
@@ -85,14 +91,8 @@
                         const shovel = this.add.sprite(759, 272, 'shovel', 0).setInteractive({ pixelPerfect: true });
                         const grain_bin = this.add.image(733, 415, 'grain_bin').setInteractive({ pixelPerfect: true });
                         const food_trough = this.add.sprite(139, 234, 'food_trough', 0).setInteractive({ pixelPerfect: true });
-
-                        fork_held_sprite = this.add.image(735, 240, 'fork_held').setVisible(false);
-                        shovel_held_sprite = this.add.image(759, 272, 'shovel_held').setVisible(false);
-                        grain_held_sprite = this.add.image(759, 272, 'grain_scoop').setVisible(false);
-
-                        const shovel_sound = this.sound.add('shovel_sound');
-                        
-                        this.input.topOnly = true; // don't allow object to be interacted with when they are lower
+                        const brush = this.add.sprite(739, 110, 'brush', 0).setInteractive({ pixelPerfect: true });
+                        const hoofpick = this.add.sprite(781, 99, 'hoofpick', 0).setInteractive({ pixelPerfect: true });
 
                         // trough
                         const trough = this.add.sprite(181, 418, 'trough', 0).setInteractive();
@@ -109,6 +109,30 @@
                             frames: this.anims.generateFrameNumbers('horse', { frames: [ 0, 1, 0 ] }),
                             frameRate: 1,
                             delay: 250
+                        });
+
+                        // held items
+                        fork_held_sprite = this.add.image(735, 240, 'fork_held').setVisible(false);
+                        shovel_held_sprite = this.add.image(759, 272, 'shovel_held').setVisible(false);
+                        grain_held_sprite = this.add.image(759, 272, 'grain_scoop').setVisible(false);
+                        brush_held_sprite = this.add.image(759, 272, 'brush_held').setVisible(false);
+                        hoofpick_held_sprite = this.add.image(759, 272, 'hoofpick_held').setVisible(false);
+
+                        const shovel_sound = this.sound.add('shovel_sound');
+                        
+                        this.input.topOnly = true; // don't allow object to be interacted with when they are lower
+
+                        music_button.on('pointerdown', function (pointer)
+                        {
+                            if (play_music) {
+                                backgroundMusic.stop()
+                                this.setFrame(1)
+                            }
+                            else {
+                                backgroundMusic.play()
+                                this.setFrame(0)
+                            }
+                            play_music = !play_music
                         });
 
                         // drink water
@@ -188,6 +212,16 @@
                                 this.setFrame(1);
                             }
                         });
+
+                        brush.on('pointerdown', function (pointer)
+                        {
+                            set_tool(hand.brush, brush)
+                        });
+
+                        hoofpick.on('pointerdown', function (pointer)
+                        {
+                            set_tool(hand.hoofpick, hoofpick)
+                        });
                     }
 
                     update ()
@@ -206,10 +240,18 @@
                         else if (handcurrent === hand.grain_scoop) {
                             grain_held_sprite.setVisible(true).setPosition(pointer.worldX, pointer.worldY);
                         }
+                        else if (handcurrent === hand.brush) {
+                            brush_held_sprite.setVisible(true).setPosition(pointer.worldX, pointer.worldY);
+                        }
+                        else if (handcurrent === hand.hoofpick) {
+                            hoofpick_held_sprite.setVisible(true).setPosition(pointer.worldX, pointer.worldY);
+                        }
                         else {
                             shovel_held_sprite.setVisible(false);
                             fork_held_sprite.setVisible(false);
                             grain_held_sprite.setVisible(false);
+                            brush_held_sprite.setVisible(false);
+                            hoofpick_held_sprite.setVisible(false);
                         }
                     }
                 }

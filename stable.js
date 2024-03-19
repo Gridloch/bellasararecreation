@@ -32,28 +32,28 @@ class Example extends Phaser.Scene
     {
         this.load.image('stable', './images/stable/stable-bg.png');
 
-        this.load.spritesheet('shovel', './images/stable/shovel.png', { frameWidth: 77, frameHeight: 195 });
+        this.load.atlas('shovel', './images/stable/shovel.png', './images/stable/shovel.json');
         this.load.image('shovel_held', './images/stable/shovel_held.png');
-        this.load.spritesheet('fork', './images/stable/fork.png', { frameWidth: 75, frameHeight: 206 });
+        this.load.atlas('fork', './images/stable/fork.png', './images/stable/fork.json');
         this.load.spritesheet('fork_held', './images/stable/fork_held.png', { frameWidth: 157, frameHeight: 167 });
         this.load.spritesheet('straw1', './images/stable/straw1.png', { frameWidth: 216, frameHeight: 143 });
         this.load.spritesheet('straw2', './images/stable/straw2.png', { frameWidth: 180, frameHeight: 126 });
         this.load.spritesheet('straw3', './images/stable/straw3.png', { frameWidth: 236, frameHeight: 150 });
         this.load.image('straw_bales', './images/stable/straw_bales.png');
 
-        this.load.spritesheet('trough', './images/stable/trough.png', { frameWidth: 263, frameHeight: 167 });
-        this.load.spritesheet('food_trough', './images/stable/food.png', { frameWidth: 139, frameHeight: 68 });
+        this.load.atlas('trough', './images/stable/trough.png', './images/stable/trough.json');
+        this.load.atlas('food_trough', './images/stable/food.png', './images/stable/food.json');
         this.load.image('grain_bin', './images/stable/grain_bin.png');
         this.load.image('grain_scoop', './images/stable/grain_scoop.png');
         this.load.image('apple_bin', './images/stable/apples.png');
         this.load.image('apple_held', './images/stable/apple.png');
         
         this.load.image('brush_held', './images/stable/brush_held.png');
-        this.load.spritesheet('brush', './images/stable/brush.png', { frameWidth: 39, frameHeight: 44 });
+        this.load.atlas('brush', './images/stable/brush.png', './images/stable/brush.json');
         this.load.image('hoofpick_held', './images/stable/hoofpick_held.png');
-        this.load.spritesheet('hoofpick', './images/stable/hoofpick.png', { frameWidth: 21, frameHeight: 68 });
+        this.load.atlas('hoofpick', './images/stable/hoofpick.png', './images/stable/hoofpick.json');
         this.load.spritesheet('hooves', './images/stable/hooves.png', { frameWidth: 45, frameHeight: 45 });
-        this.load.spritesheet('horse', './images/stable/horse.png', { frameWidth: 528, frameHeight: 475 });
+        this.load.atlas('horse', './images/stable/horse.png', './images/stable/horse.json');
 
         this.load.spritesheet('music_button', './images/stable/music.png', { frameWidth: 36, frameHeight: 36 });
 
@@ -87,15 +87,15 @@ class Example extends Phaser.Scene
         const straw_bales = this.add.sprite(333, 45, 'straw_bales', 0).setInteractive();
 
         const fork = this.add.sprite(735, 240, 'fork', 0).setInteractive({ pixelPerfect: true });
-        const shovel = this.add.sprite(759, 272, 'shovel', 0).setInteractive();
+        const shovel = this.add.sprite(759, 272, 'shovel', 0).setInteractive({ pixelPerfect: true });
         const apple_bin = this.add.image(649, 454, 'apple_bin').setInteractive();
         const grain_bin = this.add.image(733, 415, 'grain_bin').setInteractive({ pixelPerfect: true });
-        const food_trough = this.add.sprite(139, 234, 'food_trough', 0).setInteractive();
-        const brush = this.add.sprite(739, 110, 'brush', 0).setInteractive();
-        const hoofpick = this.add.sprite(781, 99, 'hoofpick', 0).setInteractive();
+        const food_trough = this.add.sprite(139, 236, 'food_trough', 0).setInteractive({ pixelPerfect: true });
+        const brush = this.add.sprite(739, 110, 'brush', 0).setInteractive({ pixelPerfect: true });
+        const hoofpick = this.add.sprite(781, 99, 'hoofpick', 0).setInteractive({ pixelPerfect: true });
 
         // trough
-        const trough = this.add.sprite(181, 418, 'trough', 0).setInteractive();
+        const trough = this.add.sprite(181, 418, 'trough', 0).setInteractive({ pixelPerfect: true });
         this.anims.create({
             key: 'fill_water',
             frames: this.anims.generateFrameNumbers('trough', { frames: [ 1, 2, 3 ] }),
@@ -103,7 +103,7 @@ class Example extends Phaser.Scene
         });
 
         // horse
-        const horse = this.add.sprite(370, 220, 'horse', 0).setInteractive();
+        const horse = this.add.sprite(370, 220, 'horse', 0).setInteractive({ pixelPerfect: true });
         this.anims.create({
             key: 'drink_water',
             frames: this.anims.generateFrameNumbers('horse', { frames: [ 0, 1, 0 ] }),

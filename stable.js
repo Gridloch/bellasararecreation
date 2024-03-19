@@ -13,7 +13,6 @@ hand = {
 handcurrent = hand.empty;
 waterfilled = false;
 foodfilled = false;
-hoofpicklevel = 0
 brushlevel = 0
 strawclean = false
 done = false;
@@ -31,6 +30,9 @@ class Example extends Phaser.Scene
     preload ()
     {
         this.load.image('stable', './images/stable/stable-bg.png');
+        this.load.image('hunger_scale', './images/stable/hunger.png');
+        this.load.image('cleanliness_scale', './images/stable/cleanliness.png');
+        this.load.image('happiness_scale', './images/stable/happiness.png');
 
         this.load.atlas('shovel', './images/stable/shovel.png', './images/stable/shovel.json');
         this.load.image('shovel_held', './images/stable/shovel_held.png');
@@ -211,13 +213,16 @@ class Example extends Phaser.Scene
             if (handcurrent === hand.shovel && straw.frame.name === 0) {
                 straw.setFrame(1);
                 shovel_sound.play();
+                updateBar(cleanlinessBar, 1/3)
+                updateBar(happinessBar, 1/6 + 0.05)
             }
             else if (handcurrent === hand.fork_filled && straw.frame.name === 1) {
                 straw.setFrame(2);
                 handcurrent = hand.fork
                 fork_sound2.play()
                 strawclean = 2 === straw1.frame.name && 2 === straw2.frame.name && 2 === straw3.frame.name
-                checkDone()
+                updateBar(cleanlinessBar, 1/3)
+                updateBar(happinessBar, 1/6 + 0.05)
             }
         }
         straw1.on('pointerdown', function (pointer) {clean_straw(straw1)});
@@ -241,7 +246,8 @@ class Example extends Phaser.Scene
                 grain_bin.setVisible(true);
                 this.setFrame(1);
                 grain_sound2.play()
-                checkDone()
+                updateBar(hungerBar, 2)
+                updateBar(happinessBar, 1.05)
             }
         });
 
@@ -253,7 +259,7 @@ class Example extends Phaser.Scene
                 this.play('fill_water');
                 horse.play('drink_water');
                 water_sound.play()
-                checkDone()
+                updateBar(hungerBar, 1.5)
             }
         });
 
@@ -262,9 +268,9 @@ class Example extends Phaser.Scene
             if (sprite.frame.name <2 && handcurrent === hand.hoofpick) {
                 sprite.setFrame(sprite.frame.name + 1)
                 hoofpick_sound.play()
+                updateBar(cleanlinessBar, 0.25)
+                updateBar(happinessBar, 1/8)
             }
-            hoofpicklevel = hooves1.frame.name + hooves2.frame.name
-            checkDone()
         }
         hooves1.on('pointerdown', function (pointer) { clean_hooves(hooves1) });
         hooves2.on('pointerdown', function (pointer) { clean_hooves(hooves2) });
@@ -280,21 +286,83 @@ class Example extends Phaser.Scene
                 brush_sound.play();
                 if (brushlevel < 2) {
                     brushlevel += 1;
+                    updateBar(cleanlinessBar, 1/3)
+                    updateBar(happinessBar, 1/6)
                 }
                 else if (brushlevel === 2) {
                     horse.play('rear');
+                    updateBar(cleanlinessBar, 1/3)
+                    updateBar(happinessBar, 1/6)
                 }
-                checkDone()
             }
         });
 
-        // This makes the horse rear once fully fed/clean/happy
-        // It should be removed once the progress bars are added
-        function checkDone() {
-            if (!done && waterfilled && foodfilled && hoofpicklevel === 4 && brushlevel === 2 && strawclean) {
-                horse.play('rear');
-                done = true;
-            }
+        // progress bars
+        const bar = 13
+        // hunger
+        const hunger_level = 1.5
+        const hunger_pos = 338 - 32 + (hunger_level*bar/2)
+        const hunger_width = 1 + hunger_level*bar
+        this.add.rectangle(338, 487, 66, 3, 0x5f2041);
+        this.add.rectangle(338, 491, 66, 8, 0xfd575d);
+        const hungerBar = {
+            x: 338,
+            leftShine: this.add.rectangle(hunger_pos - hunger_width/2 - 1, 490, 3, 10, 0xfabad0),
+            rightShade: this.add.rectangle(hunger_pos + hunger_width/2 + 1, 491, 3, 10, 0x983657),
+            topShine: this.add.rectangle(hunger_pos, 487, hunger_width, 3, 0xfabad0),
+            bottomShade: this.add.rectangle(hunger_pos, 495, hunger_width, 2, 0x983657),
+            progress: this.add.rectangle(hunger_pos, 491, hunger_width, 7, 0xff6699),
+            level: hunger_level
+        }
+        this.add.image(336, 491, 'hunger_scale');
+
+        // cleanliness
+        const cleanliness_level = 1
+        const cleanliness_pos = 428 - 32 + (cleanliness_level*bar/2)
+        const cleanliness_width = 1 + cleanliness_level*bar
+        this.add.rectangle(428, 487, 66, 3, 0x123625);
+        this.add.rectangle(428, 491, 66, 8, 0x37a66f);
+        const cleanlinessBar = {
+            x: 428,
+            leftShine: this.add.rectangle(cleanliness_pos - cleanliness_width/2 - 1, 490, 3, 10, 0xb2f3b1),
+            rightShade: this.add.rectangle(cleanliness_pos + cleanliness_width/2 + 1, 491, 3, 10, 0x1d7429),
+            topShine: this.add.rectangle(cleanliness_pos, 487, cleanliness_width, 3, 0xb2f3b1),
+            bottomShade: this.add.rectangle(cleanliness_pos, 495, cleanliness_width, 2, 0x1d7429),
+            progress: this.add.rectangle(cleanliness_pos, 491, cleanliness_width, 7, 0x2fce30),
+            level: cleanliness_level
+        }
+        this.add.image(426, 491, 'cleanliness_scale');
+
+        // happiness
+        const happiness_level = 1.75
+        const happiness_pos = 520 - 32 + (happiness_level*bar/2)
+        const happiness_width = 1 + happiness_level*bar
+        this.add.rectangle(520, 487, 66, 3, 0x002353);
+        this.add.rectangle(520, 491, 66, 8, 0x00ccff);
+        const happinessBar = {
+            x: 520,
+            leftShine: this.add.rectangle(happiness_pos - happiness_width/2 - 1, 490, 3, 10, 0xb4e2fb),
+            rightShade: this.add.rectangle(happiness_pos + happiness_width/2 + 1, 491, 3, 10, 0x004673),
+            topShine: this.add.rectangle(happiness_pos, 487, happiness_width, 3, 0xb4e2fb),
+            bottomShade: this.add.rectangle(happiness_pos, 495, happiness_width, 2, 0x004673),
+            progress: this.add.rectangle(happiness_pos, 491, happiness_width, 7, 0x0099ff),
+            level: happiness_level
+        }
+        this.add.image(519, 491, 'happiness_scale');
+
+        function updateBar(progressBar, progressAdd) {
+            progressBar.level += progressAdd
+
+            progressBar.progress.setDisplaySize(progressBar.level*bar, progressBar.progress.height)
+            progressBar.progress.setPosition(progressBar.x - 33 + (progressBar.level*bar/2), progressBar.progress.y)
+            
+            progressBar.topShine.setDisplaySize(progressBar.level*bar, progressBar.topShine.height)
+            progressBar.topShine.setPosition(progressBar.x - 33 + (progressBar.level*bar/2), progressBar.topShine.y)
+            
+            progressBar.bottomShade.setDisplaySize(progressBar.level*bar, progressBar.bottomShade.height)
+            progressBar.bottomShade.setPosition(progressBar.x - 33 + (progressBar.level*bar/2), progressBar.bottomShade.y)
+            
+            progressBar.rightShade.setPosition(progressBar.x - 32 + progressBar.level*bar, progressBar.rightShade.y)
         }
     }
 

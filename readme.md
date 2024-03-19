@@ -40,7 +40,6 @@ All the original textures, animations, sounds and the gameplay itself were taken
   - [This video](https://www.youtube.com/watch?v=nw-J5skHzrE) has clear sounds from the foal version, many of which are the same, and no music.
 - Other tools used:
   - The [Phaser](https://phaser.io/) game framework has been used to keep most of the coding pretty simple.
-    <!-- - https://github.com/phaserjs/examples/blob/master/public/src/animation/animation%20get%20progress.js - use for progress bars -->
   - The [Leshy Sprite Sheet Tool](https://www.leshylabs.com/apps/sstool/) and [Codeshack Sprite Sheet Generator](https://codeshack.io/images-sprite-sheet-generator/) have been used to generate the texture atlas files and sprite sheets.
   <!-- - [Spine Animations](https://blog.ourcade.co/posts/2020/phaser-3-parcel-typescript-spine/) will probably be the best option for the horse animations (so it can be animated in parts), but it does cost money. Basic sprites have been used so far instead to provide some basic animation. -->
 
@@ -55,7 +54,7 @@ All the original textures, animations, sounds and the gameplay itself were taken
   - [x] give food
   - [x] apple
   - [x] music on/off
-  - [ ] progress bars for hunger, cleanliness and happiness
+  - [x] progress bars for hunger, cleanliness and happiness
   - [ ] click card for positive message
   - [ ] click horseshoe for good luck
   - [ ] glow to show which objects can be interacted with
@@ -101,16 +100,3 @@ All the original textures, animations, sounds and the gameplay itself were taken
   - [ ] rear / neigh
   - [ ] pawing
   - [ ] hooves shifting
-
-<!-- 
-Notes for the estimated progress bar amounts
-Start = 1.5 hunger + 1 cleanliness + 1.5 happiness
-Apple = 0
-Water = 1.5 hunger
-Food = 2 hunger + 1 happiness
-Shovel = 1/3 + 1/13 cleanliness + 1/6 happiness (3 total)
-Fork = 1/3 + 1/13 cleanliness + 1/6 happiness (3 total)
-Hoofpick = 1/8 + 1/13 cleanliness + 1/8 happiness (4 total)
-Brush = 1/3 + 1/13 cleanliness + 1/6 happiness (3 total)
-Total = 5 hunger + 5 cleanliness + 5 happiness
- -->

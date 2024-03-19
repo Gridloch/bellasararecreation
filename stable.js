@@ -139,7 +139,7 @@ class Example extends Phaser.Scene
         const apple_sound = this.sound.add('apple_sound');
         const brush_sound = this.sound.add('brush_sound');
         
-        this.input.topOnly = false; // allow objects to be interacted with when they are lower
+        this.input.topOnly = true; // don't allow objects to be interacted with when they are lower
 
         // mute button
         music_button.on('pointerdown', function (pointer)
@@ -278,16 +278,20 @@ class Example extends Phaser.Scene
             }
             else if (handcurrent === hand.brush) {
                 brush_sound.play();
-                if (brushlevel < 4) {
+                if (brushlevel < 2) {
                     brushlevel += 1;
+                }
+                else if (brushlevel === 2) {
+                    horse.play('rear');
                 }
                 checkDone()
             }
         });
 
-        // rear once fully fed/clean/happy
+        // This makes the horse rear once fully fed/clean/happy
+        // It should be removed once the progress bars are added
         function checkDone() {
-            if (!done && waterfilled && foodfilled && hoofpicklevel === 4 && brushlevel === 4 && strawclean) {
+            if (!done && waterfilled && foodfilled && hoofpicklevel === 4 && brushlevel === 2 && strawclean) {
                 horse.play('rear');
                 done = true;
             }

@@ -290,6 +290,7 @@ class Example extends Phaser.Scene
                     updateBar(happinessBar, 1/6)
                 }
                 else if (brushlevel === 2) {
+                    brushlevel += 1;
                     horse.play('rear');
                     updateBar(cleanlinessBar, 1/3)
                     updateBar(happinessBar, 1/6)

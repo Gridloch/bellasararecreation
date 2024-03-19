@@ -1,46 +1,73 @@
-References:
-- https://www.youtube.com/watch?v=uaQ2FjKgHKQ&t=627s - has music off
-- https://www.youtube.com/watch?v=DVlLQOMo2Ow - has some of the animations (played all animations available in menu for classic horses) and shows the whole screen
-- https://codeshack.io/images-sprite-sheet-generator/ to make sprite sheets from individual images
-- https://www.joshmorony.com/how-to-create-animations-in-phaser-with-a-texture-atlas/
-  - https://www.leshylabs.com/apps/sstool/
+# Recreation of Bella Sara Stable Game
 
-Progress:
+References:
+- Textures and sounds:
+  - https://bellasara.wiki.gg/wiki/Bella_Sara_Wiki
+  - https://www.youtube.com/watch?v=uaQ2FjKgHKQ&t=627s - shows care of some different horses and has music off (for clearer sounds)
+  - https://www.youtube.com/watch?v=DVlLQOMo2Ow - has some of the animations (played all animations available in menu for classic horses) and shows the whole screen
+  - https://www.youtube.com/watch?v=nw-J5skHzrE - has clear sounds from the foal version, many of which are the same,  and no music
+- Code and sprites:
+  - https://phaser.io/ - game framework to simplify things
+    - https://github.com/phaserjs/examples/blob/master/public/src/animation/animation%20get%20progress.js - use for progress bars
+  - https://codeshack.io/images-sprite-sheet-generator/ to make sprite sheets from individual images
+  - https://www.joshmorony.com/how-to-create-animations-in-phaser-with-a-texture-atlas/ - not sure if this would fix the issue that occurs when trying to use pixel perfect selection for interactive items?
+    - https://www.leshylabs.com/apps/sstool/
+  - https://blog.ourcade.co/posts/2020/phaser-3-parcel-typescript-spine/ - is probably the best option for the horse animations (so it can be animated in parts instead of using entire frames)
+
+## Progress
 - [ ] basic functionality
   - [x] drink water
   - [x] remove dirty straw
   - [x] add new straw
-  - [ ] brush
-  - [ ] small brush
-  - [ ] hoofpick
+  - [x] brush
+  - [ ] small brush (still need textures for this one)
+  - [x] hoofpick
   - [x] food
-  - [ ] apple
-  - [ ] click card for positive message
-  - [ ] click horseshoe for good luck
+  - [x] apple
   - [x] music on/off
   - [ ] track hunger, cleanliness, happiness
+  - [ ] click card for positive message
+  - [ ] click horseshoe for good luck
   - [ ] glow to show which objects can be interacted with
 - [ ] animations
-  - *horse animations should be made to work with the body in parts (using spine) to make adding multiple horses easier*
-  - [ ] eye blink
-  - [ ] idle
-  - [ ] drink
-  - [ ] rear
-- [ ] textures
-  - [ ] horse
-    - [ ] cleanliness stages (see if this can be overlaid on top of horse)
-    - [ ] peter
-    - [ ] any other land horses in the wiki
+  - [ ] Idle animations should be chosen randomly and start after a random delay. [onCompleteEvent](https://labs.phaser.io/view.html?src=src\animation\on%20complete%20event.js) could be used to queue the next animation, and random numbers could be used to pick an animation and start it after a [random delay](https://labs.phaser.io/view.html?src=src\animation\random%20delay.js)
+  - *horse animations should be made to work with the body in parts (using [spine](http://esotericsoftware.com/) animations?) to make adding multiple horses easier and to hopefully use less file space*
+    - [ ] eat
+    - [ ] drink
+    - [ ] rear
+    - [ ] paw with foreleg
+    - [ ] raise head
+    - [ ] raise head slow
+    - [ ] shift in place
+    - [ ] ear twitch
+    - [ ] breath
+    - [ ] sway
+    - [ ] tail swish
   - [ ] items
-    - [ ] ...?
+    - [ ] pitchfork
+    - [ ] shovel
+    - [ ] hoofpick
+    - [ ] brush
+    - [ ] small brush
+    - [ ] grain scoop
+    - [ ] water trough (this has a partial version already)
+- [ ] textures
+  - [ ] horse *(again, should be made to work as parts rather than as a single image - this might also make it easier to add different horses without needing to reanimate each one)*
+    - [ ] cleanliness stages (see if this can be overlaid on top of horse as a texture)
+    - [ ] eye (with blink frames)
+    - [ ] peter
+    - [ ] ...
 - [ ] sounds
   - [x] background music
-  - [ ] horse movement
-  - [ ] pour water and drink
-  - [ ] pick up grain
-  - [ ] pour grain
-  - [ ] pick up apple
-  - [ ] feed apple
+  - [x] pour water
+  - [x] pick up grain
+  - [x] pour grain
+  - [x] feed apple
   - [x] use shovel
-  - [ ] pick up straw
-  - [ ] place straw
+  - [x] pick up straw
+  - [x] place straw
+  - [x] brush
+  - [x] use hoofpick
+  - [ ] rear / neigh
+  - [ ] pawing
+  - [ ] hooves shifting

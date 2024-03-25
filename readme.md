@@ -41,7 +41,7 @@ All the original textures, animations, sounds and the gameplay itself were taken
 - Other tools used:
   - The [Phaser](https://phaser.io/) game framework has been used to keep most of the coding pretty simple.
   - The [Leshy Sprite Sheet Tool](https://www.leshylabs.com/apps/sstool/) and [Codeshack Sprite Sheet Generator](https://codeshack.io/images-sprite-sheet-generator/) have been used to generate the texture atlas files and sprite sheets.
-  <!-- - [Spine Animations](https://blog.ourcade.co/posts/2020/phaser-3-parcel-typescript-spine/) will probably be the best option for the horse animations (so it can be animated in parts), but it does cost money. Basic sprites have been used so far instead to provide some basic animation. -->
+  - [Spine Animations](https://blog.ourcade.co/posts/2020/phaser-3-parcel-typescript-spine/) are used for the horse
 
 ## Progress
 - [ ] basic gameplay

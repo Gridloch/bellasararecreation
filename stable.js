@@ -26,6 +26,16 @@ apple_held_sprite = null
 
 class Example extends Phaser.Scene
 {
+    constructor ()
+    {
+        super({
+            pack: {
+                files: [
+                    { type: 'scenePlugin', key: 'SpinePlugin', url: '/SpinePluginDebug.js', sceneKey: 'spine' }
+                ]
+            }
+        });
+    }
 
     preload ()
     {
@@ -55,7 +65,8 @@ class Example extends Phaser.Scene
         this.load.image('hoofpick_held', './images/stable/hoofpick_held.png');
         this.load.atlas('hoofpick', './images/stable/hoofpick.png', './images/stable/hoofpick.json');
         this.load.spritesheet('hooves', './images/stable/hooves.png', { frameWidth: 45, frameHeight: 45 });
-        this.load.atlas('horse', './images/stable/horse.png', './images/stable/horse.json');
+
+        this.load.spine('horse', './images/horse/horse.json', ['./images/horse/peter.atlas'], true);
 
         this.load.spritesheet('music_button', './images/stable/music.png', { frameWidth: 36, frameHeight: 36 });
 
@@ -73,6 +84,9 @@ class Example extends Phaser.Scene
 
     create ()
     {
+        //  If you disable topOnly it will fire events for all objects the pointer is over, regardless of place on the display list
+        this.input.topOnly = false;
+
         const backgroundMusic = this.sound.add('background_music');
         backgroundMusic.loop = true; 
         backgroundMusic.play();
@@ -80,9 +94,6 @@ class Example extends Phaser.Scene
         this.add.image(427, 251, 'stable');
         const music_button = this.add.sprite(832, 480, 'music_button', 0).setInteractive({ pixelPerfect: true });
 
-        // note: pixel perfect appears to have a bug that causes it to include pixels from other frames 
-        // i.e. the spritesheet has multiple frames and a click is counted if it falls on where the second 
-        // frame would be if the entire image were visible, even if only the first frame is visible
         const straw2 = this.add.sprite(481, 387, 'straw2', 0).setInteractive();
         const straw1 = this.add.sprite(315, 380, 'straw1', 0).setInteractive();
         const straw3 = this.add.sprite(632, 376, 'straw3', 0).setInteractive();
@@ -105,19 +116,12 @@ class Example extends Phaser.Scene
         });
 
         // horse
-        const horse = this.add.sprite(370, 220, 'horse', 0).setInteractive({ pixelPerfect: true });
-        this.anims.create({
-            key: 'drink_water',
-            frames: this.anims.generateFrameNumbers('horse', { frames: [ 0, 1, 0 ] }),
-            frameRate: 1,
-            delay: 0
-        });
-        this.anims.create({
-            key: 'rear',
-            frames: this.anims.generateFrameNumbers('horse', { frames: [ 0, 2, 0 ] }),
-            frameRate: 1,
-            delay: 0
-        });
+        const horse = this.add.spine(403, 283, 'horse', 'idle').setAngle(90);
+        // const horse_interactive = graphics.setInteractive(new Phaser.Geom.Rectangle(0, 0, 128, 128), Phaser.Geom.Rectangle.Contains);
+
+        const graphics = this.add.graphics()
+        const horse_interactive = graphics.setInteractive(new Phaser.Geom.Rectangle(180, 100, 356, 256), Phaser.Geom.Rectangle.Contains);
+        // .fillStyle(0xff00ff, 0.5).fillRect(180, 100, 356, 256).setInteractive();
 
         const hooves1 = this.add.sprite(305, 427, 'hooves', 0).setInteractive().setVisible(false);
         const hooves2 = this.add.sprite(510, 427, 'hooves', 0).setInteractive().setVisible(false);
@@ -257,7 +261,7 @@ class Example extends Phaser.Scene
             if (!waterfilled && handcurrent === hand.empty) {
                 waterfilled = true;
                 this.play('fill_water');
-                horse.play('drink_water');
+                horse.play('drink')
                 water_sound.play()
                 updateBar(hungerBar, 1.5)
             }
@@ -276,7 +280,7 @@ class Example extends Phaser.Scene
         hooves2.on('pointerdown', function (pointer) { clean_hooves(hooves2) });
 
         // interact with horse
-        horse.on('pointerdown', function (pointer)
+        horse_interactive.on('pointerdown', function (pointer)
         {
             if (handcurrent === hand.apple) {
                 handcurrent = hand.empty;

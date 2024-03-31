@@ -73,9 +73,8 @@ class Example extends Phaser.Scene
         this.load.audio('background_music', ['./sounds/stable_soundtrack.mp3']);
         this.load.audio('shovel_sound', ['./sounds/shovel_sound.mp3']);
         this.load.audio('fork_sound', ['./sounds/fork_fill.mp3']);
-        this.load.audio('fork_sound2', ['./sounds/fork_place.mp3']);
+        this.load.audio('fork_grain_place', ['./sounds/fork+grain_place.mp3']);
         this.load.audio('grain_sound', ['./sounds/grain_fill.mp3']);
-        this.load.audio('grain_sound2', ['./sounds/grain_place.mp3']);
         this.load.audio('water_sound', ['./sounds/water_sound.mp3']);
         this.load.audio('hoofpick_sound', ['./sounds/hoof_scrape.mp3']);
         this.load.audio('apple_sound', ['./sounds/apple_munch.mp3']);
@@ -137,9 +136,8 @@ class Example extends Phaser.Scene
 
         const shovel_sound = this.sound.add('shovel_sound');
         const fork_sound = this.sound.add('fork_sound');
-        const fork_sound2 = this.sound.add('fork_sound2');
+        const fork_grain_place_sound = this.sound.add('fork_grain_place');
         const grain_sound = this.sound.add('grain_sound');
-        const grain_sound2 = this.sound.add('grain_sound2');
         const water_sound = this.sound.add('water_sound');
         const hoofpick_sound = this.sound.add('hoofpick_sound');
         const apple_sound = this.sound.add('apple_sound');
@@ -223,7 +221,7 @@ class Example extends Phaser.Scene
             else if (handcurrent === hand.fork_filled && straw.frame.name === 1) {
                 straw.setFrame(2);
                 handcurrent = hand.fork
-                fork_sound2.play()
+                fork_grain_place_sound.play()
                 strawclean = 2 === straw1.frame.name && 2 === straw2.frame.name && 2 === straw3.frame.name
                 updateBar(cleanlinessBar, 1/3)
                 updateBar(happinessBar, 1/6 + 0.05)
@@ -249,7 +247,7 @@ class Example extends Phaser.Scene
                 foodfilled = true;
                 grain_bin.setVisible(true);
                 this.setFrame(1);
-                grain_sound2.play()
+                fork_grain_place_sound.play()
                 updateBar(hungerBar, 2)
                 updateBar(happinessBar, 1.05)
             }
@@ -261,9 +259,9 @@ class Example extends Phaser.Scene
             if (!waterfilled && handcurrent === hand.empty) {
                 waterfilled = true;
                 this.play('fill_water');
-                horse.play('drink')
                 water_sound.play()
                 updateBar(hungerBar, 1.5)
+                horse.play('drink')
             }
         });
 

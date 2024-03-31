@@ -31,7 +31,7 @@ class Example extends Phaser.Scene
         super({
             pack: {
                 files: [
-                    { type: 'scenePlugin', key: 'SpinePlugin', url: '/SpinePluginDebug.js', sceneKey: 'spine' }
+                    { type: 'scenePlugin', key: 'SpinePlugin', url: './SpinePluginDebug.js', sceneKey: 'spine' }
                 ]
             }
         });

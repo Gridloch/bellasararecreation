@@ -53,7 +53,8 @@ class Example extends Phaser.Scene
         this.load.spritesheet('straw3', './images/stable/straw3.png', { frameWidth: 236, frameHeight: 150 });
         this.load.image('straw_bales', './images/stable/straw_bales.png');
 
-        this.load.atlas('trough', './images/stable/trough.png', './images/stable/trough.json');
+        // this.load.atlas('trough', './images/stable/trough.png', './images/stable/trough.json');
+        this.load.atlas('trough', './images/stable/water.png', './images/stable/water.json');
         this.load.atlas('food_trough', './images/stable/food.png', './images/stable/food.json');
         this.load.image('grain_bin', './images/stable/grain_bin.png');
         this.load.image('grain_scoop', './images/stable/grain_scoop.png');
@@ -98,21 +99,31 @@ class Example extends Phaser.Scene
         const straw3 = this.add.sprite(632, 376, 'straw3', 0).setInteractive();
         const straw_bales = this.add.sprite(333, 45, 'straw_bales', 0).setInteractive();
 
-        const fork = this.add.sprite(735, 240, 'fork', 0).setInteractive({ pixelPerfect: true });
-        const shovel = this.add.sprite(759, 272, 'shovel', 0).setInteractive({ pixelPerfect: true });
-        const apple_bin = this.add.image(649, 454, 'apple_bin').setInteractive();
-        const grain_bin = this.add.image(733, 415, 'grain_bin').setInteractive({ pixelPerfect: true });
-        const food_trough = this.add.sprite(139, 236, 'food_trough', 0).setInteractive({ pixelPerfect: true });
-        const brush = this.add.sprite(739, 110, 'brush', 0).setInteractive({ pixelPerfect: true });
-        const hoofpick = this.add.sprite(781, 99, 'hoofpick', 0).setInteractive({ pixelPerfect: true });
-
         // trough
-        const trough = this.add.sprite(181, 418, 'trough', 0).setInteractive({ pixelPerfect: true });
+        const trough = this.add.sprite(148, 442, 'trough', 'idle0000').setInteractive({ pixelPerfect: true });
         this.anims.create({
             key: 'fill_water',
-            frames: this.anims.generateFrameNumbers('trough', { frames: [ 1, 2, 3 ] }),
-            frameRate: 4
+            frames: this.anims.generateFrameNumbers('trough', { frames: [
+                'water0011', 'water0011', 'water0011',
+                'water0014', 'water0014',
+                'water0016', 'water0016',
+                'water0018', 'water0019', 'water0020', 'water0021', 'water0022', 'water0023', 'water0024', 'water0025', 'water0025',
+                'water0027', 'water0028', 'water0029', 'water0030', 'water0031', 'water0032', 'water0033', 'water0034', 'water0035',
+                'water0036', 'water0037', 'water0038', 'water0039', 'water0040', 'water0041', 'water0042', 'water0043', 'water0044',
+                'water0045', 'water0046', 'water0047', 'water0048', 'water0049', 'water0050', 'water0051', 'water0052', 'water0053',
+                'water0054', 'water0055', 'water0056', 'water0057', 'water0058', 'water0059', 'water0060',
+                'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060',
+                'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060',
+                'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060',
+                'water0092', 'water0093', 'water0094', 'water0095', 'water0096', 'water0097', 'water0098', 'water0099', 'water0100',
+                'water0101', 'water0102', 'water0103', 'water0104', 'water0105', 'water0106', 'water0107', 'water0108', 'water0109', 'water0110',
+                'water0111', 'water0112', 'water0113', 'water0114', 'water0115', 'water0116', 'water0117', 'water0118', 'water0119', 'water0120',
+                'water0121', 'water0121', 'water0122', 'water0123', 'water0124', 'water0125', 'water0126'
+            ] }),
+            frameRate: 24
         });
+
+        const food_trough = this.add.sprite(139, 236, 'food_trough', 0).setInteractive({ pixelPerfect: true });
 
         // horse
         const horse = this.add.spine(403, 283, 'horse', 'idle').setAngle(90);
@@ -125,9 +136,37 @@ class Example extends Phaser.Scene
         const hooves1 = this.add.sprite(305, 427, 'hooves', 0).setInteractive().setVisible(false);
         const hooves2 = this.add.sprite(510, 427, 'hooves', 0).setInteractive().setVisible(false);
 
+        const fork = this.add.sprite(689, 168, 'fork', 'idle').setInteractive({ pixelPerfect: true });
+        const shovel = this.add.sprite(759, 272, 'shovel', 0).setInteractive({ pixelPerfect: true });
+        const apple_bin = this.add.image(649, 454, 'apple_bin').setInteractive();
+        const grain_bin = this.add.image(733, 415, 'grain_bin').setInteractive({ pixelPerfect: true });
+        const brush = this.add.sprite(739, 110, 'brush', 0).setInteractive({ pixelPerfect: true });
+        const hoofpick = this.add.sprite(781, 99, 'hoofpick', 0).setInteractive({ pixelPerfect: true });
+
 
         // held items
-        fork_held_sprite = this.add.image(735, 240, 'fork_held').setVisible(false);
+        fork_held_sprite = this.add.sprite(735, 240, 'fork').setVisible(false);
+        this.anims.create({
+            key: 'forkfill',
+            frames: this.anims.generateFrameNumbers('fork', { frames: [
+                'fill0000', 'fill0001', 'fill0002', 'fill0003', 'fill0004', 'fill0005', 'fill0006', 'fill0007', 'held_filled'
+            ] }),
+            frameRate: 24
+        });
+        this.anims.create({
+            key: 'forkpickup',
+            frames: this.anims.generateFrameNumbers('fork', { frames: [
+                'hold0000', 'hold0001', 'hold0002', 'hold0003', 'hold0004', 'hold0005', 'hold0006', 'hold0007', 'held_empty'
+            ] }),
+            frameRate: 24
+        });
+        this.anims.create({
+            key: 'forkplace',
+            frames: this.anims.generateFrameNumbers('fork', { frames: [
+                'place0000', 'place0001', 'place0002', 'place0003', 'place0004', 'place0005', 'held_empty'
+            ] }),
+            frameRate: 24
+        });
         shovel_held_sprite = this.add.image(759, 272, 'shovel_held').setVisible(false);
         grain_held_sprite = this.add.image(759, 272, 'grain_scoop').setVisible(false);
         brush_held_sprite = this.add.image(759, 272, 'brush_held').setVisible(false);
@@ -174,15 +213,29 @@ class Example extends Phaser.Scene
         {
             set_tool(hand.shovel, shovel)
         });
+        
+        
+        fork.on('pointerover', function (pointer)
+        {
+            if (handcurrent === hand.empty) {
+                this.setFrame('hover_use');
+            }
+        });
+        fork.on('pointerout', function (pointer)
+        {
+            if (handcurrent === hand.empty) {
+                this.setFrame('idle');
+            }
+        });
         fork.on('pointerdown', function (pointer)
         {
             if (handcurrent === hand.empty) {
                 handcurrent = hand.fork;
-                this.setFrame(1)
+                this.setFrame('in_use')
             }
             else if (handcurrent === hand.fork || handcurrent === hand.fork_filled) {
                 handcurrent = hand.empty;
-                this.setFrame(0)
+                this.setFrame('idle')
             }
         });
         grain_bin.on('pointerdown', function (pointer)
@@ -254,6 +307,18 @@ class Example extends Phaser.Scene
         });
 
         // fill water
+        trough.on('pointerover', function (pointer)
+        {
+            if (!waterfilled && handcurrent === hand.empty) {
+                this.setFrame('hover0004');
+            }
+        });
+        trough.on('pointerout', function (pointer)
+        {
+            if (!waterfilled && handcurrent === hand.empty) {
+                this.setFrame('idle0000');
+            }
+        });
         trough.on('pointerdown', function (pointer)
         {
             if (!waterfilled && handcurrent === hand.empty) {
@@ -389,12 +454,19 @@ class Example extends Phaser.Scene
             shovel_held_sprite.setVisible(true).setPosition(pointer.worldX+15, pointer.worldY-30);
         }
         else if (handcurrent === hand.fork) {
-            clearCursor()
-            fork_held_sprite.setFrame(0).setVisible(true).setPosition(pointer.worldX+20, pointer.worldY-20);
+            fork_held_sprite.setPosition(pointer.worldX-35, pointer.worldY+60)
+            if (!fork_held_sprite.visible) {
+                fork_held_sprite.setVisible(true).play('forkpickup');
+            }
+            else if (fork_held_sprite.anims.getName() === 'forkfill') {
+                fork_held_sprite.play('forkplace')
+            }
         }
         else if (handcurrent === hand.fork_filled) {
-            clearCursor()
-            fork_held_sprite.setFrame(1).setVisible(true).setPosition(pointer.worldX+20, pointer.worldY-20);
+            fork_held_sprite.setPosition(pointer.worldX-35, pointer.worldY+60)
+            if (fork_held_sprite.anims.getName() === 'forkpickup' || fork_held_sprite.anims.getName() === 'forkplace') {
+                fork_held_sprite.play('forkfill')
+            }
         }
         else if (handcurrent === hand.grain_scoop) {
             clearCursor()

@@ -39,7 +39,8 @@ class Example extends Phaser.Scene
 
     preload ()
     {
-        this.load.image('stable', './images/stable/stable-bg.png');
+        this.load.image('stable_bg', './images/stable/stable-bg.png');
+        this.load.image('stable_fg', './images/stable/stable-fg.png');
         this.load.image('hunger_scale', './images/stable/hunger.png');
         this.load.image('cleanliness_scale', './images/stable/cleanliness.png');
         this.load.image('happiness_scale', './images/stable/happiness.png');
@@ -53,7 +54,6 @@ class Example extends Phaser.Scene
         this.load.spritesheet('straw3', './images/stable/straw3.png', { frameWidth: 236, frameHeight: 150 });
         this.load.image('straw_bales', './images/stable/straw_bales.png');
 
-        // this.load.atlas('trough', './images/stable/trough.png', './images/stable/trough.json');
         this.load.atlas('trough', './images/stable/water.png', './images/stable/water.json');
         this.load.atlas('food_trough', './images/stable/food.png', './images/stable/food.json');
         this.load.image('grain_bin', './images/stable/grain_bin.png');
@@ -91,8 +91,7 @@ class Example extends Phaser.Scene
         backgroundMusic.loop = true; 
         backgroundMusic.play();
 
-        this.add.image(427, 251, 'stable');
-        const music_button = this.add.sprite(832, 480, 'music_button', 0).setInteractive({ pixelPerfect: true });
+        this.add.image(444, 261, 'stable_bg');
 
         const straw2 = this.add.sprite(481, 387, 'straw2', 0).setInteractive();
         const straw1 = this.add.sprite(315, 380, 'straw1', 0).setInteractive();
@@ -100,7 +99,7 @@ class Example extends Phaser.Scene
         const straw_bales = this.add.sprite(333, 45, 'straw_bales', 0).setInteractive();
 
         // trough
-        const trough = this.add.sprite(148, 442, 'trough', 'idle0000').setInteractive({ pixelPerfect: true });
+        const trough = this.add.sprite(153, 455, 'trough', 'idle0000').setInteractive({ pixelPerfect: true });
         this.anims.create({
             key: 'fill_water',
             frames: this.anims.generateFrameNumbers('trough', { frames: [
@@ -136,8 +135,8 @@ class Example extends Phaser.Scene
         const hooves1 = this.add.sprite(305, 427, 'hooves', 0).setInteractive().setVisible(false);
         const hooves2 = this.add.sprite(510, 427, 'hooves', 0).setInteractive().setVisible(false);
 
-        const fork = this.add.sprite(689, 168, 'fork', 'idle').setInteractive({ pixelPerfect: true });
-        const shovel = this.add.sprite(759, 272, 'shovel', 0).setInteractive({ pixelPerfect: true });
+        const fork = this.add.sprite(718, 177, 'fork', 'idle').setInteractive({ pixelPerfect: true });
+        const shovel = this.add.sprite(809, 272, 'shovel', 0).setInteractive({ pixelPerfect: true });
         const apple_bin = this.add.image(649, 454, 'apple_bin').setInteractive();
         const grain_bin = this.add.image(733, 415, 'grain_bin').setInteractive({ pixelPerfect: true });
         const brush = this.add.sprite(739, 110, 'brush', 0).setInteractive({ pixelPerfect: true });
@@ -146,27 +145,27 @@ class Example extends Phaser.Scene
 
         // held items
         fork_held_sprite = this.add.sprite(735, 240, 'fork').setVisible(false);
-        this.anims.create({
-            key: 'forkfill',
-            frames: this.anims.generateFrameNumbers('fork', { frames: [
-                'fill0000', 'fill0001', 'fill0002', 'fill0003', 'fill0004', 'fill0005', 'fill0006', 'fill0007', 'held_filled'
-            ] }),
-            frameRate: 24
-        });
-        this.anims.create({
-            key: 'forkpickup',
-            frames: this.anims.generateFrameNumbers('fork', { frames: [
-                'hold0000', 'hold0001', 'hold0002', 'hold0003', 'hold0004', 'hold0005', 'hold0006', 'hold0007', 'held_empty'
-            ] }),
-            frameRate: 24
-        });
-        this.anims.create({
-            key: 'forkplace',
-            frames: this.anims.generateFrameNumbers('fork', { frames: [
-                'place0000', 'place0001', 'place0002', 'place0003', 'place0004', 'place0005', 'held_empty'
-            ] }),
-            frameRate: 24
-        });
+            this.anims.create({
+                key: 'fork_fill',
+                frames: this.anims.generateFrameNumbers('fork', { frames: [
+                    'fill0000', 'fill0001', 'fill0002', 'fill0003', 'fill0004', 'fill0005', 'fill0006', 'fill0007', 'held_filled'
+                ] }),
+                frameRate: 24
+            });
+            this.anims.create({
+                key: 'fork_pickup',
+                frames: this.anims.generateFrameNumbers('fork', { frames: [
+                    'hold0000', 'hold0001', 'hold0002', 'hold0003', 'hold0004', 'hold0005', 'hold0006', 'hold0007', 'held_empty'
+                ] }),
+                frameRate: 24
+            });
+            this.anims.create({
+                key: 'fork_place',
+                frames: this.anims.generateFrameNumbers('fork', { frames: [
+                    'place0000', 'place0001', 'place0002', 'place0003', 'place0004', 'place0005', 'held_empty'
+                ] }),
+                frameRate: 24
+            });
         shovel_held_sprite = this.add.image(759, 272, 'shovel_held').setVisible(false);
         grain_held_sprite = this.add.image(759, 272, 'grain_scoop').setVisible(false);
         brush_held_sprite = this.add.image(759, 272, 'brush_held').setVisible(false);
@@ -183,20 +182,6 @@ class Example extends Phaser.Scene
         const brush_sound = this.sound.add('brush_sound');
         
         this.input.topOnly = true; // don't allow objects to be interacted with when they are lower
-
-        // mute button
-        music_button.on('pointerdown', function (pointer)
-        {
-            if (play_music) {
-                backgroundMusic.stop()
-                this.setFrame(1)
-            }
-            else {
-                backgroundMusic.play()
-                this.setFrame(0)
-            }
-            play_music = !play_music
-        });
         
         // pick up and return items
         function set_tool(tool, sprite) {
@@ -365,58 +350,74 @@ class Example extends Phaser.Scene
             }
         });
 
+        // Stable foreground and UI
+        this.add.image(444, 261, 'stable_fg');
+
+        // buttons
+        const music_button = this.add.sprite(832, 480, 'music_button', 0).setInteractive({ pixelPerfect: true });
+        // mute button
+        music_button.on('pointerdown', function (pointer)
+        {
+            if (play_music) {
+                backgroundMusic.stop()
+                this.setFrame(1)
+            }
+            else {
+                backgroundMusic.play()
+                this.setFrame(0)
+            }
+            play_music = !play_music
+        });
+
         // progress bars
         const bar = 13
         // hunger
         const hunger_level = 1.5
-        const hunger_pos = 338 - 32 + (hunger_level*bar/2)
+        const hunger_pos = 353 - 32 + (hunger_level*bar/2)
         const hunger_width = 1 + hunger_level*bar
-        this.add.rectangle(338, 487, 66, 3, 0x5f2041);
-        this.add.rectangle(338, 491, 66, 8, 0xfd575d);
+        this.add.rectangle(353, 505, 66, 2, 0x5f2041);
         const hungerBar = {
-            x: 338,
-            leftShine: this.add.rectangle(hunger_pos - hunger_width/2 - 1, 490, 3, 10, 0xfabad0),
-            rightShade: this.add.rectangle(hunger_pos + hunger_width/2 + 1, 491, 3, 10, 0x983657),
-            topShine: this.add.rectangle(hunger_pos, 487, hunger_width, 3, 0xfabad0),
-            bottomShade: this.add.rectangle(hunger_pos, 495, hunger_width, 2, 0x983657),
-            progress: this.add.rectangle(hunger_pos, 491, hunger_width, 7, 0xff6699),
+            x: 353,
+            leftShine: this.add.rectangle(hunger_pos - hunger_width/2 - 1, 510, 3, 10, 0xfabad0),
+            rightShade: this.add.rectangle(hunger_pos + hunger_width/2 + 1, 510, 3, 10, 0x983657),
+            topShine: this.add.rectangle(hunger_pos, 506, hunger_width, 3, 0xfabad0),
+            bottomShade: this.add.rectangle(hunger_pos, 514, hunger_width, 2, 0x983657),
+            progress: this.add.rectangle(hunger_pos, 510, hunger_width, 7, 0xff6699),
             level: hunger_level
         }
-        this.add.image(336, 491, 'hunger_scale');
+        this.add.image(351, 509, 'hunger_scale');
 
         // cleanliness
         const cleanliness_level = 1
-        const cleanliness_pos = 428 - 32 + (cleanliness_level*bar/2)
+        const cleanliness_pos = 446 - 32 + (cleanliness_level*bar/2)
         const cleanliness_width = 1 + cleanliness_level*bar
-        this.add.rectangle(428, 487, 66, 3, 0x123625);
-        this.add.rectangle(428, 491, 66, 8, 0x37a66f);
+        this.add.rectangle(446, 505, 66, 2, 0x123625);
         const cleanlinessBar = {
-            x: 428,
-            leftShine: this.add.rectangle(cleanliness_pos - cleanliness_width/2 - 1, 490, 3, 10, 0xb2f3b1),
-            rightShade: this.add.rectangle(cleanliness_pos + cleanliness_width/2 + 1, 491, 3, 10, 0x1d7429),
-            topShine: this.add.rectangle(cleanliness_pos, 487, cleanliness_width, 3, 0xb2f3b1),
-            bottomShade: this.add.rectangle(cleanliness_pos, 495, cleanliness_width, 2, 0x1d7429),
-            progress: this.add.rectangle(cleanliness_pos, 491, cleanliness_width, 7, 0x2fce30),
+            x: 446,
+            leftShine: this.add.rectangle(cleanliness_pos - cleanliness_width/2 - 1, 510, 3, 10, 0xb2f3b1),
+            rightShade: this.add.rectangle(cleanliness_pos + cleanliness_width/2 + 1, 510, 3, 10, 0x1d7429),
+            topShine: this.add.rectangle(cleanliness_pos, 506, cleanliness_width, 3, 0xb2f3b1),
+            bottomShade: this.add.rectangle(cleanliness_pos, 514, cleanliness_width, 2, 0x1d7429),
+            progress: this.add.rectangle(cleanliness_pos, 510, cleanliness_width, 7, 0x2fce30),
             level: cleanliness_level
         }
-        this.add.image(426, 491, 'cleanliness_scale');
+        this.add.image(444, 509, 'cleanliness_scale');
 
         // happiness
         const happiness_level = 1.75
-        const happiness_pos = 520 - 32 + (happiness_level*bar/2)
+        const happiness_pos = 542 - 32 + (happiness_level*bar/2)
         const happiness_width = 1 + happiness_level*bar
-        this.add.rectangle(520, 487, 66, 3, 0x002353);
-        this.add.rectangle(520, 491, 66, 8, 0x00ccff);
+        this.add.rectangle(542, 505, 66, 2, 0x002353);
         const happinessBar = {
-            x: 520,
-            leftShine: this.add.rectangle(happiness_pos - happiness_width/2 - 1, 490, 3, 10, 0xb4e2fb),
-            rightShade: this.add.rectangle(happiness_pos + happiness_width/2 + 1, 491, 3, 10, 0x004673),
-            topShine: this.add.rectangle(happiness_pos, 487, happiness_width, 3, 0xb4e2fb),
-            bottomShade: this.add.rectangle(happiness_pos, 495, happiness_width, 2, 0x004673),
-            progress: this.add.rectangle(happiness_pos, 491, happiness_width, 7, 0x0099ff),
+            x: 542,
+            leftShine: this.add.rectangle(happiness_pos - happiness_width/2 - 1, 510, 3, 10, 0xb4e2fb),
+            rightShade: this.add.rectangle(happiness_pos + happiness_width/2 + 1, 510, 3, 10, 0x004673),
+            topShine: this.add.rectangle(happiness_pos, 506, happiness_width, 3, 0xb4e2fb),
+            bottomShade: this.add.rectangle(happiness_pos, 514, happiness_width, 2, 0x004673),
+            progress: this.add.rectangle(happiness_pos, 510, happiness_width, 7, 0x0099ff),
             level: happiness_level
         }
-        this.add.image(519, 491, 'happiness_scale');
+        this.add.image(540, 509, 'happiness_scale');
 
         function updateBar(progressBar, progressAdd) {
             progressBar.level += progressAdd
@@ -456,16 +457,16 @@ class Example extends Phaser.Scene
         else if (handcurrent === hand.fork) {
             fork_held_sprite.setPosition(pointer.worldX-35, pointer.worldY+60)
             if (!fork_held_sprite.visible) {
-                fork_held_sprite.setVisible(true).play('forkpickup');
+                fork_held_sprite.setVisible(true).play('fork_pickup');
             }
-            else if (fork_held_sprite.anims.getName() === 'forkfill') {
-                fork_held_sprite.play('forkplace')
+            else if (fork_held_sprite.anims.getName() === 'fork_fill') {
+                fork_held_sprite.play('fork_place')
             }
         }
         else if (handcurrent === hand.fork_filled) {
             fork_held_sprite.setPosition(pointer.worldX-35, pointer.worldY+60)
-            if (fork_held_sprite.anims.getName() === 'forkpickup' || fork_held_sprite.anims.getName() === 'forkplace') {
-                fork_held_sprite.play('forkfill')
+            if (fork_held_sprite.anims.getName() === 'fork_pickup' || fork_held_sprite.anims.getName() === 'fork_place') {
+                fork_held_sprite.play('fork_fill')
             }
         }
         else if (handcurrent === hand.grain_scoop) {

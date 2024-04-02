@@ -44,24 +44,47 @@ All the original textures, animations, sounds and the gameplay itself were taken
   - [Spine Animations](https://blog.ourcade.co/posts/2020/phaser-3-parcel-typescript-spine/) are used for the horse
 
 ## Progress
-- [ ] basic gameplay
-  - [x] fill water
+- [ ] Basic gameplay
   - [x] remove dirty straw
   - [x] add new straw
   - [x] brush
-  - [ ] small brush *(still need textures for this one)*
+  - [ ] small brush
   - [x] hoofpick
+  - [x] fill water
   - [x] give food
   - [x] apple
-  - [x] music on/off
-  - [x] progress bars for hunger, cleanliness and happiness
   - [ ] click card for positive message
-  - [ ] click horseshoe for good luck
-  - [ ] glow to show which objects can be interacted with
-- [ ] animations
+  - [x] click horseshoe for good luck
+  - [ ] awards?
+  - [x] music on/off
+  - [x] help button
+  - [x] progress bars for hunger, cleanliness and happiness
+- [ ] Original sprites
+  - [x] stable background
+  - [ ] shovel
+  - [x] pitchfork
+  - [ ] hay loft
+  - [ ] hay (on ground)
+  - [ ] brush
+  - [ ] small brush
+  - [ ] hoofpick
+  - [ ] hoofpick circles
+  - [x] water trough
+  - [x] oats bin
+  - [x] oats scoop
+  - [x] food trough
+  - [x] apple bin
+  - [x] apple
+  - [ ] card image
+  - [x] good luck
+  - [ ] awards?
+  - [ ] music button
+  - [x] help button
+- [ ] Horse animations (these are being reanimated with pine animations)
   - [ ] Idle animations should be chosen randomly and start after a random delay. (*[onCompleteEvent](https://labs.phaser.io/view.html?src=src\animation\on%20complete%20event.js) could be used to queue the next animation, and random numbers could be used to pick an animation and start it after a [random delay](https://labs.phaser.io/view.html?src=src\animation\random%20delay.js)?*)
   - Placeholder
-    - [ ] eat
+    - [ ] eat food
+    - [ ] eat apple
     - [x] drink
     - [x] rear
     - [ ] paw with foreleg
@@ -73,7 +96,8 @@ All the original textures, animations, sounds and the gameplay itself were taken
     - [ ] sway
     - [ ] tail swish
   - Final
-    - [ ] eat
+    - [ ] eat food
+    - [ ] eat apple
     - [ ] drink
     - [ ] rear
     - [ ] paw with foreleg
@@ -84,31 +108,26 @@ All the original textures, animations, sounds and the gameplay itself were taken
     - [ ] breath
     - [ ] sway
     - [ ] tail swish
-  - [ ] item use animations
-    - [ ] shovel
-    - [ ] pitchfork
-    - [ ] hoofpick
-    - [ ] brush
-    - [ ] small brush
-    - [ ] grain scoop
-    - [ ] water trough
-- [ ] textures
-  - [ ] horse *(again, should be made to work as parts rather than as a single image - this might also make it easier to add different horses without needing to reanimate each one)*
-    - [ ] cleanliness stages (see if this can be overlaid on top of horse as a texture)
-    - [ ] eye (with blink frames)
-    - [ ] peter
-    - [ ] ...?
-- [ ] sounds
-  - [x] background music
+- [ ] Textures
+  - [ ] Horses
+    - [ ] Peter
+    - [ ] Jewel
+    - [ ] Fiona
+    - [ ] ...
+  - [ ] dirt overlay
+- [ ] Sounds
+  - [ ] background music
   - [x] pour water
-  - [x] pick up grain
-  - [x] pour grain
-  - [x] feed apple
-  - [x] use shovel
-  - [x] pick up straw
-  - [x] place straw
-  - [x] brush
-  - [x] use hoofpick
+  - [ ] pick up grain
+  - [ ] pour grain
+  - [ ] feed apple
+  - [ ] use shovel
+  - [ ] pick up straw
+  - [ ] place straw
+  - [ ] brush
+  - [ ] use hoofpick
+  - [x] good luck
   - [ ] rear / neigh
   - [ ] pawing
   - [ ] hooves shifting
+  - [ ] ...

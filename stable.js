@@ -83,6 +83,7 @@ class Example extends Phaser.Scene
         this.load.audio('hoofpick_sound', ['./sounds/hoof_scrape.mp3']);
         this.load.audio('apple_sound', ['./sounds/apple_munch.mp3']);
         this.load.audio('brush_sound', ['./sounds/brush_sound.mp3']);
+        this.load.audio('luck_sound', ['./sounds/luck_sound.mp3']);
     }
 
     create ()
@@ -311,7 +312,7 @@ class Example extends Phaser.Scene
                 if (straw1.frame.name === 1 || straw2.frame.name === 1 || straw3.frame.name === 1) {
                     this.setFrame('hover_use');
                 }
-                else if (straw1.frame.name === 0 || straw2.frame.name === 0 || straw3.frame.name === 0) {
+                else {
                     this.setFrame('hover_wait');
                 }
             }
@@ -325,10 +326,8 @@ class Example extends Phaser.Scene
         fork.on('pointerdown', function (pointer)
         {
             if (handcurrent === hand.empty) {
-                if (straw1.frame.name === 1 || straw2.frame.name === 1 || straw3.frame.name === 1) {
-                    handcurrent = hand.fork;
-                    this.setFrame('in_use')
-                }
+                handcurrent = hand.fork;
+                this.setFrame('in_use')
             }
             else if (handcurrent === hand.fork || handcurrent === hand.fork_filled) {
                 handcurrent = hand.empty;
@@ -433,6 +432,7 @@ class Example extends Phaser.Scene
 
         // Lucky Horseshoe
         const luck = this.add.sprite(453, 268, 'luck', 'idle').setInteractive({ pixelPerfect: true });
+        const luck_sound = this.sound.add('luck_sound');
         this.anims.create({
             key: 'good_luck',
             frames: this.anims.generateFrameNumbers('luck', { frames: [
@@ -450,6 +450,7 @@ class Example extends Phaser.Scene
         {
             if (luck.frame.name === 'hover') {
                 luck.play('good_luck')
+                luck_sound.play()
             }
         });
         luck.on('pointerover', function (pointer)
@@ -580,7 +581,7 @@ class Example extends Phaser.Scene
             shovel_held_sprite.setVisible(true).setPosition(pointer.worldX+15, pointer.worldY-30);
         }
         else if (handcurrent === hand.fork) {
-            fork_held_sprite.setPosition(pointer.worldX-35, pointer.worldY+60)
+            fork_held_sprite.setPosition(pointer.worldX-20, pointer.worldY+45)
             if (!fork_held_sprite.visible) {
                 fork_held_sprite.setVisible(true).play('fork_pickup');
             }
@@ -589,7 +590,7 @@ class Example extends Phaser.Scene
             }
         }
         else if (handcurrent === hand.fork_filled) {
-            fork_held_sprite.setPosition(pointer.worldX-35, pointer.worldY+60)
+            fork_held_sprite.setPosition(pointer.worldX-20, pointer.worldY+45)
             if (fork_held_sprite.anims.getName() === 'fork_pickup' || fork_held_sprite.anims.getName() === 'fork_place') {
                 fork_held_sprite.play('fork_fill')
             }

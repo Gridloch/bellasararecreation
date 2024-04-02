@@ -69,6 +69,8 @@ class Example extends Phaser.Scene
 
         this.load.spine('horse', './images/horse/horse.json', ['./images/horse/peter.atlas'], true);
 
+        this.load.atlas('luck', './images/stable/luck.png', './images/stable/luck.json');
+
         this.load.spritesheet('music_button', './images/stable/music.png', { frameWidth: 36, frameHeight: 36 });
         this.load.atlas('help_button', './images/stable/help.png', './images/stable/help.json');
 
@@ -427,6 +429,42 @@ class Example extends Phaser.Scene
                 }
             }
         });
+
+
+        // Lucky Horseshoe
+        const luck = this.add.sprite(453, 268, 'luck', 'idle').setInteractive({ pixelPerfect: true });
+        this.anims.create({
+            key: 'good_luck',
+            frames: this.anims.generateFrameNumbers('luck', { frames: [
+                'idle',
+                'good_luck0000', 'good_luck0001', 'good_luck0002', 'good_luck0003', 'good_luck0004', 'good_luck0005', 'good_luck0006', 'good_luck0007', 'good_luck0008', 'good_luck0009',
+                'good_luck0010', 'good_luck0011', 'good_luck0012', 'good_luck0013', 'good_luck0014', 'good_luck0015', 'good_luck0016', 'good_luck0017', 'good_luck0018', 'good_luck0019',
+                'good_luck0020', 'good_luck0021', 'good_luck0022', 'good_luck0023', 'good_luck0024', 'good_luck0025', 'good_luck0026', 'good_luck0027', 'good_luck0028', 'good_luck0029',
+                'good_luck0030', 'good_luck0031', 'good_luck0032', 'good_luck0033', 'good_luck0034', 'good_luck0035', 'good_luck0036', 'good_luck0037', 'good_luck0038', 'good_luck0039',
+                'good_luck0040', 'good_luck0041', 'good_luck0042',
+                'idle'
+            ] }),
+            frameRate: 24
+        });
+        luck.on('pointerdown', function (pointer)
+        {
+            if (luck.frame.name === 'hover') {
+                luck.play('good_luck')
+            }
+        });
+        luck.on('pointerover', function (pointer)
+        {
+            if (luck.frame.name === 'idle') {
+                luck.setFrame('hover')
+            }
+        });
+        luck.on('pointerout', function (pointer)
+        {
+            if (luck.frame.name === 'hover') {
+                luck.setFrame('idle')
+            }
+        });
+
 
         // Stable foreground and UI
         this.add.image(444, 261, 'stable_fg');

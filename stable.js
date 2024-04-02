@@ -306,7 +306,12 @@ class Example extends Phaser.Scene
         fork.on('pointerover', function (pointer)
         {
             if (handcurrent === hand.empty) {
-                this.setFrame('hover_use');
+                if (straw1.frame.name === 1 || straw2.frame.name === 1 || straw3.frame.name === 1) {
+                    this.setFrame('hover_use');
+                }
+                else if (straw1.frame.name === 0 || straw2.frame.name === 0 || straw3.frame.name === 0) {
+                    this.setFrame('hover_wait');
+                }
             }
         });
         fork.on('pointerout', function (pointer)
@@ -318,8 +323,10 @@ class Example extends Phaser.Scene
         fork.on('pointerdown', function (pointer)
         {
             if (handcurrent === hand.empty) {
-                handcurrent = hand.fork;
-                this.setFrame('in_use')
+                if (straw1.frame.name === 1 || straw2.frame.name === 1 || straw3.frame.name === 1) {
+                    handcurrent = hand.fork;
+                    this.setFrame('in_use')
+                }
             }
             else if (handcurrent === hand.fork || handcurrent === hand.fork_filled) {
                 handcurrent = hand.empty;

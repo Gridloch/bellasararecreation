@@ -56,9 +56,9 @@ class Example extends Phaser.Scene
 
         this.load.atlas('trough', './images/stable/water.png', './images/stable/water.json');
         this.load.atlas('food_trough', './images/stable/food.png', './images/stable/food.json');
-        this.load.image('grain_bin', './images/stable/grain_bin.png');
+        this.load.atlas('grain_bin', './images/stable/grain_bin.png', './images/stable/grain_bin.json');
         this.load.image('grain_scoop', './images/stable/grain_scoop.png');
-        this.load.image('apple_bin', './images/stable/apples.png');
+        this.load.atlas('apple_bin', './images/stable/apples.png','./images/stable/apples.json');
         this.load.image('apple_held', './images/stable/apple.png');
         
         this.load.image('brush_held', './images/stable/brush_held.png');
@@ -70,6 +70,7 @@ class Example extends Phaser.Scene
         this.load.spine('horse', './images/horse/horse.json', ['./images/horse/peter.atlas'], true);
 
         this.load.spritesheet('music_button', './images/stable/music.png', { frameWidth: 36, frameHeight: 36 });
+        this.load.atlas('help_button', './images/stable/help.png', './images/stable/help.json');
 
         this.load.audio('background_music', ['./sounds/stable_soundtrack.mp3']);
         this.load.audio('shovel_sound', ['./sounds/shovel_sound.mp3']);
@@ -98,8 +99,10 @@ class Example extends Phaser.Scene
         const straw3 = this.add.sprite(632, 376, 'straw3', 0).setInteractive();
         const straw_bales = this.add.sprite(333, 45, 'straw_bales', 0).setInteractive();
 
-        // trough
+
+        // Water Trough
         const trough = this.add.sprite(153, 455, 'trough', 'idle0000').setInteractive({ pixelPerfect: true });
+        const water_sound = this.sound.add('water_sound');
         this.anims.create({
             key: 'fill_water',
             frames: this.anims.generateFrameNumbers('trough', { frames: [
@@ -121,24 +124,126 @@ class Example extends Phaser.Scene
             ] }),
             frameRate: 24
         });
+        trough.on('pointerdown', function (pointer)
+        {
+            if (!waterfilled && handcurrent === hand.empty) {
+                waterfilled = true;
+                this.play('fill_water');
+                water_sound.play()
+                updateBar(hungerBar, 1.5)
+                horse.play('drink')
+            }
+        });
+        trough.on('pointerover', function (pointer)
+        {
+            if (!waterfilled && handcurrent === hand.empty) {
+                this.setFrame('hover0004');
+            }
+        });
+        trough.on('pointerout', function (pointer)
+        {
+            if (!waterfilled && handcurrent === hand.empty) {
+                this.setFrame('idle0000');
+            }
+        });
 
-        const food_trough = this.add.sprite(139, 236, 'food_trough', 0).setInteractive({ pixelPerfect: true });
+
+        // Food Trough
+        const food_trough = this.add.sprite(104, 303, 'food_trough', 0).setInteractive({ pixelPerfect: true });
+        this.anims.create({
+            key: 'fill',
+            frames: this.anims.generateFrameNumbers('food_trough', { frames: [
+                'empty',
+                'fill0000', 'fill0001', 'fill0002', 'fill0003', 'fill0004', 'fill0005', 'fill0006', 'fill0007', 'fill0008', 'fill0009', 'fill0010',
+                'full'
+            ] }),
+            frameRate: 24
+        });
+        this.anims.create({
+            key: 'fill_again',
+            frames: this.anims.generateFrameNumbers('food_trough', { frames: [
+                'full',
+                'fill_again0000', 'fill_again0001', 'fill_again0002', 'fill_again0003', 'fill_again0004', 'fill_again0004', 'fill_again0004', 'fill_again0004', 'fill_again0004', 'fill_again0009', 'fill_again0010',
+                'full'
+            ] }),
+            frameRate: 24
+        });
+        food_trough.on('pointerdown', function (pointer)
+        {
+            if (handcurrent === hand.grain_scoop) {
+                handcurrent = hand.empty;
+                grain_bin.play('place');
+                this.play(foodfilled ? 'fill_again' : 'fill')
+                fork_grain_place_sound.play()
+                if (!foodfilled) {
+                    updateBar(hungerBar, 2)
+                    updateBar(happinessBar, 1.05)
+                }
+                foodfilled = true;
+            }
+        });
 
         // horse
-        const horse = this.add.spine(403, 283, 'horse', 'idle').setAngle(90);
-        // const horse_interactive = graphics.setInteractive(new Phaser.Geom.Rectangle(0, 0, 128, 128), Phaser.Geom.Rectangle.Contains);
+        const horse = this.add.spine(453, 283, 'horse', 'idle').setAngle(90);
 
         const graphics = this.add.graphics()
-        const horse_interactive = graphics.setInteractive(new Phaser.Geom.Rectangle(180, 100, 356, 256), Phaser.Geom.Rectangle.Contains);
-        // .fillStyle(0xff00ff, 0.5).fillRect(180, 100, 356, 256).setInteractive();
+        const horse_interactive = graphics.setInteractive(new Phaser.Geom.Rectangle(230, 100, 356, 256), Phaser.Geom.Rectangle.Contains);
 
         const hooves1 = this.add.sprite(305, 427, 'hooves', 0).setInteractive().setVisible(false);
         const hooves2 = this.add.sprite(510, 427, 'hooves', 0).setInteractive().setVisible(false);
 
         const fork = this.add.sprite(718, 177, 'fork', 'idle').setInteractive({ pixelPerfect: true });
         const shovel = this.add.sprite(809, 272, 'shovel', 0).setInteractive({ pixelPerfect: true });
-        const apple_bin = this.add.image(649, 454, 'apple_bin').setInteractive();
-        const grain_bin = this.add.image(733, 415, 'grain_bin').setInteractive({ pixelPerfect: true });
+        const apple_bin = this.add.image(680, 505, 'apple_bin', 'apple_bin').setInteractive();
+        
+
+        // Grain Bin
+        const grain_bin = this.add.sprite(736, 413, 'grain_bin', 'idle').setInteractive({ pixelPerfect: true });
+        const grain_sound = this.sound.add('grain_sound');
+        this.anims.create({
+            key: 'pickup',
+            frames: this.anims.generateFrameNumbers('grain_bin', { frames: [
+                'idle',
+                'pickup0000', 'pickup0001', 'pickup0002', 'pickup0003', 'pickup0004', 'pickup0005', 'pickup0006', 'pickup0007', 'pickup0008', 'pickup0009', 'pickup0010',
+                'pickup0011', 'pickup0012', 'pickup0013', 'pickup0013', 'pickup0015', 'pickup0016', 'pickup0017',
+                'empty'
+            ] }),
+            frameRate: 24
+        });
+        this.anims.create({
+            key: 'place',
+            frames: this.anims.generateFrameNumbers('grain_bin', { frames: [
+                'empty',
+                'place0000', 'place0001', 'place0002', 'place0003', 'place0004', 'place0005', 'place0006', 'place0007',
+                'idle'
+            ] }),
+            frameRate: 24
+        });
+        grain_bin.on('pointerdown', function (pointer)
+        {
+            if (handcurrent === hand.empty) {
+                handcurrent = hand.grain_scoop
+                grain_bin.play('pickup')
+                grain_sound.play()
+            }
+        });
+        grain_bin.on('pointerover', function (pointer)
+        {
+            if (handcurrent === hand.empty) {
+                grain_bin.setFrame('hover')
+            }
+        });
+        grain_bin.on('pointerout', function (pointer)
+        {
+            if (handcurrent === hand.grain_scoop) {
+                grain_bin.setFrame('empty')
+            }
+            else {
+                grain_bin.setFrame('idle')
+            }
+        });
+
+
         const brush = this.add.sprite(739, 110, 'brush', 0).setInteractive({ pixelPerfect: true });
         const hoofpick = this.add.sprite(781, 99, 'hoofpick', 0).setInteractive({ pixelPerfect: true });
 
@@ -175,8 +280,6 @@ class Example extends Phaser.Scene
         const shovel_sound = this.sound.add('shovel_sound');
         const fork_sound = this.sound.add('fork_sound');
         const fork_grain_place_sound = this.sound.add('fork_grain_place');
-        const grain_sound = this.sound.add('grain_sound');
-        const water_sound = this.sound.add('water_sound');
         const hoofpick_sound = this.sound.add('hoofpick_sound');
         const apple_sound = this.sound.add('apple_sound');
         const brush_sound = this.sound.add('brush_sound');
@@ -223,20 +326,26 @@ class Example extends Phaser.Scene
                 this.setFrame('idle')
             }
         });
-        grain_bin.on('pointerdown', function (pointer)
-        {
-            if (!foodfilled && handcurrent === hand.empty) {
-                handcurrent = hand.grain_scoop
-                grain_bin.setVisible(false)
-                grain_sound.play()
-            }
-        });
+
+        // Apple Bin
         apple_bin.on('pointerdown', function (pointer)
         {
             if (handcurrent === hand.empty) {
                 handcurrent = hand.apple;
+                apple_bin.setFrame('apple_bin')
             }
         });
+        apple_bin.on('pointerover', function (pointer)
+        {
+            if (handcurrent === hand.empty) {
+                apple_bin.setFrame('apple_bin_hover')
+            }
+        });
+        apple_bin.on('pointerout', function (pointer)
+        {
+            apple_bin.setFrame('apple_bin')
+        });
+
         brush.on('pointerdown', function (pointer)
         {
             set_tool(hand.brush, brush)
@@ -274,44 +383,6 @@ class Example extends Phaser.Scene
             if (handcurrent === hand.fork) {
                 handcurrent = hand.fork_filled
                 fork_sound.play()
-            }
-        });
-
-        // place food
-        food_trough.on('pointerdown', function (pointer)
-        {
-            if (!foodfilled && handcurrent === hand.grain_scoop) {
-                handcurrent = hand.empty;
-                foodfilled = true;
-                grain_bin.setVisible(true);
-                this.setFrame(1);
-                fork_grain_place_sound.play()
-                updateBar(hungerBar, 2)
-                updateBar(happinessBar, 1.05)
-            }
-        });
-
-        // fill water
-        trough.on('pointerover', function (pointer)
-        {
-            if (!waterfilled && handcurrent === hand.empty) {
-                this.setFrame('hover0004');
-            }
-        });
-        trough.on('pointerout', function (pointer)
-        {
-            if (!waterfilled && handcurrent === hand.empty) {
-                this.setFrame('idle0000');
-            }
-        });
-        trough.on('pointerdown', function (pointer)
-        {
-            if (!waterfilled && handcurrent === hand.empty) {
-                waterfilled = true;
-                this.play('fill_water');
-                water_sound.play()
-                updateBar(hungerBar, 1.5)
-                horse.play('drink')
             }
         });
 
@@ -354,7 +425,8 @@ class Example extends Phaser.Scene
         this.add.image(444, 261, 'stable_fg');
 
         // buttons
-        const music_button = this.add.sprite(832, 480, 'music_button', 0).setInteractive({ pixelPerfect: true });
+        const music_button = this.add.sprite(867, 498, 'music_button', 0).setInteractive({ pixelPerfect: true });
+        const help_button = this.add.sprite(444, 261, 'help_button', 'idle').setInteractive(this.input.makePixelPerfect(150));
         // mute button
         music_button.on('pointerdown', function (pointer)
         {
@@ -367,6 +439,14 @@ class Example extends Phaser.Scene
                 this.setFrame(0)
             }
             play_music = !play_music
+        });
+        help_button.on('pointerover', function (pointer)
+        {
+            this.setFrame('help')
+        });
+        help_button.on('pointerout', function (pointer)
+        {
+            this.setFrame('idle')
         });
 
         // progress bars

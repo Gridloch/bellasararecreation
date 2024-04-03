@@ -28,6 +28,7 @@ shovel_held_sprite = null
 fork_held_sprite = null
 grain_held_sprite = null
 brush_held_sprite = null
+brush_small_held_sprite = null
 hoofpick_held_sprite = null
 apple_held_sprite = null
 
@@ -53,9 +54,7 @@ class Example extends Phaser.Scene
         this.load.image('happiness_scale', './images/stable/happiness.png');
 
         this.load.atlas('shovel', './images/stable/shovel.png', './images/stable/shovel.json');
-        this.load.image('shovel_held', './images/stable/shovel_held.png');
         this.load.atlas('fork', './images/stable/fork.png', './images/stable/fork.json');
-        this.load.spritesheet('fork_held', './images/stable/fork_held.png', { frameWidth: 157, frameHeight: 167 });
         this.load.spritesheet('straw1', './images/stable/straw1.png', { frameWidth: 216, frameHeight: 143 });
         this.load.spritesheet('straw2', './images/stable/straw2.png', { frameWidth: 180, frameHeight: 126 });
         this.load.spritesheet('straw3', './images/stable/straw3.png', { frameWidth: 236, frameHeight: 150 });
@@ -68,9 +67,8 @@ class Example extends Phaser.Scene
         this.load.atlas('apple_bin', './images/stable/apples.png','./images/stable/apples.json');
         this.load.image('apple_held', './images/stable/apple.png');
         
-        this.load.image('brush_held', './images/stable/brush_held.png');
         this.load.atlas('brush', './images/stable/brush.png', './images/stable/brush.json');
-        this.load.image('hoofpick_held', './images/stable/hoofpick_held.png');
+        this.load.atlas('brush_small', './images/stable/brush_small.png', './images/stable/brush_small.json');
         this.load.atlas('hoofpick', './images/stable/hoofpick.png', './images/stable/hoofpick.json');
         this.load.spritesheet('hooves', './images/stable/hooves.png', { frameWidth: 53, frameHeight: 53 });
 
@@ -360,6 +358,7 @@ class Example extends Phaser.Scene
             });
 
 
+        // Brush
         const brush = this.add.sprite(767, 100, 'brush', 'idle').setInteractive({ pixelPerfect: true }).setScale(0.75);
         const brush_sound = this.sound.add('brush_sound');
             this.anims.create({
@@ -411,6 +410,60 @@ class Example extends Phaser.Scene
                     brush.setFrame('idle')
                 }
             });
+
+            // Brush
+            const brush_small = this.add.sprite(746, 64, 'brush_small', 'idle').setInteractive({ pixelPerfect: true })//.setScale(0.90);
+            const brush_sound_small = this.sound.add('brush_sound_small');
+                this.anims.create({
+                    key: 'brush_pickup_small',
+                    frames: this.anims.generateFrameNumbers('brush_small', { frames: [
+                        'pickup0000', 'pickup0001', 'pickup0002', 'pickup0003', 'pickup0004', 'pickup0005',
+                        'in_use'
+                    ] }),
+                    frameRate: 24
+                });
+                this.anims.create({
+                    key: 'brush_small',
+                    frames: this.anims.generateFrameNumbers('brush_small', { frames: [
+                        'hold',
+                        'brush0000', 'brush0001', 'brush0002', 'brush0003', 'brush0004', 'brush0005', 'brush0006', 'brush0007', 'brush0008', 'brush0009', 'brush0010',
+                        'hold'
+                    ] }),
+                    frameRate: 24
+                });
+                this.anims.create({
+                    key: 'brush_place_small',
+                    frames: this.anims.generateFrameNumbers('brush_small', { frames: [
+                        'place0000', 'place0001', 'place0002', 'place0003', 'place0004', 'place0005',
+                        'idle'
+                    ] }),
+                    frameRate: 24
+                });
+                brush_small.on('pointerdown', function (pointer)
+                {
+                    if (handcurrent === hand.empty) {
+                        handcurrent = hand.brush_small;
+                        brush_small.play('brush_pickup_small')
+                        pickup.play();
+                    }
+                    else if (handcurrent === hand.brush_small) {
+                        handcurrent = hand.empty;
+                        brush_small.play('brush_place_small')
+                    }
+                });
+                brush_small.on('pointerover', function (pointer)
+                {
+                    if (handcurrent === hand.empty) {
+                        brush_small.setFrame('hover')
+                        hover1.play();
+                    }
+                });
+                brush_small.on('pointerout', function (pointer)
+                {
+                    if (handcurrent === hand.empty) {
+                        brush_small.setFrame('idle')
+                    }
+                });
 
         // Hoofpick
         const hoofpick = this.add.sprite(823, 80, 'hoofpick', 'idle').setInteractive({ pixelPerfect: true }).setScale(0.75);
@@ -490,6 +543,7 @@ class Example extends Phaser.Scene
 
         grain_held_sprite = this.add.image(759, 272, 'grain_scoop').setVisible(false);
         brush_held_sprite = this.add.sprite(759, 272, 'brush', 'hold').setVisible(false);
+        brush_small_held_sprite = this.add.sprite(759, 272, 'brush_small', 'hold').setVisible(false);
 
         hoofpick_held_sprite = this.add.sprite(759, 272, 'hoofpick').setVisible(false);
             this.anims.create({
@@ -564,6 +618,21 @@ class Example extends Phaser.Scene
             else if (handcurrent === hand.brush) {
                 brush_held_sprite.play('brush')
                 brush_sound.play();
+                if (brushlevel < 2) {
+                    brushlevel += 1;
+                    updateBar(cleanlinessBar, 1/3)
+                    updateBar(happinessBar, 1/6)
+                }
+                else if (brushlevel === 2) {
+                    brushlevel += 1;
+                    horse.play('rear');
+                    updateBar(cleanlinessBar, 1/3)
+                    updateBar(happinessBar, 1/6)
+                }
+            }
+            else if (handcurrent === hand.brush_small) {
+                brush_small_held_sprite.play('brush_small')
+                brush_sound_small.play();
                 if (brushlevel < 2) {
                     brushlevel += 1;
                     updateBar(cleanlinessBar, 1/3)
@@ -721,6 +790,7 @@ class Example extends Phaser.Scene
             fork_held_sprite.setVisible(false);
             grain_held_sprite.setVisible(false);
             brush_held_sprite.setVisible(false);
+            brush_small_held_sprite.setVisible(false);
             hoofpick_held_sprite.setVisible(false);
             apple_held_sprite.setVisible(false);
         }
@@ -763,6 +833,13 @@ class Example extends Phaser.Scene
             if (!brush_held_sprite.visible) {
                 brush_held_sprite.setAlpha(0).setVisible(true)
                 this.time.delayedCall(250, function () {brush_held_sprite.setAlpha(1)});
+            }
+        }
+        else if (handcurrent === hand.brush_small) {
+            brush_small_held_sprite.setPosition(pointer.worldX-8, pointer.worldY+8);
+            if (!brush_small_held_sprite.visible) {
+                brush_small_held_sprite.setAlpha(0).setVisible(true)
+                this.time.delayedCall(250, function () {brush_small_held_sprite.setAlpha(1)});
             }
         }
         else if (handcurrent === hand.hoofpick) {

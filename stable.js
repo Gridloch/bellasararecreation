@@ -260,13 +260,6 @@ class Example extends Phaser.Scene
 
         // Apple Bin
         const apple_bin = this.add.image(680, 505, 'apple_bin', 'apple_bin').setInteractive();
-            apple_bin.on('pointerdown', function (pointer)
-            {
-                if (handcurrent === hand.empty) {
-                    handcurrent = hand.apple;
-                    apple_bin.setFrame('apple_bin')
-                }
-            });
             apple_bin.on('pointerover', function (pointer)
             {
                 if (handcurrent === hand.empty) {
@@ -276,6 +269,13 @@ class Example extends Phaser.Scene
             apple_bin.on('pointerout', function (pointer)
             {
                 apple_bin.setFrame('apple_bin')
+            });
+            apple_bin.on('pointerdown', function (pointer)
+            {
+                if (handcurrent === hand.empty) {
+                    handcurrent = hand.apple;
+                    apple_bin.setFrame('apple_bin')
+                }
             });
         
         // Grain Bin
@@ -300,14 +300,6 @@ class Example extends Phaser.Scene
                 ] }),
                 frameRate: 24
             });
-            grain_bin.on('pointerdown', function (pointer)
-            {
-                if (handcurrent === hand.empty) {
-                    handcurrent = hand.grain_scoop
-                    grain_bin.play('pickup')
-                    grain_sound.play()
-                }
-            });
             grain_bin.on('pointerover', function (pointer)
             {
                 if (handcurrent === hand.empty) {
@@ -323,10 +315,43 @@ class Example extends Phaser.Scene
                     grain_bin.setFrame('idle')
                 }
             });
+            grain_bin.on('pointerdown', function (pointer)
+            {
+                if (handcurrent === hand.empty) {
+                    handcurrent = hand.grain_scoop
+                    grain_bin.play('pickup')
+                    grain_sound.play()
+                }
+            });
 
 
         const brush = this.add.sprite(739, 110, 'brush', 0).setInteractive({ pixelPerfect: true });
-        const hoofpick = this.add.sprite(781, 99, 'hoofpick', 0).setInteractive({ pixelPerfect: true });
+
+        // Hoofpick
+        const hoofpick = this.add.sprite(823, 80, 'hoofpick', 'idle').setInteractive({ pixelPerfect: true }).setScale(0.75);
+            hoofpick.on('pointerdown', function (pointer)
+            {
+                if (handcurrent === hand.empty) {
+                    handcurrent = hand.hoofpick;
+                    hoofpick.setFrame('in_use')
+                }
+                else if (handcurrent === hand.hoofpick) {
+                    handcurrent = hand.empty;
+                    hoofpick.setFrame('idle')
+                }
+                hooves1.setVisible(handcurrent === hand.hoofpick)
+                hooves2.setVisible(handcurrent === hand.hoofpick)
+            });
+            hoofpick.on('pointerover', function (pointer)
+            {
+                if (handcurrent === hand.empty) {
+                    hoofpick.setFrame('hover')
+                }
+            });
+            hoofpick.on('pointerout', function (pointer)
+            {
+                hoofpick.setFrame('idle')
+            });
 
 
         // held items
@@ -374,7 +399,26 @@ class Example extends Phaser.Scene
 
         grain_held_sprite = this.add.image(759, 272, 'grain_scoop').setVisible(false);
         brush_held_sprite = this.add.image(759, 272, 'brush_held').setVisible(false);
-        hoofpick_held_sprite = this.add.image(759, 272, 'hoofpick_held').setVisible(false);
+
+        hoofpick_held_sprite = this.add.sprite(759, 272, 'hoofpick').setVisible(false);
+        this.anims.create({
+            key: 'hoofpick_pickup',
+            frames: this.anims.generateFrameNumbers('hoofpick', { frames: [
+                'pickup0000', 'pickup0001', 'pickup0002', 'pickup0003', 'pickup0004', 'pickup0005', 'held'
+            ] }),
+            frameRate: 24
+        });
+        this.anims.create({
+            key: 'hoofpick_use',
+            frames: this.anims.generateFrameNumbers('hoofpick', { frames: [
+                'held',
+                'use0000', 'use0001', 'use0002', 'use0003', 'use0004', 'use0005', 'use0006', 'use0007', 'use0008', 'use0009',
+                'use0010', 'use0011', 'use0012', 'use0012',
+                'held'
+            ] }),
+            frameRate: 24
+        });
+
         apple_held_sprite = this.add.image(759, 272, 'apple_held').setVisible(false);
 
         const shovel_sound = this.sound.add('shovel_sound');
@@ -401,12 +445,6 @@ class Example extends Phaser.Scene
         brush.on('pointerdown', function (pointer)
         {
             set_tool(hand.brush, brush)
-        });
-        hoofpick.on('pointerdown', function (pointer)
-        {
-            set_tool(hand.hoofpick, hoofpick)
-            hooves1.setVisible(handcurrent === hand.hoofpick)
-            hooves2.setVisible(handcurrent === hand.hoofpick)
         });
 
         // pick up dirty straw and place clean straw
@@ -444,6 +482,7 @@ class Example extends Phaser.Scene
             if (sprite.frame.name <2 && handcurrent === hand.hoofpick) {
                 sprite.setFrame(sprite.frame.name + 1)
                 hoofpick_sound.play()
+                hoofpick_held_sprite.play('hoofpick_use')
                 updateBar(cleanlinessBar, 0.25)
                 updateBar(happinessBar, 1/8)
             }
@@ -651,8 +690,10 @@ class Example extends Phaser.Scene
             brush_held_sprite.setVisible(true).setPosition(pointer.worldX, pointer.worldY);
         }
         else if (handcurrent === hand.hoofpick) {
-            clearCursor()
-            hoofpick_held_sprite.setVisible(true).setPosition(pointer.worldX, pointer.worldY);
+            hoofpick_held_sprite.setPosition(pointer.worldX, pointer.worldY);
+            if (!hoofpick_held_sprite.visible) {
+                hoofpick_held_sprite.setVisible(true).play('hoofpick_pickup');
+            }
         }
         else if (handcurrent === hand.apple) {
             clearCursor()

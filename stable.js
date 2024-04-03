@@ -106,85 +106,84 @@ class Example extends Phaser.Scene
         // Water Trough
         const trough = this.add.sprite(153, 455, 'trough', 'idle0000').setInteractive({ pixelPerfect: true });
         const water_sound = this.sound.add('water_sound');
-        this.anims.create({
-            key: 'fill_water',
-            frames: this.anims.generateFrameNumbers('trough', { frames: [
-                'water0011', 'water0011', 'water0011',
-                'water0014', 'water0014',
-                'water0016', 'water0016',
-                'water0018', 'water0019', 'water0020', 'water0021', 'water0022', 'water0023', 'water0024', 'water0025', 'water0025',
-                'water0027', 'water0028', 'water0029', 'water0030', 'water0031', 'water0032', 'water0033', 'water0034', 'water0035',
-                'water0036', 'water0037', 'water0038', 'water0039', 'water0040', 'water0041', 'water0042', 'water0043', 'water0044',
-                'water0045', 'water0046', 'water0047', 'water0048', 'water0049', 'water0050', 'water0051', 'water0052', 'water0053',
-                'water0054', 'water0055', 'water0056', 'water0057', 'water0058', 'water0059', 'water0060',
-                'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060',
-                'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060',
-                'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060',
-                'water0092', 'water0093', 'water0094', 'water0095', 'water0096', 'water0097', 'water0098', 'water0099', 'water0100',
-                'water0101', 'water0102', 'water0103', 'water0104', 'water0105', 'water0106', 'water0107', 'water0108', 'water0109', 'water0110',
-                'water0111', 'water0112', 'water0113', 'water0114', 'water0115', 'water0116', 'water0117', 'water0118', 'water0119', 'water0120',
-                'water0121', 'water0121', 'water0122', 'water0123', 'water0124', 'water0125', 'water0126'
-            ] }),
-            frameRate: 24
-        });
-        trough.on('pointerdown', function (pointer)
-        {
-            if (!waterfilled && handcurrent === hand.empty) {
-                waterfilled = true;
-                this.play('fill_water');
-                water_sound.play()
-                updateBar(hungerBar, 1.5)
-                horse.play('drink')
-            }
-        });
-        trough.on('pointerover', function (pointer)
-        {
-            if (!waterfilled && handcurrent === hand.empty) {
-                this.setFrame('hover0004');
-            }
-        });
-        trough.on('pointerout', function (pointer)
-        {
-            if (!waterfilled && handcurrent === hand.empty) {
-                this.setFrame('idle0000');
-            }
-        });
-
+            this.anims.create({
+                key: 'fill_water',
+                frames: this.anims.generateFrameNumbers('trough', { frames: [
+                    'water0011', 'water0011', 'water0011',
+                    'water0014', 'water0014',
+                    'water0016', 'water0016',
+                    'water0018', 'water0019', 'water0020', 'water0021', 'water0022', 'water0023', 'water0024', 'water0025', 'water0025',
+                    'water0027', 'water0028', 'water0029', 'water0030', 'water0031', 'water0032', 'water0033', 'water0034', 'water0035',
+                    'water0036', 'water0037', 'water0038', 'water0039', 'water0040', 'water0041', 'water0042', 'water0043', 'water0044',
+                    'water0045', 'water0046', 'water0047', 'water0048', 'water0049', 'water0050', 'water0051', 'water0052', 'water0053',
+                    'water0054', 'water0055', 'water0056', 'water0057', 'water0058', 'water0059', 'water0060',
+                    'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060',
+                    'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060',
+                    'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060',
+                    'water0092', 'water0093', 'water0094', 'water0095', 'water0096', 'water0097', 'water0098', 'water0099', 'water0100',
+                    'water0101', 'water0102', 'water0103', 'water0104', 'water0105', 'water0106', 'water0107', 'water0108', 'water0109', 'water0110',
+                    'water0111', 'water0112', 'water0113', 'water0114', 'water0115', 'water0116', 'water0117', 'water0118', 'water0119', 'water0120',
+                    'water0121', 'water0121', 'water0122', 'water0123', 'water0124', 'water0125', 'water0126'
+                ] }),
+                frameRate: 24
+            });
+            trough.on('pointerdown', function (pointer)
+            {
+                if (!waterfilled && handcurrent === hand.empty) {
+                    waterfilled = true;
+                    this.play('fill_water');
+                    water_sound.play()
+                    updateBar(hungerBar, 1.5)
+                    horse.play('drink')
+                }
+            });
+            trough.on('pointerover', function (pointer)
+            {
+                if (!waterfilled && handcurrent === hand.empty) {
+                    this.setFrame('hover0004');
+                }
+            });
+            trough.on('pointerout', function (pointer)
+            {
+                if (!waterfilled && handcurrent === hand.empty) {
+                    this.setFrame('idle0000');
+                }
+            });
 
         // Food Trough
         const food_trough = this.add.sprite(104, 303, 'food_trough', 0).setInteractive({ pixelPerfect: true });
-        this.anims.create({
-            key: 'fill',
-            frames: this.anims.generateFrameNumbers('food_trough', { frames: [
-                'empty',
-                'fill0000', 'fill0001', 'fill0002', 'fill0003', 'fill0004', 'fill0005', 'fill0006', 'fill0007', 'fill0008', 'fill0009', 'fill0010',
-                'full'
-            ] }),
-            frameRate: 24
-        });
-        this.anims.create({
-            key: 'fill_again',
-            frames: this.anims.generateFrameNumbers('food_trough', { frames: [
-                'full',
-                'fill_again0000', 'fill_again0001', 'fill_again0002', 'fill_again0003', 'fill_again0004', 'fill_again0004', 'fill_again0004', 'fill_again0004', 'fill_again0004', 'fill_again0009', 'fill_again0010',
-                'full'
-            ] }),
-            frameRate: 24
-        });
-        food_trough.on('pointerdown', function (pointer)
-        {
-            if (handcurrent === hand.grain_scoop) {
-                handcurrent = hand.empty;
-                grain_bin.play('place');
-                this.play(foodfilled ? 'fill_again' : 'fill')
-                fork_grain_place_sound.play()
-                if (!foodfilled) {
-                    updateBar(hungerBar, 2)
-                    updateBar(happinessBar, 1.05)
+            this.anims.create({
+                key: 'fill',
+                frames: this.anims.generateFrameNumbers('food_trough', { frames: [
+                    'empty',
+                    'fill0000', 'fill0001', 'fill0002', 'fill0003', 'fill0004', 'fill0005', 'fill0006', 'fill0007', 'fill0008', 'fill0009', 'fill0010',
+                    'full'
+                ] }),
+                frameRate: 24
+            });
+            this.anims.create({
+                key: 'fill_again',
+                frames: this.anims.generateFrameNumbers('food_trough', { frames: [
+                    'full',
+                    'fill_again0000', 'fill_again0001', 'fill_again0002', 'fill_again0003', 'fill_again0004', 'fill_again0004', 'fill_again0004', 'fill_again0004', 'fill_again0004', 'fill_again0009', 'fill_again0010',
+                    'full'
+                ] }),
+                frameRate: 24
+            });
+            food_trough.on('pointerdown', function (pointer)
+            {
+                if (handcurrent === hand.grain_scoop) {
+                    handcurrent = hand.empty;
+                    grain_bin.play('place');
+                    this.play(foodfilled ? 'fill_again' : 'fill')
+                    fork_grain_place_sound.play()
+                    if (!foodfilled) {
+                        updateBar(hungerBar, 2)
+                        updateBar(happinessBar, 1.05)
+                    }
+                    foodfilled = true;
                 }
-                foodfilled = true;
-            }
-        });
+            });
 
         // horse
         const horse = this.add.spine(453, 283, 'horse', 'idle').setAngle(90);
@@ -195,56 +194,135 @@ class Example extends Phaser.Scene
         const hooves1 = this.add.sprite(305, 427, 'hooves', 0).setInteractive().setVisible(false);
         const hooves2 = this.add.sprite(510, 427, 'hooves', 0).setInteractive().setVisible(false);
 
-        const fork = this.add.sprite(718, 177, 'fork', 'idle').setInteractive({ pixelPerfect: true });
-        const shovel = this.add.sprite(809, 272, 'shovel', 0).setInteractive({ pixelPerfect: true });
-        const apple_bin = this.add.image(680, 505, 'apple_bin', 'apple_bin').setInteractive();
-        
 
+        // Pitchfork
+        const fork = this.add.sprite(718, 177, 'fork', 'idle').setInteractive({ pixelPerfect: true });
+            fork.on('pointerover', function (pointer)
+            {
+                if (handcurrent === hand.empty) {
+                    if (straw1.frame.name === 1 || straw2.frame.name === 1 || straw3.frame.name === 1) {
+                        this.setFrame('hover_use');
+                    }
+                    else {
+                        this.setFrame('hover_wait');
+                    }
+                }
+            });
+            fork.on('pointerout', function (pointer)
+            {
+                if (handcurrent === hand.empty) {
+                    this.setFrame('idle');
+                }
+            });
+            fork.on('pointerdown', function (pointer)
+            {
+                if (handcurrent === hand.empty) {
+                    handcurrent = hand.fork;
+                    this.setFrame('in_use')
+                }
+                else if (handcurrent === hand.fork || handcurrent === hand.fork_filled) {
+                    handcurrent = hand.empty;
+                    this.setFrame('idle')
+                }
+            });
+
+        // Shovel
+        const shovel = this.add.sprite(742, 189, 'shovel', 'idle').setInteractive({ pixelPerfect: true });
+            shovel.on('pointerover', function (pointer)
+            {
+                if (handcurrent === hand.empty) {
+                    if (straw1.frame.name === 1 || straw2.frame.name === 1 || straw3.frame.name === 1) {
+                        this.setFrame('hover_done');
+                    }
+                    else {
+                        this.setFrame('hover_use');
+                    }
+                }
+            });
+            shovel.on('pointerout', function (pointer)
+            {
+                if (handcurrent === hand.empty) {
+                    this.setFrame('idle');
+                }
+            });
+            shovel.on('pointerdown', function (pointer)
+            {
+                if (handcurrent === hand.empty) {
+                    handcurrent = hand.shovel;
+                    shovel.setFrame('in_use')
+                }
+                else if (handcurrent === hand.shovel) {
+                    handcurrent = hand.empty;
+                    shovel.setFrame('idle')
+                }
+            });
+
+
+        // Apple Bin
+        const apple_bin = this.add.image(680, 505, 'apple_bin', 'apple_bin').setInteractive();
+            apple_bin.on('pointerdown', function (pointer)
+            {
+                if (handcurrent === hand.empty) {
+                    handcurrent = hand.apple;
+                    apple_bin.setFrame('apple_bin')
+                }
+            });
+            apple_bin.on('pointerover', function (pointer)
+            {
+                if (handcurrent === hand.empty) {
+                    apple_bin.setFrame('apple_bin_hover')
+                }
+            });
+            apple_bin.on('pointerout', function (pointer)
+            {
+                apple_bin.setFrame('apple_bin')
+            });
+        
         // Grain Bin
         const grain_bin = this.add.sprite(736, 413, 'grain_bin', 'idle').setInteractive({ pixelPerfect: true });
         const grain_sound = this.sound.add('grain_sound');
-        this.anims.create({
-            key: 'pickup',
-            frames: this.anims.generateFrameNumbers('grain_bin', { frames: [
-                'idle',
-                'pickup0000', 'pickup0001', 'pickup0002', 'pickup0003', 'pickup0004', 'pickup0005', 'pickup0006', 'pickup0007', 'pickup0008', 'pickup0009', 'pickup0010',
-                'pickup0011', 'pickup0012', 'pickup0013', 'pickup0013', 'pickup0015', 'pickup0016', 'pickup0017',
-                'empty'
-            ] }),
-            frameRate: 24
-        });
-        this.anims.create({
-            key: 'place',
-            frames: this.anims.generateFrameNumbers('grain_bin', { frames: [
-                'empty',
-                'place0000', 'place0001', 'place0002', 'place0003', 'place0004', 'place0005', 'place0006', 'place0007',
-                'idle'
-            ] }),
-            frameRate: 24
-        });
-        grain_bin.on('pointerdown', function (pointer)
-        {
-            if (handcurrent === hand.empty) {
-                handcurrent = hand.grain_scoop
-                grain_bin.play('pickup')
-                grain_sound.play()
-            }
-        });
-        grain_bin.on('pointerover', function (pointer)
-        {
-            if (handcurrent === hand.empty) {
-                grain_bin.setFrame('hover')
-            }
-        });
-        grain_bin.on('pointerout', function (pointer)
-        {
-            if (handcurrent === hand.grain_scoop) {
-                grain_bin.setFrame('empty')
-            }
-            else {
-                grain_bin.setFrame('idle')
-            }
-        });
+            this.anims.create({
+                key: 'pickup',
+                frames: this.anims.generateFrameNumbers('grain_bin', { frames: [
+                    'idle',
+                    'pickup0000', 'pickup0001', 'pickup0002', 'pickup0003', 'pickup0004', 'pickup0005', 'pickup0006', 'pickup0007', 'pickup0008', 'pickup0009', 'pickup0010',
+                    'pickup0011', 'pickup0012', 'pickup0013', 'pickup0013', 'pickup0015', 'pickup0016', 'pickup0017',
+                    'empty'
+                ] }),
+                frameRate: 24
+            });
+            this.anims.create({
+                key: 'place',
+                frames: this.anims.generateFrameNumbers('grain_bin', { frames: [
+                    'empty',
+                    'place0000', 'place0001', 'place0002', 'place0003', 'place0004', 'place0005', 'place0006', 'place0007',
+                    'idle'
+                ] }),
+                frameRate: 24
+            });
+            grain_bin.on('pointerdown', function (pointer)
+            {
+                if (handcurrent === hand.empty) {
+                    handcurrent = hand.grain_scoop
+                    grain_bin.play('pickup')
+                    grain_sound.play()
+                }
+            });
+            grain_bin.on('pointerover', function (pointer)
+            {
+                if (handcurrent === hand.empty) {
+                    grain_bin.setFrame('hover')
+                }
+            });
+            grain_bin.on('pointerout', function (pointer)
+            {
+                if (handcurrent === hand.grain_scoop) {
+                    grain_bin.setFrame('empty')
+                }
+                else {
+                    grain_bin.setFrame('idle')
+                }
+            });
 
 
         const brush = this.add.sprite(739, 110, 'brush', 0).setInteractive({ pixelPerfect: true });
@@ -274,7 +352,26 @@ class Example extends Phaser.Scene
                 ] }),
                 frameRate: 24
             });
-        shovel_held_sprite = this.add.image(759, 272, 'shovel_held').setVisible(false);
+
+        shovel_held_sprite = this.add.sprite(759, 272, 'shovel').setVisible(false);
+            this.anims.create({
+                key: 'shovel_pickup',
+                frames: this.anims.generateFrameNumbers('shovel', { frames: [
+                    'hold0000', 'hold0001', 'held'
+                ] }),
+                frameRate: 24
+            });
+            this.anims.create({
+                key: 'shovel_scoop',
+                frames: this.anims.generateFrameNumbers('shovel', { frames: [
+                    'held',
+                    'scoop0000', 'scoop0001', 'scoop0002', 'scoop0003', 'scoop0004', 'scoop0005', 'scoop0006', 'scoop0007', 'scoop0008', 'scoop0009',
+                    'scoop0010', 'scoop0011', 'scoop0012',
+                    'held'
+                ] }),
+                frameRate: 24
+            });
+
         grain_held_sprite = this.add.image(759, 272, 'grain_scoop').setVisible(false);
         brush_held_sprite = this.add.image(759, 272, 'brush_held').setVisible(false);
         hoofpick_held_sprite = this.add.image(759, 272, 'hoofpick_held').setVisible(false);
@@ -300,59 +397,6 @@ class Example extends Phaser.Scene
                 sprite.setFrame(0)
             }
         }
-        shovel.on('pointerdown', function (pointer)
-        {
-            set_tool(hand.shovel, shovel)
-        });
-        
-        
-        fork.on('pointerover', function (pointer)
-        {
-            if (handcurrent === hand.empty) {
-                if (straw1.frame.name === 1 || straw2.frame.name === 1 || straw3.frame.name === 1) {
-                    this.setFrame('hover_use');
-                }
-                else {
-                    this.setFrame('hover_wait');
-                }
-            }
-        });
-        fork.on('pointerout', function (pointer)
-        {
-            if (handcurrent === hand.empty) {
-                this.setFrame('idle');
-            }
-        });
-        fork.on('pointerdown', function (pointer)
-        {
-            if (handcurrent === hand.empty) {
-                handcurrent = hand.fork;
-                this.setFrame('in_use')
-            }
-            else if (handcurrent === hand.fork || handcurrent === hand.fork_filled) {
-                handcurrent = hand.empty;
-                this.setFrame('idle')
-            }
-        });
-
-        // Apple Bin
-        apple_bin.on('pointerdown', function (pointer)
-        {
-            if (handcurrent === hand.empty) {
-                handcurrent = hand.apple;
-                apple_bin.setFrame('apple_bin')
-            }
-        });
-        apple_bin.on('pointerover', function (pointer)
-        {
-            if (handcurrent === hand.empty) {
-                apple_bin.setFrame('apple_bin_hover')
-            }
-        });
-        apple_bin.on('pointerout', function (pointer)
-        {
-            apple_bin.setFrame('apple_bin')
-        });
 
         brush.on('pointerdown', function (pointer)
         {
@@ -370,6 +414,7 @@ class Example extends Phaser.Scene
             if (handcurrent === hand.shovel && straw.frame.name === 0) {
                 straw.setFrame(1);
                 shovel_sound.play();
+                shovel_held_sprite.play('shovel_scoop');
                 updateBar(cleanlinessBar, 1/3)
                 updateBar(happinessBar, 1/6 + 0.05)
             }
@@ -577,8 +622,10 @@ class Example extends Phaser.Scene
 
         // display held items under cursor
         if (handcurrent === hand.shovel) {
-            clearCursor()
-            shovel_held_sprite.setVisible(true).setPosition(pointer.worldX+15, pointer.worldY-30);
+            shovel_held_sprite.setPosition(pointer.worldX-18, pointer.worldY+35);
+            if (!shovel_held_sprite.visible) {
+                shovel_held_sprite.setVisible(true).play('shovel_pickup');
+            }
         }
         else if (handcurrent === hand.fork) {
             fork_held_sprite.setPosition(pointer.worldX-20, pointer.worldY+45)

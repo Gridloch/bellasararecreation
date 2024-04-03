@@ -61,7 +61,7 @@ All the original textures, animations, sounds and the gameplay itself were taken
   - [x] progress bars for hunger, cleanliness and happiness
 - [ ] Original sprites
   - [x] stable background
-  - [ ] shovel
+  - [x] shovel
   - [x] pitchfork
   - [ ] hay loft
   - [ ] hay (on ground)

@@ -48,7 +48,7 @@ All the original textures, animations, sounds and the gameplay itself were taken
   - [x] remove dirty straw
   - [x] add new straw
   - [x] brush
-  - [ ] small brush
+  - [x] small brush
   - [x] hoofpick
   - [x] fill water
   - [x] give food
@@ -64,11 +64,11 @@ All the original textures, animations, sounds and the gameplay itself were taken
   - [x] shovel
   - [x] pitchfork
   - [ ] hay loft
-  - [ ] hay (on ground)
-  - [ ] brush
-  - [ ] small brush
-  - [ ] hoofpick
-  - [ ] hoofpick circles
+  - [x] hay (on ground)
+  - [x] brush
+  - [x] small brush
+  - [x] hoofpick
+  - [x] hoofpick circles
   - [x] water trough
   - [x] oats bin
   - [x] oats scoop
@@ -116,16 +116,16 @@ All the original textures, animations, sounds and the gameplay itself were taken
     - [ ] ...
   - [ ] dirt overlay
 - [ ] Sounds
-  - [ ] background music
+  - [x] background music
   - [x] pour water
-  - [ ] pick up grain
-  - [ ] pour grain
-  - [ ] feed apple
-  - [ ] use shovel
-  - [ ] pick up straw
-  - [ ] place straw
-  - [ ] brush
-  - [ ] use hoofpick
+  - [x] pick up / pour grain
+  - [x] feed apple
+  - [x] use shovel
+  - [x] pick up straw
+  - [x] place straw
+  - [x] brush
+  - [x] small brush
+  - [x] use hoofpick
   - [x] good luck
   - [ ] rear / neigh
   - [ ] pawing

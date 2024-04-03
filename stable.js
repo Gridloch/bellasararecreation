@@ -65,7 +65,7 @@ class Example extends Phaser.Scene
         this.load.atlas('brush', './images/stable/brush.png', './images/stable/brush.json');
         this.load.image('hoofpick_held', './images/stable/hoofpick_held.png');
         this.load.atlas('hoofpick', './images/stable/hoofpick.png', './images/stable/hoofpick.json');
-        this.load.spritesheet('hooves', './images/stable/hooves.png', { frameWidth: 45, frameHeight: 45 });
+        this.load.spritesheet('hooves', './images/stable/hooves.png', { frameWidth: 53, frameHeight: 53 });
 
         this.load.spine('horse', './images/horse/horse.json', ['./images/horse/peter.atlas'], true);
 

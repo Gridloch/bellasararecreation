@@ -55,9 +55,9 @@ class Example extends Phaser.Scene
 
         this.load.atlas('shovel', './images/stable/shovel.png', './images/stable/shovel.json');
         this.load.atlas('fork', './images/stable/fork.png', './images/stable/fork.json');
-        this.load.spritesheet('straw1', './images/stable/straw1.png', { frameWidth: 216, frameHeight: 143 });
-        this.load.spritesheet('straw2', './images/stable/straw2.png', { frameWidth: 180, frameHeight: 126 });
-        this.load.spritesheet('straw3', './images/stable/straw3.png', { frameWidth: 236, frameHeight: 150 });
+        this.load.atlas('straw1', './images/stable/straw1.png', './images/stable/straw1.json');
+        this.load.atlas('straw2', './images/stable/straw2.png', './images/stable/straw2.json');
+        this.load.atlas('straw3', './images/stable/straw3.png', './images/stable/straw3.json');
         this.load.image('straw_bales', './images/stable/straw_bales.png');
 
         this.load.atlas('trough', './images/stable/water.png', './images/stable/water.json');
@@ -115,9 +115,76 @@ class Example extends Phaser.Scene
         const hover2 = this.sound.add('hover2');
         const pickup = this.sound.add('pickup');
 
-        const straw2 = this.add.sprite(481, 387, 'straw2', 0).setInteractive();
-        const straw1 = this.add.sprite(315, 380, 'straw1', 0).setInteractive();
-        const straw3 = this.add.sprite(632, 376, 'straw3', 0).setInteractive();
+        const straw1 = this.add.sprite(351, 420, 'straw1', 'frame0000').setInteractive().setScale(0.65);
+            this.anims.create({
+                key: 'straw1_pickup',
+                frames: this.anims.generateFrameNumbers('straw1', { frames: [
+                    'frame0000', 'frame0001', 'frame0002', 'frame0003', 'frame0004', 'frame0005', 'frame0006'
+                ] }),
+                frameRate: 24
+            });
+            this.anims.create({
+                key: 'straw1_place',
+                frames: this.anims.generateFrameNumbers('straw1', { frames: [
+                    'frame0006', 'frame0007', 'frame0008', 'frame0009', 'frame0010', 'frame0011', 'frame0012'
+                ] }),
+                frameRate: 24
+            });
+        const straw3 = this.add.sprite(643, 411, 'straw3', 'frame0000').setInteractive().setScale(0.75);
+            this.anims.create({
+                key: 'straw3_pickup',
+                frames: this.anims.generateFrameNumbers('straw3', { frames: [
+                    'frame0000', 'frame0001', 'frame0002', 'frame0003', 'frame0004', 'frame0005', 'frame0006'
+                ] }),
+                frameRate: 24
+            });
+            this.anims.create({
+                key: 'straw3_place',
+                frames: this.anims.generateFrameNumbers('straw3', { frames: [
+                    'frame0006', 'frame0007', 'frame0008', 'frame0009', 'frame0010', 'frame0011', 'frame0012'
+                ] }),
+                frameRate: 24
+            });
+            const straw2 = this.add.sprite(539, 439, 'straw2', 'frame0000').setInteractive().setScale(0.8);
+                this.anims.create({
+                    key: 'straw2_pickup',
+                    frames: this.anims.generateFrameNumbers('straw2', { frames: [
+                        'frame0000', 'frame0001', 'frame0002', 'frame0003', 'frame0004', 'frame0005', 'frame0006'
+                    ] }),
+                    frameRate: 24
+                });
+                this.anims.create({
+                    key: 'straw2_place',
+                    frames: this.anims.generateFrameNumbers('straw2', { frames: [
+                        'frame0006', 'frame0007', 'frame0008', 'frame0009', 'frame0010', 'frame0011', 'frame0012'
+                    ] }),
+                    frameRate: 24
+                });
+
+            
+
+        // pick up dirty straw and place clean straw
+        function clean_straw(straw, pickup_anim, place_anim) {
+            if (handcurrent === hand.shovel && straw.frame.name === 'frame0000') {
+                straw.play(pickup_anim);
+                shovel_sound.play();
+                shovel_held_sprite.play('shovel_scoop');
+                updateBar(cleanlinessBar, 1/3)
+                updateBar(happinessBar, 1/6 + 0.05)
+            }
+            else if (handcurrent === hand.fork_filled && straw.frame.name === 'frame0006') {
+                straw.play(place_anim);
+                handcurrent = hand.fork
+                fork_place.play()
+                strawclean = 2 === straw1.frame.name && 2 === straw2.frame.name && 2 === straw3.frame.name
+                updateBar(cleanlinessBar, 1/3)
+                updateBar(happinessBar, 1/6 + 0.05)
+            }
+        }
+        straw1.on('pointerdown', function (pointer) {clean_straw(straw1, 'straw1_pickup', 'straw1_place')});
+        straw2.on('pointerdown', function (pointer) {clean_straw(straw2, 'straw2_pickup', 'straw2_place')});
+        straw3.on('pointerdown', function (pointer) {clean_straw(straw3, 'straw3_pickup', 'straw3_place')});
+
         const straw_bales = this.add.sprite(333, 45, 'straw_bales', 0).setInteractive();
 
 
@@ -173,7 +240,7 @@ class Example extends Phaser.Scene
         // Food Trough
         food_trough = this.add.sprite(104, 303, 'food_trough', 0).setInteractive({ pixelPerfect: true });
         oats_eat = this.sound.add('oats_eat');
-        this.anims.create({
+            this.anims.create({
                 key: 'fill',
                 frames: this.anims.generateFrameNumbers('food_trough', { frames: [
                     'empty',
@@ -577,28 +644,6 @@ class Example extends Phaser.Scene
         apple_held_sprite = this.add.image(759, 272, 'apple_held').setVisible(false);
         
         this.input.topOnly = true; // don't allow objects to be interacted with when they are lower
-
-        // pick up dirty straw and place clean straw
-        function clean_straw(straw) {
-            if (handcurrent === hand.shovel && straw.frame.name === 0) {
-                straw.setFrame(1);
-                shovel_sound.play();
-                shovel_held_sprite.play('shovel_scoop');
-                updateBar(cleanlinessBar, 1/3)
-                updateBar(happinessBar, 1/6 + 0.05)
-            }
-            else if (handcurrent === hand.fork_filled && straw.frame.name === 1) {
-                straw.setFrame(2);
-                handcurrent = hand.fork
-                fork_place.play()
-                strawclean = 2 === straw1.frame.name && 2 === straw2.frame.name && 2 === straw3.frame.name
-                updateBar(cleanlinessBar, 1/3)
-                updateBar(happinessBar, 1/6 + 0.05)
-            }
-        }
-        straw1.on('pointerdown', function (pointer) {clean_straw(straw1)});
-        straw2.on('pointerdown', function (pointer) {clean_straw(straw2)});
-        straw3.on('pointerdown', function (pointer) {clean_straw(straw3)});
 
         straw_bales.on('pointerdown', function (pointer)
         {

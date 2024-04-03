@@ -17,6 +17,13 @@ brushlevel = 0
 strawclean = false
 done = false;
 
+trough = null
+water_drink = null
+food_trough = null
+oats_eat = null
+hoofpick1 = null
+hoofpick2 = null
+
 shovel_held_sprite = null
 fork_held_sprite = null
 grain_held_sprite = null
@@ -75,15 +82,24 @@ class Example extends Phaser.Scene
         this.load.atlas('help_button', './images/stable/help.png', './images/stable/help.json');
 
         this.load.audio('background_music', ['./sounds/stable_soundtrack.mp3']);
-        this.load.audio('shovel_sound', ['./sounds/shovel_sound.mp3']);
-        this.load.audio('fork_sound', ['./sounds/fork_fill.mp3']);
-        this.load.audio('fork_grain_place', ['./sounds/fork+grain_place.mp3']);
-        this.load.audio('grain_sound', ['./sounds/grain_fill.mp3']);
-        this.load.audio('water_sound', ['./sounds/water_sound.mp3']);
-        this.load.audio('hoofpick_sound', ['./sounds/hoof_scrape.mp3']);
-        this.load.audio('apple_sound', ['./sounds/apple_munch.mp3']);
+        this.load.audio('apple_munch', ['./sounds/apple_munch.mp3']);
         this.load.audio('brush_sound', ['./sounds/brush_sound.mp3']);
+        this.load.audio('brush_sound_small', ['./sounds/brush_sound_small.mp3']);
+        this.load.audio('fork_fill', ['./sounds/fork_fill.mp3']);
+        this.load.audio('fork_place', ['./sounds/fork_place.mp3']);
+        this.load.audio('grain_sound', ['./sounds/grain_sound.mp3']);
+        this.load.audio('hoofpick1', ['./sounds/hoofpick1.mp3']);
+        this.load.audio('hoofpick2', ['./sounds/hoofpick2.mp3']);
+        this.load.audio('hover1', ['./sounds/hover1.mp3']);
+        this.load.audio('hover2', ['./sounds/hover1.mp3']);
+        this.load.audio('inspiration_hover', ['./sounds/inspiration_hover.mp3']);
+        this.load.audio('inspiration', ['./sounds/inspiration.mp3']);
         this.load.audio('luck_sound', ['./sounds/luck_sound.mp3']);
+        this.load.audio('oats_eat', ['./sounds/oats_eat.mp3']);
+        this.load.audio('pickup', ['./sounds/pickup.mp3']);
+        this.load.audio('shovel_sound', ['./sounds/shovel_sound.mp3']);
+        this.load.audio('water_sound', ['./sounds/water_sound.mp3']);
+        this.load.audio('water_drink', ['./sounds/water_drink.mp3']);
     }
 
     create ()
@@ -97,6 +113,10 @@ class Example extends Phaser.Scene
 
         this.add.image(444, 261, 'stable_bg');
 
+        const hover1 = this.sound.add('hover1');
+        const hover2 = this.sound.add('hover2');
+        const pickup = this.sound.add('pickup');
+
         const straw2 = this.add.sprite(481, 387, 'straw2', 0).setInteractive();
         const straw1 = this.add.sprite(315, 380, 'straw1', 0).setInteractive();
         const straw3 = this.add.sprite(632, 376, 'straw3', 0).setInteractive();
@@ -104,8 +124,9 @@ class Example extends Phaser.Scene
 
 
         // Water Trough
-        const trough = this.add.sprite(153, 455, 'trough', 'idle0000').setInteractive({ pixelPerfect: true });
+        trough = this.add.sprite(153, 455, 'trough', 'idle0000').setInteractive({ pixelPerfect: true });
         const water_sound = this.sound.add('water_sound');
+        water_drink = this.sound.add('water_drink');
             this.anims.create({
                 key: 'fill_water',
                 frames: this.anims.generateFrameNumbers('trough', { frames: [
@@ -141,6 +162,7 @@ class Example extends Phaser.Scene
             {
                 if (!waterfilled && handcurrent === hand.empty) {
                     this.setFrame('hover0004');
+                    hover1.play();
                 }
             });
             trough.on('pointerout', function (pointer)
@@ -151,8 +173,9 @@ class Example extends Phaser.Scene
             });
 
         // Food Trough
-        const food_trough = this.add.sprite(104, 303, 'food_trough', 0).setInteractive({ pixelPerfect: true });
-            this.anims.create({
+        food_trough = this.add.sprite(104, 303, 'food_trough', 0).setInteractive({ pixelPerfect: true });
+        oats_eat = this.sound.add('oats_eat');
+        this.anims.create({
                 key: 'fill',
                 frames: this.anims.generateFrameNumbers('food_trough', { frames: [
                     'empty',
@@ -176,7 +199,7 @@ class Example extends Phaser.Scene
                     handcurrent = hand.empty;
                     grain_bin.play('place');
                     this.play(foodfilled ? 'fill_again' : 'fill')
-                    fork_grain_place_sound.play()
+                    grain_sound.play()
                     if (!foodfilled) {
                         updateBar(hungerBar, 2)
                         updateBar(happinessBar, 1.05)
@@ -197,6 +220,8 @@ class Example extends Phaser.Scene
 
         // Pitchfork
         const fork = this.add.sprite(718, 177, 'fork', 'idle').setInteractive({ pixelPerfect: true });
+        const fork_fill = this.sound.add('fork_fill');
+        const fork_place = this.sound.add('fork_place');
             fork.on('pointerover', function (pointer)
             {
                 if (handcurrent === hand.empty) {
@@ -206,6 +231,7 @@ class Example extends Phaser.Scene
                     else {
                         this.setFrame('hover_wait');
                     }
+                    hover2.play();
                 }
             });
             fork.on('pointerout', function (pointer)
@@ -219,6 +245,7 @@ class Example extends Phaser.Scene
                 if (handcurrent === hand.empty) {
                     handcurrent = hand.fork;
                     this.setFrame('in_use')
+                    pickup.play();
                 }
                 else if (handcurrent === hand.fork || handcurrent === hand.fork_filled) {
                     handcurrent = hand.empty;
@@ -228,6 +255,7 @@ class Example extends Phaser.Scene
 
         // Shovel
         const shovel = this.add.sprite(742, 189, 'shovel', 'idle').setInteractive({ pixelPerfect: true });
+        const shovel_sound = this.sound.add('shovel_sound');
             shovel.on('pointerover', function (pointer)
             {
                 if (handcurrent === hand.empty) {
@@ -237,6 +265,7 @@ class Example extends Phaser.Scene
                     else {
                         this.setFrame('hover_use');
                     }
+                    hover2.play();
                 }
             });
             shovel.on('pointerout', function (pointer)
@@ -250,6 +279,7 @@ class Example extends Phaser.Scene
                 if (handcurrent === hand.empty) {
                     handcurrent = hand.shovel;
                     shovel.setFrame('in_use')
+                    pickup.play();
                 }
                 else if (handcurrent === hand.shovel) {
                     handcurrent = hand.empty;
@@ -260,10 +290,12 @@ class Example extends Phaser.Scene
 
         // Apple Bin
         const apple_bin = this.add.image(680, 505, 'apple_bin', 'apple_bin').setInteractive();
+        const apple_munch = this.sound.add('apple_munch');
             apple_bin.on('pointerover', function (pointer)
             {
                 if (handcurrent === hand.empty) {
                     apple_bin.setFrame('apple_bin_hover')
+                    hover1.play();
                 }
             });
             apple_bin.on('pointerout', function (pointer)
@@ -275,6 +307,7 @@ class Example extends Phaser.Scene
                 if (handcurrent === hand.empty) {
                     handcurrent = hand.apple;
                     apple_bin.setFrame('apple_bin')
+                    pickup.play();
                 }
             });
         
@@ -304,6 +337,7 @@ class Example extends Phaser.Scene
             {
                 if (handcurrent === hand.empty) {
                     grain_bin.setFrame('hover')
+                    hover2.play();
                 }
             });
             grain_bin.on('pointerout', function (pointer)
@@ -320,20 +354,25 @@ class Example extends Phaser.Scene
                 if (handcurrent === hand.empty) {
                     handcurrent = hand.grain_scoop
                     grain_bin.play('pickup')
+                    pickup.play();
                     grain_sound.play()
                 }
             });
 
 
         const brush = this.add.sprite(739, 110, 'brush', 0).setInteractive({ pixelPerfect: true });
+        const brush_sound = this.sound.add('brush_sound');
 
         // Hoofpick
         const hoofpick = this.add.sprite(823, 80, 'hoofpick', 'idle').setInteractive({ pixelPerfect: true }).setScale(0.75);
+        hoofpick1 = this.sound.add('hoofpick1');
+        hoofpick2 = this.sound.add('hoofpick2');
             hoofpick.on('pointerdown', function (pointer)
             {
                 if (handcurrent === hand.empty) {
                     handcurrent = hand.hoofpick;
                     hoofpick.setFrame('in_use')
+                    pickup.play();
                 }
                 else if (handcurrent === hand.hoofpick) {
                     handcurrent = hand.empty;
@@ -346,6 +385,7 @@ class Example extends Phaser.Scene
             {
                 if (handcurrent === hand.empty) {
                     hoofpick.setFrame('hover')
+                    hover1.play();
                 }
             });
             hoofpick.on('pointerout', function (pointer)
@@ -401,32 +441,36 @@ class Example extends Phaser.Scene
         brush_held_sprite = this.add.image(759, 272, 'brush_held').setVisible(false);
 
         hoofpick_held_sprite = this.add.sprite(759, 272, 'hoofpick').setVisible(false);
-        this.anims.create({
-            key: 'hoofpick_pickup',
-            frames: this.anims.generateFrameNumbers('hoofpick', { frames: [
-                'pickup0000', 'pickup0001', 'pickup0002', 'pickup0003', 'pickup0004', 'pickup0005', 'held'
-            ] }),
-            frameRate: 24
-        });
-        this.anims.create({
-            key: 'hoofpick_use',
-            frames: this.anims.generateFrameNumbers('hoofpick', { frames: [
-                'held',
-                'use0000', 'use0001', 'use0002', 'use0003', 'use0004', 'use0005', 'use0006', 'use0007', 'use0008', 'use0009',
-                'use0010', 'use0011', 'use0012', 'use0012',
-                'held'
-            ] }),
-            frameRate: 24
-        });
+            this.anims.create({
+                key: 'hoofpick_pickup',
+                frames: this.anims.generateFrameNumbers('hoofpick', { frames: [
+                    'pickup0000', 'pickup0001', 'pickup0002', 'pickup0003', 'pickup0004', 'pickup0005', 'held'
+                ] }),
+                frameRate: 24
+            });
+            this.anims.create({
+                key: 'hoofpick_use',
+                frames: this.anims.generateFrameNumbers('hoofpick', { frames: [
+                    'held',
+                    'use0000', 'use0001', 'use0002', 'use0003', 'use0004', 'use0005', 'use0006', 'use0007', 'use0008', 'use0009',
+                    'use0010', 'use0011', 'use0012', 'use0012',
+                    'held'
+                ] }),
+                frameRate: 24
+            });
+            // clean hooves
+            function clean_hooves(sprite) {
+                if (sprite.frame.name <2 && handcurrent === hand.hoofpick) {
+                    sprite.setFrame(sprite.frame.name + 1)
+                    hoofpick_held_sprite.play('hoofpick_use')
+                    updateBar(cleanlinessBar, 0.25)
+                    updateBar(happinessBar, 1/8)
+                }
+            }
+            hooves1.on('pointerdown', function (pointer) { clean_hooves(hooves1) });
+            hooves2.on('pointerdown', function (pointer) { clean_hooves(hooves2) });
 
         apple_held_sprite = this.add.image(759, 272, 'apple_held').setVisible(false);
-
-        const shovel_sound = this.sound.add('shovel_sound');
-        const fork_sound = this.sound.add('fork_sound');
-        const fork_grain_place_sound = this.sound.add('fork_grain_place');
-        const hoofpick_sound = this.sound.add('hoofpick_sound');
-        const apple_sound = this.sound.add('apple_sound');
-        const brush_sound = this.sound.add('brush_sound');
         
         this.input.topOnly = true; // don't allow objects to be interacted with when they are lower
         
@@ -459,7 +503,7 @@ class Example extends Phaser.Scene
             else if (handcurrent === hand.fork_filled && straw.frame.name === 1) {
                 straw.setFrame(2);
                 handcurrent = hand.fork
-                fork_grain_place_sound.play()
+                fork_place.play()
                 strawclean = 2 === straw1.frame.name && 2 === straw2.frame.name && 2 === straw3.frame.name
                 updateBar(cleanlinessBar, 1/3)
                 updateBar(happinessBar, 1/6 + 0.05)
@@ -473,29 +517,16 @@ class Example extends Phaser.Scene
         {
             if (handcurrent === hand.fork) {
                 handcurrent = hand.fork_filled
-                fork_sound.play()
+                fork_fill.play()
             }
         });
-
-        // clean hooves
-        function clean_hooves(sprite) {
-            if (sprite.frame.name <2 && handcurrent === hand.hoofpick) {
-                sprite.setFrame(sprite.frame.name + 1)
-                hoofpick_sound.play()
-                hoofpick_held_sprite.play('hoofpick_use')
-                updateBar(cleanlinessBar, 0.25)
-                updateBar(happinessBar, 1/8)
-            }
-        }
-        hooves1.on('pointerdown', function (pointer) { clean_hooves(hooves1) });
-        hooves2.on('pointerdown', function (pointer) { clean_hooves(hooves2) });
 
         // interact with horse
         horse_interactive.on('pointerdown', function (pointer)
         {
             if (handcurrent === hand.apple) {
                 handcurrent = hand.empty;
-                apple_sound.play();
+                apple_munch.play();
             }
             else if (handcurrent === hand.brush) {
                 brush_sound.play();
@@ -541,6 +572,7 @@ class Example extends Phaser.Scene
         {
             if (luck.frame.name === 'idle') {
                 luck.setFrame('hover')
+                hover1.play();
             }
         });
         luck.on('pointerout', function (pointer)
@@ -708,6 +740,17 @@ class Example extends Phaser.Scene
         }
         else {
             clearCursor()
+        }
+
+        if (trough.anims.getName() === 'fill_water' && trough.anims.getProgress() === 0) {
+            this.time.delayedCall(3330, function () {water_drink.play()});
+        }
+        if ((food_trough.anims.getName() === 'fill' || food_trough.anims.getName() === 'fill_again') && food_trough.anims.getProgress() === 0) {
+            this.time.delayedCall(1000, function () {oats_eat.play()});
+        }
+        if (hoofpick_held_sprite.anims.getName() === 'hoofpick_use' && hoofpick_held_sprite.anims.getProgress() === 0) {
+            this.time.delayedCall(80, function () {hoofpick1.play()});
+            this.time.delayedCall(380, function () {hoofpick2.play()});
         }
     }
 }

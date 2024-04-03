@@ -360,8 +360,57 @@ class Example extends Phaser.Scene
             });
 
 
-        const brush = this.add.sprite(739, 110, 'brush', 0).setInteractive({ pixelPerfect: true });
+        const brush = this.add.sprite(767, 100, 'brush', 'idle').setInteractive({ pixelPerfect: true }).setScale(0.75);
         const brush_sound = this.sound.add('brush_sound');
+            this.anims.create({
+                key: 'brush_pickup',
+                frames: this.anims.generateFrameNumbers('brush', { frames: [
+                    'pickup0000', 'pickup0001', 'pickup0002', 'pickup0003', 'pickup0004', 'pickup0005',
+                    'in_use'
+                ] }),
+                frameRate: 24
+            });
+            this.anims.create({
+                key: 'brush',
+                frames: this.anims.generateFrameNumbers('brush', { frames: [
+                    'hold',
+                    'brush0000', 'brush0001', 'brush0002', 'brush0003', 'brush0004', 'brush0005', 'brush0006', 'brush0007', 'brush0008', 'brush0009',
+                    'hold'
+                ] }),
+                frameRate: 24
+            });
+            this.anims.create({
+                key: 'brush_place',
+                frames: this.anims.generateFrameNumbers('brush', { frames: [
+                    'place0000', 'place0001', 'place0002', 'place0003', 'place0004', 'place0005', 'place0006'
+                ] }),
+                frameRate: 24
+            });
+            brush.on('pointerdown', function (pointer)
+            {
+                if (handcurrent === hand.empty) {
+                    handcurrent = hand.brush;
+                    brush.play('brush_pickup')
+                    pickup.play();
+                }
+                else if (handcurrent === hand.brush) {
+                    handcurrent = hand.empty;
+                    brush.play('brush_place')
+                }
+            });
+            brush.on('pointerover', function (pointer)
+            {
+                if (handcurrent === hand.empty) {
+                    brush.setFrame('hover')
+                    hover1.play();
+                }
+            });
+            brush.on('pointerout', function (pointer)
+            {
+                if (handcurrent === hand.empty) {
+                    brush.setFrame('idle')
+                }
+            });
 
         // Hoofpick
         const hoofpick = this.add.sprite(823, 80, 'hoofpick', 'idle').setInteractive({ pixelPerfect: true }).setScale(0.75);
@@ -390,7 +439,9 @@ class Example extends Phaser.Scene
             });
             hoofpick.on('pointerout', function (pointer)
             {
-                hoofpick.setFrame('idle')
+                if (handcurrent === hand.empty) {
+                    hoofpick.setFrame('idle')
+                }
             });
 
 
@@ -438,7 +489,7 @@ class Example extends Phaser.Scene
             });
 
         grain_held_sprite = this.add.image(759, 272, 'grain_scoop').setVisible(false);
-        brush_held_sprite = this.add.image(759, 272, 'brush_held').setVisible(false);
+        brush_held_sprite = this.add.sprite(759, 272, 'brush', 'hold').setVisible(false);
 
         hoofpick_held_sprite = this.add.sprite(759, 272, 'hoofpick').setVisible(false);
             this.anims.create({
@@ -451,7 +502,6 @@ class Example extends Phaser.Scene
             this.anims.create({
                 key: 'hoofpick_use',
                 frames: this.anims.generateFrameNumbers('hoofpick', { frames: [
-                    'held',
                     'use0000', 'use0001', 'use0002', 'use0003', 'use0004', 'use0005', 'use0006', 'use0007', 'use0008', 'use0009',
                     'use0010', 'use0011', 'use0012', 'use0012',
                     'held'
@@ -473,23 +523,6 @@ class Example extends Phaser.Scene
         apple_held_sprite = this.add.image(759, 272, 'apple_held').setVisible(false);
         
         this.input.topOnly = true; // don't allow objects to be interacted with when they are lower
-        
-        // pick up and return items
-        function set_tool(tool, sprite) {
-            if (handcurrent === hand.empty) {
-                handcurrent = tool;
-                sprite.setFrame(1)
-            }
-            else if (handcurrent === tool) {
-                handcurrent = hand.empty;
-                sprite.setFrame(0)
-            }
-        }
-
-        brush.on('pointerdown', function (pointer)
-        {
-            set_tool(hand.brush, brush)
-        });
 
         // pick up dirty straw and place clean straw
         function clean_straw(straw) {
@@ -529,6 +562,7 @@ class Example extends Phaser.Scene
                 apple_munch.play();
             }
             else if (handcurrent === hand.brush) {
+                brush_held_sprite.play('brush')
                 brush_sound.play();
                 if (brushlevel < 2) {
                     brushlevel += 1;
@@ -725,8 +759,11 @@ class Example extends Phaser.Scene
             
         }
         else if (handcurrent === hand.brush) {
-            clearCursor()
-            brush_held_sprite.setVisible(true).setPosition(pointer.worldX, pointer.worldY);
+            brush_held_sprite.setPosition(pointer.worldX-5, pointer.worldY+20);
+            if (!brush_held_sprite.visible) {
+                brush_held_sprite.setAlpha(0).setVisible(true)
+                this.time.delayedCall(250, function () {brush_held_sprite.setAlpha(1)});
+            }
         }
         else if (handcurrent === hand.hoofpick) {
             hoofpick_held_sprite.setPosition(pointer.worldX, pointer.worldY);

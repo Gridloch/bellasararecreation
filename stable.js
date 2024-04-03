@@ -682,8 +682,15 @@ class Example extends Phaser.Scene
             }
         }
         else if (handcurrent === hand.grain_scoop) {
-            clearCursor()
-            grain_held_sprite.setVisible(true).setPosition(pointer.worldX, pointer.worldY);
+            grain_held_sprite.setPosition(pointer.worldX, pointer.worldY)
+            if (!grain_held_sprite.visible) {
+                grain_held_sprite.setAlpha(0).setVisible(true)
+                this.time.delayedCall(630, function () {grain_held_sprite.setAlpha(.5)});
+                this.time.delayedCall(670, function () {grain_held_sprite.setAlpha(.7)});
+                this.time.delayedCall(710, function () {grain_held_sprite.setAlpha(.9)});
+                this.time.delayedCall(750, function () {grain_held_sprite.setAlpha(1)});
+            }
+            
         }
         else if (handcurrent === hand.brush) {
             clearCursor()

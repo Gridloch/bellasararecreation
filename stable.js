@@ -46,7 +46,7 @@ class Example extends Phaser.Scene
     }
 
     preload ()
-    {
+    {               
         this.load.image('stable_bg', './images/stable/stable-bg.png');
         this.load.image('stable_fg', './images/stable/stable-fg.png');
         this.load.image('hunger_scale', './images/stable/hunger.png');
@@ -58,7 +58,7 @@ class Example extends Phaser.Scene
         this.load.atlas('straw1', './images/stable/straw1.png', './images/stable/straw1.json');
         this.load.atlas('straw2', './images/stable/straw2.png', './images/stable/straw2.json');
         this.load.atlas('straw3', './images/stable/straw3.png', './images/stable/straw3.json');
-        this.load.image('straw_bales', './images/stable/straw_bales.png');
+        this.load.atlas('hay_loft', './images/stable/hay_loft.png', './images/stable/hay_loft.json');
 
         this.load.atlas('trough', './images/stable/water.png', './images/stable/water.json');
         this.load.atlas('food_trough', './images/stable/food.png', './images/stable/food.json');
@@ -70,13 +70,13 @@ class Example extends Phaser.Scene
         this.load.atlas('brush', './images/stable/brush.png', './images/stable/brush.json');
         this.load.atlas('brush_small', './images/stable/brush_small.png', './images/stable/brush_small.json');
         this.load.atlas('hoofpick', './images/stable/hoofpick.png', './images/stable/hoofpick.json');
-        this.load.spritesheet('hooves', './images/stable/hooves.png', { frameWidth: 53, frameHeight: 53 });
 
         this.load.spine('horse', './images/horse/horse.json', ['./images/horse/peter.atlas'], true);
+        this.load.spritesheet('hooves', './images/stable/hooves.png', { frameWidth: 53, frameHeight: 53 });
 
         this.load.atlas('luck', './images/stable/luck.png', './images/stable/luck.json');
 
-        this.load.spritesheet('music_button', './images/stable/music.png', { frameWidth: 36, frameHeight: 36 });
+        this.load.atlas('music_button', './images/stable/music.png', './images/stable/music.json');
         this.load.atlas('help_button', './images/stable/help.png', './images/stable/help.json');
 
         this.load.audio('background_music', ['./sounds/stable_soundtrack.mp3']);
@@ -185,7 +185,24 @@ class Example extends Phaser.Scene
         straw2.on('pointerdown', function (pointer) {clean_straw(straw2, 'straw2_pickup', 'straw2_place')});
         straw3.on('pointerdown', function (pointer) {clean_straw(straw3, 'straw3_pickup', 'straw3_place')});
 
-        const straw_bales = this.add.sprite(333, 45, 'straw_bales', 0).setInteractive();
+        const hay_loft = this.add.sprite(350, 56, 'hay_loft', 'idle').setInteractive().setScale(.88);
+            this.anims.create({
+                key: 'get_hay',
+                frames: this.anims.generateFrameNumbers('hay_loft', { frames: [
+                    'idle', 'idle', 'idle', 'idle', 'idle', 'idle', 'idle', 'idle',
+                    'shuffle0000', 'shuffle0001', 'shuffle0000',
+                    'idle'
+                ] }),
+                frameRate: 24
+            });
+            hay_loft.on('pointerdown', function (pointer)
+            {
+                if (handcurrent === hand.fork) {
+                    handcurrent = hand.fork_filled
+                    fork_fill.play()
+                    hay_loft.play('get_hay')
+                }
+            });
 
 
         // Water Trough
@@ -645,14 +662,6 @@ class Example extends Phaser.Scene
         
         this.input.topOnly = true; // don't allow objects to be interacted with when they are lower
 
-        straw_bales.on('pointerdown', function (pointer)
-        {
-            if (handcurrent === hand.fork) {
-                handcurrent = hand.fork_filled
-                fork_fill.play()
-            }
-        });
-
         // interact with horse
         horse_interactive.on('pointerdown', function (pointer)
         {
@@ -734,22 +743,31 @@ class Example extends Phaser.Scene
         // Stable foreground and UI
         this.add.image(444, 261, 'stable_fg');
 
-        // buttons
-        const music_button = this.add.sprite(867, 498, 'music_button', 0).setInteractive({ pixelPerfect: true });
+        // Buttons
+        const music_button = this.add.sprite(867, 498, 'music_button', 'music_on').setInteractive({ pixelPerfect: true });
         const help_button = this.add.sprite(444, 261, 'help_button', 'idle').setInteractive(this.input.makePixelPerfect(150));
-        // mute button
+        // Music button
         music_button.on('pointerdown', function (pointer)
         {
             if (play_music) {
                 backgroundMusic.stop()
-                this.setFrame(1)
+                this.setFrame('music_off_hover')
             }
             else {
                 backgroundMusic.play()
-                this.setFrame(0)
+                this.setFrame('music_on_hover')
             }
             play_music = !play_music
         });
+        music_button.on('pointerover', function (pointer)
+        {
+            this.setFrame(`music_${play_music ? 'on' : 'off'}_hover`)
+        });
+        music_button.on('pointerout', function (pointer)
+        {
+            this.setFrame(`music_${play_music ? 'on' : 'off'}`)
+        });
+        // Help Button
         help_button.on('pointerover', function (pointer)
         {
             this.setFrame('help')

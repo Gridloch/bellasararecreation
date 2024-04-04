@@ -32,11 +32,32 @@ brush_small_held_sprite = null
 hoofpick_held_sprite = null
 apple_held_sprite = null
 
-class Example extends Phaser.Scene
+// This scene is just used to load the image for the loading screen
+class Load extends Phaser.Scene 
+{
+    constructor ()
+    {
+        super({ key: 'Load' });
+    }
+
+    preload ()
+    {
+        this.load.image('card_back', './images/stable/card_back.png');
+    }
+
+    create ()
+    { 
+        this.scene.start('Stable');
+    }
+}
+
+// Actual game start
+class Stable extends Phaser.Scene
 {
     constructor ()
     {
         super({
+            key: 'Stable',
             pack: {
                 files: [
                     { type: 'scenePlugin', key: 'SpinePlugin', url: './SpinePluginDebug.js', sceneKey: 'spine' }
@@ -46,7 +67,25 @@ class Example extends Phaser.Scene
     }
 
     preload ()
-    {               
+    {  
+        // Loading Bar
+        this.load.on('progress', function (value) {
+            console.log(value);
+            progressBar.clear();
+            progressBar.fillStyle(0x35a3d5, 1);
+            progressBar.fillRect(389, 337, 100 * value, 6);
+        });    
+        this.load.on('fileprogress', function (file) {
+            console.log(file.src);
+        });
+        this.load.on('complete', function () {
+            console.log('complete');
+        });
+        this.add.image(444, 261, 'card_back');  
+        this.add.graphics().fillStyle(0x000000).fillRect(386, 334, 116, 12);
+        const progressBar = this.add.graphics();
+            
+        // Load in images and sounds
         this.load.image('stable_bg', './images/stable/stable-bg.png');
         this.load.image('stable_fg', './images/stable/stable-fg.png');
         this.load.image('hunger_scale', './images/stable/hunger.png');
@@ -115,7 +154,22 @@ class Example extends Phaser.Scene
         const hover2 = this.sound.add('hover2');
         const pickup = this.sound.add('pickup');
 
-        const straw1 = this.add.sprite(351, 420, 'straw1', 'frame0000').setInteractive().setScale(0.65);
+        const straw2 = this.add.sprite(539, 439, 'straw2', 'frame0000').setScale(0.8);
+        this.anims.create({
+            key: 'straw2_pickup',
+            frames: this.anims.generateFrameNumbers('straw2', { frames: [
+                'frame0000', 'frame0001', 'frame0002', 'frame0003', 'frame0004', 'frame0005', 'frame0006'
+            ] }),
+            frameRate: 24
+        });
+        this.anims.create({
+            key: 'straw2_place',
+            frames: this.anims.generateFrameNumbers('straw2', { frames: [
+                'frame0006', 'frame0007', 'frame0008', 'frame0009', 'frame0010', 'frame0011', 'frame0012'
+            ] }),
+            frameRate: 24
+        });
+        const straw1 = this.add.sprite(351, 420, 'straw1', 'frame0000').setScale(0.65);
             this.anims.create({
                 key: 'straw1_pickup',
                 frames: this.anims.generateFrameNumbers('straw1', { frames: [
@@ -130,7 +184,7 @@ class Example extends Phaser.Scene
                 ] }),
                 frameRate: 24
             });
-        const straw3 = this.add.sprite(643, 411, 'straw3', 'frame0000').setInteractive().setScale(0.75);
+        const straw3 = this.add.sprite(643, 411, 'straw3', 'frame0000').setScale(0.75);
             this.anims.create({
                 key: 'straw3_pickup',
                 frames: this.anims.generateFrameNumbers('straw3', { frames: [
@@ -145,23 +199,9 @@ class Example extends Phaser.Scene
                 ] }),
                 frameRate: 24
             });
-            const straw2 = this.add.sprite(539, 439, 'straw2', 'frame0000').setInteractive().setScale(0.8);
-                this.anims.create({
-                    key: 'straw2_pickup',
-                    frames: this.anims.generateFrameNumbers('straw2', { frames: [
-                        'frame0000', 'frame0001', 'frame0002', 'frame0003', 'frame0004', 'frame0005', 'frame0006'
-                    ] }),
-                    frameRate: 24
-                });
-                this.anims.create({
-                    key: 'straw2_place',
-                    frames: this.anims.generateFrameNumbers('straw2', { frames: [
-                        'frame0006', 'frame0007', 'frame0008', 'frame0009', 'frame0010', 'frame0011', 'frame0012'
-                    ] }),
-                    frameRate: 24
-                });
-
-            
+        const straw1_interactive = this.add.graphics().setInteractive(new Phaser.Geom.Rectangle(249, 309, 170, 170), Phaser.Geom.Rectangle.Contains);
+        const straw2_interactive = this.add.graphics().setInteractive(new Phaser.Geom.Rectangle(419, 309, 170, 170), Phaser.Geom.Rectangle.Contains);
+        const straw3_interactive = this.add.graphics().setInteractive(new Phaser.Geom.Rectangle(589, 309, 170, 170), Phaser.Geom.Rectangle.Contains);
 
         // pick up dirty straw and place clean straw
         function clean_straw(straw, pickup_anim, place_anim) {
@@ -181,9 +221,9 @@ class Example extends Phaser.Scene
                 updateBar(happinessBar, 1/6 + 0.05)
             }
         }
-        straw1.on('pointerdown', function (pointer) {clean_straw(straw1, 'straw1_pickup', 'straw1_place')});
-        straw2.on('pointerdown', function (pointer) {clean_straw(straw2, 'straw2_pickup', 'straw2_place')});
-        straw3.on('pointerdown', function (pointer) {clean_straw(straw3, 'straw3_pickup', 'straw3_place')});
+        straw1_interactive.on('pointerdown', function (pointer) {clean_straw(straw1, 'straw1_pickup', 'straw1_place')});
+        straw2_interactive.on('pointerdown', function (pointer) {clean_straw(straw2, 'straw2_pickup', 'straw2_place')});
+        straw3_interactive.on('pointerdown', function (pointer) {clean_straw(straw3, 'straw3_pickup', 'straw3_place')});
 
         const hay_loft = this.add.sprite(350, 56, 'hay_loft', 'idle').setInteractive().setScale(.88);
             this.anims.create({
@@ -292,9 +332,7 @@ class Example extends Phaser.Scene
 
         // horse
         const horse = this.add.spine(453, 283, 'horse', 'idle').setAngle(90);
-
-        const graphics = this.add.graphics()
-        const horse_interactive = graphics.setInteractive(new Phaser.Geom.Rectangle(230, 100, 356, 256), Phaser.Geom.Rectangle.Contains);
+        const horse_interactive = this.add.graphics().setInteractive(new Phaser.Geom.Rectangle(230, 100, 356, 256), Phaser.Geom.Rectangle.Contains);
 
         const hooves1 = this.add.sprite(305, 427, 'hooves', 0).setInteractive().setVisible(false);
         const hooves2 = this.add.sprite(510, 427, 'hooves', 0).setInteractive().setVisible(false);
@@ -443,7 +481,8 @@ class Example extends Phaser.Scene
 
 
         // Brush
-        const brush = this.add.sprite(767, 100, 'brush', 'idle').setInteractive({ pixelPerfect: true }).setScale(0.75);
+        const brush = this.add.sprite(767, 100, 'brush', 'idle').setScale(0.75);
+        const brush_interactive = this.add.graphics().setInteractive(new Phaser.Geom.Rectangle(753, 88, 40, 50), Phaser.Geom.Rectangle.Contains);
         const brush_sound = this.sound.add('brush_sound');
             this.anims.create({
                 key: 'brush_pickup',
@@ -469,7 +508,7 @@ class Example extends Phaser.Scene
                 ] }),
                 frameRate: 24
             });
-            brush.on('pointerdown', function (pointer)
+            brush_interactive.on('pointerdown', function (pointer)
             {
                 if (handcurrent === hand.empty) {
                     handcurrent = hand.brush;
@@ -481,22 +520,23 @@ class Example extends Phaser.Scene
                     brush.play('brush_place')
                 }
             });
-            brush.on('pointerover', function (pointer)
+            brush_interactive.on('pointerover', function (pointer)
             {
                 if (handcurrent === hand.empty) {
                     brush.setFrame('hover')
                     hover1.play();
                 }
             });
-            brush.on('pointerout', function (pointer)
+            brush_interactive.on('pointerout', function (pointer)
             {
                 if (handcurrent === hand.empty) {
                     brush.setFrame('idle')
                 }
             });
 
-            // Brush
-            const brush_small = this.add.sprite(746, 64, 'brush_small', 'idle').setInteractive({ pixelPerfect: true })//.setScale(0.90);
+            // Small Brush
+            const brush_small = this.add.sprite(746, 64, 'brush_small', 'idle');
+            const brush_small_interactive = this.add.graphics().setInteractive(new Phaser.Geom.Rectangle(753, 54, 40, 28), Phaser.Geom.Rectangle.Contains);
             const brush_sound_small = this.sound.add('brush_sound_small');
                 this.anims.create({
                     key: 'brush_pickup_small',
@@ -523,7 +563,7 @@ class Example extends Phaser.Scene
                     ] }),
                     frameRate: 24
                 });
-                brush_small.on('pointerdown', function (pointer)
+                brush_small_interactive.on('pointerdown', function (pointer)
                 {
                     if (handcurrent === hand.empty) {
                         handcurrent = hand.brush_small;
@@ -535,14 +575,14 @@ class Example extends Phaser.Scene
                         brush_small.play('brush_place_small')
                     }
                 });
-                brush_small.on('pointerover', function (pointer)
+                brush_small_interactive.on('pointerover', function (pointer)
                 {
                     if (handcurrent === hand.empty) {
                         brush_small.setFrame('hover')
                         hover1.play();
                     }
                 });
-                brush_small.on('pointerout', function (pointer)
+                brush_small_interactive.on('pointerout', function (pointer)
                 {
                     if (handcurrent === hand.empty) {
                         brush_small.setFrame('idle')
@@ -550,10 +590,11 @@ class Example extends Phaser.Scene
                 });
 
         // Hoofpick
-        const hoofpick = this.add.sprite(823, 80, 'hoofpick', 'idle').setInteractive({ pixelPerfect: true }).setScale(0.75);
+        const hoofpick = this.add.sprite(823, 80, 'hoofpick', 'idle').setScale(0.75);
+        const hoofpick_interactive = this.add.graphics().setInteractive(new Phaser.Geom.Rectangle(801, 60, 26, 75), Phaser.Geom.Rectangle.Contains);
         hoofpick1 = this.sound.add('hoofpick1');
         hoofpick2 = this.sound.add('hoofpick2');
-            hoofpick.on('pointerdown', function (pointer)
+            hoofpick_interactive.on('pointerdown', function (pointer)
             {
                 if (handcurrent === hand.empty) {
                     handcurrent = hand.hoofpick;
@@ -567,14 +608,14 @@ class Example extends Phaser.Scene
                 hooves1.setVisible(handcurrent === hand.hoofpick)
                 hooves2.setVisible(handcurrent === hand.hoofpick)
             });
-            hoofpick.on('pointerover', function (pointer)
+            hoofpick_interactive.on('pointerover', function (pointer)
             {
                 if (handcurrent === hand.empty) {
                     hoofpick.setFrame('hover')
                     hover1.play();
                 }
             });
-            hoofpick.on('pointerout', function (pointer)
+            hoofpick_interactive.on('pointerout', function (pointer)
             {
                 if (handcurrent === hand.empty) {
                     hoofpick.setFrame('idle')

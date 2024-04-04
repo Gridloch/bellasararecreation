@@ -22,7 +22,11 @@
                     type: Phaser.AUTO,
                     width: 888,
                     height: 521,
-                    scene: Example
+                    backgroundColor: '#110c27',
+                    scene: [
+                        Load,
+                        Stable
+                    ]
                 };
 
                 const game = new Phaser.Game(config);

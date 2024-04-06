@@ -344,9 +344,6 @@ class Stable extends Phaser.Scene
         horse = this.add.spine(418, 295, 'horse', 'idle').setAngle(90);
         const horse_interactive = this.add.graphics().setInteractive(new Phaser.Geom.Rectangle(230, 100, 356, 256), Phaser.Geom.Rectangle.Contains);
 
-        const hooves1 = this.add.sprite(305, 427, 'hooves', 0).setInteractive().setVisible(false);
-        const hooves2 = this.add.sprite(510, 427, 'hooves', 0).setInteractive().setVisible(false);
-
 
         // Pitchfork
         const fork = this.add.sprite(718, 177, 'fork', 'idle').setInteractive({ pixelPerfect: true });
@@ -640,8 +637,10 @@ class Stable extends Phaser.Scene
         // Hoofpick
         const hoofpick = this.add.sprite(823, 80, 'hoofpick', 'idle').setScale(0.75);
         const hoofpick_interactive = this.add.graphics().setInteractive(new Phaser.Geom.Rectangle(801, 60, 26, 75), Phaser.Geom.Rectangle.Contains);
-            hoofpick1 = this.sound.add('hoofpick1');
-            hoofpick2 = this.sound.add('hoofpick2');
+        const hooves1 = this.add.sprite(316, 445, 'hooves', 0).setInteractive().setScale(.84).setVisible(false);
+        const hooves2 = this.add.sprite(531, 445, 'hooves', 0).setInteractive().setScale(.84).setVisible(false);
+        hoofpick1 = this.sound.add('hoofpick1');
+        hoofpick2 = this.sound.add('hoofpick2');
             this.anims.create({
                 key: 'hoofpick_pickup',
                 frames: this.anims.generateFrameNumbers('hoofpick', { frames: [

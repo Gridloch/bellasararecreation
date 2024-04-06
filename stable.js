@@ -1,5 +1,6 @@
+// Variable to be used throughout scene
 play_music = true;
-hand = {
+const hand = {
     empty: 'empty',
     shovel: 'shovel',
     fork: 'fork',
@@ -17,12 +18,15 @@ brushlevel = 0
 strawclean = false
 done = false;
 
+horse = null
 trough = null
 water_drink = null
 food_trough = null
 oats_eat = null
 hoofpick1 = null
 hoofpick2 = null
+inspiration = null
+inspiration_message = null
 
 shovel_held_sprite = null
 fork_held_sprite = null
@@ -31,6 +35,17 @@ brush_held_sprite = null
 brush_small_held_sprite = null
 hoofpick_held_sprite = null
 apple_held_sprite = null
+
+// Gets info about the horse from data.json file
+let horse_data
+const xmlhttp = new XMLHttpRequest();
+xmlhttp.onload = function() {
+  const myObj = JSON.parse(this.responseText);
+  horse_data = myObj
+}
+xmlhttp.open("GET", "./images/horse/peter/data.json");
+xmlhttp.send();
+
 
 // This scene is just used to load the image for the loading screen
 class Load extends Phaser.Scene 
@@ -70,17 +85,10 @@ class Stable extends Phaser.Scene
     {  
         // Loading Bar
         this.load.on('progress', function (value) {
-            console.log(value);
             progressBar.clear();
             progressBar.fillStyle(0x35a3d5, 1);
             progressBar.fillRect(389, 337, 100 * value, 6);
         });    
-        this.load.on('fileprogress', function (file) {
-            console.log(file.src);
-        });
-        this.load.on('complete', function () {
-            console.log('complete');
-        });
         this.add.image(444, 261, 'card_back');  
         this.add.graphics().fillStyle(0x000000).fillRect(386, 334, 116, 12);
         const progressBar = this.add.graphics();
@@ -110,10 +118,13 @@ class Stable extends Phaser.Scene
         this.load.atlas('brush_small', './images/stable/brush_small.png', './images/stable/brush_small.json');
         this.load.atlas('hoofpick', './images/stable/hoofpick.png', './images/stable/hoofpick.json');
 
-        this.load.spine('horse', './images/horse/horse.json', ['./images/horse/peter.atlas'], true);
+        this.load.spine('horse', './images/horse/peter/horse.json', ['./images/horse/peter/horse.atlas'], true);
+        this.load.image('horse_image', './images/horse/peter/image.jpg');
+        this.load.image('inspiration', './images/stable/inspiration.png');
         this.load.spritesheet('hooves', './images/stable/hooves.png', { frameWidth: 53, frameHeight: 53 });
 
         this.load.atlas('luck', './images/stable/luck.png', './images/stable/luck.json');
+        this.load.atlas('frame', './images/stable/frame.png', './images/stable/frame.json');
 
         this.load.atlas('music_button', './images/stable/music.png', './images/stable/music.json');
         this.load.atlas('help_button', './images/stable/help.png', './images/stable/help.json');
@@ -142,7 +153,7 @@ class Stable extends Phaser.Scene
     create ()
     {
         //  If you disable topOnly it will fire events for all objects the pointer is over, regardless of place on the display list
-        this.input.topOnly = false;
+        this.input.topOnly = true;
 
         const backgroundMusic = this.sound.add('background_music');
         backgroundMusic.loop = true; 
@@ -277,7 +288,6 @@ class Stable extends Phaser.Scene
                     this.play('fill_water');
                     water_sound.play()
                     updateBar(hungerBar, 1.5)
-                    horse.play('drink')
                 }
             });
             trough.on('pointerover', function (pointer)
@@ -331,7 +341,7 @@ class Stable extends Phaser.Scene
             });
 
         // horse
-        const horse = this.add.spine(453, 283, 'horse', 'idle').setAngle(90);
+        horse = this.add.spine(418, 295, 'horse', 'idle').setAngle(90);
         const horse_interactive = this.add.graphics().setInteractive(new Phaser.Geom.Rectangle(230, 100, 356, 256), Phaser.Geom.Rectangle.Contains);
 
         const hooves1 = this.add.sprite(305, 427, 'hooves', 0).setInteractive().setVisible(false);
@@ -342,6 +352,27 @@ class Stable extends Phaser.Scene
         const fork = this.add.sprite(718, 177, 'fork', 'idle').setInteractive({ pixelPerfect: true });
         const fork_fill = this.sound.add('fork_fill');
         const fork_place = this.sound.add('fork_place');
+            this.anims.create({
+                key: 'fork_fill',
+                frames: this.anims.generateFrameNumbers('fork', { frames: [
+                    'fill0000', 'fill0001', 'fill0002', 'fill0003', 'fill0004', 'fill0005', 'fill0006', 'fill0007', 'held_filled'
+                ] }),
+                frameRate: 24
+            });
+            this.anims.create({
+                key: 'fork_pickup',
+                frames: this.anims.generateFrameNumbers('fork', { frames: [
+                    'hold0000', 'hold0001', 'hold0002', 'hold0003', 'hold0004', 'hold0005', 'hold0006', 'hold0007', 'held_empty'
+                ] }),
+                frameRate: 24
+            });
+            this.anims.create({
+                key: 'fork_place',
+                frames: this.anims.generateFrameNumbers('fork', { frames: [
+                    'place0000', 'place0001', 'place0002', 'place0003', 'place0004', 'place0005', 'held_empty'
+                ] }),
+                frameRate: 24
+            });
             fork.on('pointerover', function (pointer)
             {
                 if (handcurrent === hand.empty) {
@@ -376,6 +407,23 @@ class Stable extends Phaser.Scene
         // Shovel
         const shovel = this.add.sprite(742, 189, 'shovel', 'idle').setInteractive({ pixelPerfect: true });
         const shovel_sound = this.sound.add('shovel_sound');
+            this.anims.create({
+                key: 'shovel_pickup',
+                frames: this.anims.generateFrameNumbers('shovel', { frames: [
+                    'hold0000', 'hold0001', 'held'
+                ] }),
+                frameRate: 24
+            });
+            this.anims.create({
+                key: 'shovel_scoop',
+                frames: this.anims.generateFrameNumbers('shovel', { frames: [
+                    'held',
+                    'scoop0000', 'scoop0001', 'scoop0002', 'scoop0003', 'scoop0004', 'scoop0005', 'scoop0006', 'scoop0007', 'scoop0008', 'scoop0009',
+                    'scoop0010', 'scoop0011', 'scoop0012',
+                    'held'
+                ] }),
+                frameRate: 24
+            });
             shovel.on('pointerover', function (pointer)
             {
                 if (handcurrent === hand.empty) {
@@ -592,8 +640,24 @@ class Stable extends Phaser.Scene
         // Hoofpick
         const hoofpick = this.add.sprite(823, 80, 'hoofpick', 'idle').setScale(0.75);
         const hoofpick_interactive = this.add.graphics().setInteractive(new Phaser.Geom.Rectangle(801, 60, 26, 75), Phaser.Geom.Rectangle.Contains);
-        hoofpick1 = this.sound.add('hoofpick1');
-        hoofpick2 = this.sound.add('hoofpick2');
+            hoofpick1 = this.sound.add('hoofpick1');
+            hoofpick2 = this.sound.add('hoofpick2');
+            this.anims.create({
+                key: 'hoofpick_pickup',
+                frames: this.anims.generateFrameNumbers('hoofpick', { frames: [
+                    'pickup0000', 'pickup0001', 'pickup0002', 'pickup0003', 'pickup0004', 'pickup0005', 'held'
+                ] }),
+                frameRate: 24
+            });
+            this.anims.create({
+                key: 'hoofpick_use',
+                frames: this.anims.generateFrameNumbers('hoofpick', { frames: [
+                    'use0000', 'use0001', 'use0002', 'use0003', 'use0004', 'use0005', 'use0006', 'use0007', 'use0008', 'use0009',
+                    'use0010', 'use0011', 'use0012', 'use0012',
+                    'held'
+                ] }),
+                frameRate: 24
+            });
             hoofpick_interactive.on('pointerdown', function (pointer)
             {
                 if (handcurrent === hand.empty) {
@@ -621,72 +685,6 @@ class Stable extends Phaser.Scene
                     hoofpick.setFrame('idle')
                 }
             });
-
-
-        // held items
-        fork_held_sprite = this.add.sprite(735, 240, 'fork').setVisible(false);
-            this.anims.create({
-                key: 'fork_fill',
-                frames: this.anims.generateFrameNumbers('fork', { frames: [
-                    'fill0000', 'fill0001', 'fill0002', 'fill0003', 'fill0004', 'fill0005', 'fill0006', 'fill0007', 'held_filled'
-                ] }),
-                frameRate: 24
-            });
-            this.anims.create({
-                key: 'fork_pickup',
-                frames: this.anims.generateFrameNumbers('fork', { frames: [
-                    'hold0000', 'hold0001', 'hold0002', 'hold0003', 'hold0004', 'hold0005', 'hold0006', 'hold0007', 'held_empty'
-                ] }),
-                frameRate: 24
-            });
-            this.anims.create({
-                key: 'fork_place',
-                frames: this.anims.generateFrameNumbers('fork', { frames: [
-                    'place0000', 'place0001', 'place0002', 'place0003', 'place0004', 'place0005', 'held_empty'
-                ] }),
-                frameRate: 24
-            });
-
-        shovel_held_sprite = this.add.sprite(759, 272, 'shovel').setVisible(false);
-            this.anims.create({
-                key: 'shovel_pickup',
-                frames: this.anims.generateFrameNumbers('shovel', { frames: [
-                    'hold0000', 'hold0001', 'held'
-                ] }),
-                frameRate: 24
-            });
-            this.anims.create({
-                key: 'shovel_scoop',
-                frames: this.anims.generateFrameNumbers('shovel', { frames: [
-                    'held',
-                    'scoop0000', 'scoop0001', 'scoop0002', 'scoop0003', 'scoop0004', 'scoop0005', 'scoop0006', 'scoop0007', 'scoop0008', 'scoop0009',
-                    'scoop0010', 'scoop0011', 'scoop0012',
-                    'held'
-                ] }),
-                frameRate: 24
-            });
-
-        grain_held_sprite = this.add.image(759, 272, 'grain_scoop').setVisible(false);
-        brush_held_sprite = this.add.sprite(759, 272, 'brush', 'hold').setVisible(false);
-        brush_small_held_sprite = this.add.sprite(759, 272, 'brush_small', 'hold').setVisible(false);
-
-        hoofpick_held_sprite = this.add.sprite(759, 272, 'hoofpick').setVisible(false);
-            this.anims.create({
-                key: 'hoofpick_pickup',
-                frames: this.anims.generateFrameNumbers('hoofpick', { frames: [
-                    'pickup0000', 'pickup0001', 'pickup0002', 'pickup0003', 'pickup0004', 'pickup0005', 'held'
-                ] }),
-                frameRate: 24
-            });
-            this.anims.create({
-                key: 'hoofpick_use',
-                frames: this.anims.generateFrameNumbers('hoofpick', { frames: [
-                    'use0000', 'use0001', 'use0002', 'use0003', 'use0004', 'use0005', 'use0006', 'use0007', 'use0008', 'use0009',
-                    'use0010', 'use0011', 'use0012', 'use0012',
-                    'held'
-                ] }),
-                frameRate: 24
-            });
             // clean hooves
             function clean_hooves(sprite) {
                 if (sprite.frame.name <2 && handcurrent === hand.hoofpick) {
@@ -698,10 +696,6 @@ class Stable extends Phaser.Scene
             }
             hooves1.on('pointerdown', function (pointer) { clean_hooves(hooves1) });
             hooves2.on('pointerdown', function (pointer) { clean_hooves(hooves2) });
-
-        apple_held_sprite = this.add.image(759, 272, 'apple_held').setVisible(false);
-        
-        this.input.topOnly = true; // don't allow objects to be interacted with when they are lower
 
         // interact with horse
         horse_interactive.on('pointerdown', function (pointer)
@@ -720,7 +714,7 @@ class Stable extends Phaser.Scene
                 }
                 else if (brushlevel === 2) {
                     brushlevel += 1;
-                    horse.play('rear');
+                    horse.play('rear')
                     updateBar(cleanlinessBar, 1/3)
                     updateBar(happinessBar, 1/6)
                 }
@@ -741,6 +735,22 @@ class Stable extends Phaser.Scene
                 }
             }
         });
+
+
+        // Inspirational message
+        const frame = this.add.sprite(516, 118, 'frame', 'idle').setScale(.93);
+        this.add.image(517, 126, 'horse_image').setScale(.32);
+        const inspiration_hover = this.sound.add('inspiration_hover');
+        const frame_interactive = this.add.graphics().setInteractive(new Phaser.Geom.Rectangle(478, 65, 75, 110), Phaser.Geom.Rectangle.Contains);
+            frame_interactive.on('pointerover', function (pointer)
+            {
+                frame.setFrame('hover');
+                inspiration_hover.play()
+            });
+            frame_interactive.on('pointerout', function (pointer)
+            {
+                frame.setFrame('idle')
+            });
 
 
         // Lucky Horseshoe
@@ -781,8 +791,19 @@ class Stable extends Phaser.Scene
         });
 
 
+        inspiration = this.add.image(430, 150, 'inspiration').setScale(.93).setVisible(false);
+
+        inspiration_message = this.add.text(431, 133, 'Static Text Object', { fontFamily: 'Arial', fontSize: 56, color: '#ffffff', align: 'center' }).setVisible(false);
+        inspiration_message.text = horse_data.message;
+        inspiration_message.setPosition(431-inspiration_message.width/2, 133-inspiration_message.height/2)
+
         // Stable foreground and UI
         this.add.image(444, 261, 'stable_fg');
+
+        // Horse name
+        const horse_name = this.add.text(444, 133, 'Static Text Object', { fontFamily: 'Arial', fontSize: 12, color: '#ffffff', align: 'center' });
+        horse_name.text = horse_data.name;
+        horse_name.setPosition(444-horse_name.width/2, 478-horse_name.height/2)
 
         // Buttons
         const music_button = this.add.sprite(867, 498, 'music_button', 'music_on').setInteractive({ pixelPerfect: true });
@@ -882,6 +903,16 @@ class Stable extends Phaser.Scene
             
             progressBar.rightShade.setPosition(progressBar.x - 32 + progressBar.level*bar, progressBar.rightShade.y)
         }
+
+
+        // held items
+        fork_held_sprite = this.add.sprite(735, 240, 'fork').setVisible(false);
+        shovel_held_sprite = this.add.sprite(759, 272, 'shovel').setVisible(false);
+        grain_held_sprite = this.add.image(759, 272, 'grain_scoop').setVisible(false);
+        brush_held_sprite = this.add.sprite(759, 272, 'brush', 'hold').setVisible(false);
+        brush_small_held_sprite = this.add.sprite(759, 272, 'brush_small', 'hold').setVisible(false);
+        hoofpick_held_sprite = this.add.sprite(759, 272, 'hoofpick').setVisible(false);
+        apple_held_sprite = this.add.image(759, 272, 'apple_held').setVisible(false);
     }
 
     update ()
@@ -961,7 +992,12 @@ class Stable extends Phaser.Scene
         }
 
         if (trough.anims.getName() === 'fill_water' && trough.anims.getProgress() === 0) {
-            this.time.delayedCall(3330, function () {water_drink.play()});
+            this.time.delayedCall(2800, function () {
+                horse.play('drink')
+            });
+            this.time.delayedCall(3330, function () {
+                water_drink.play()
+            });
         }
         if ((food_trough.anims.getName() === 'fill' || food_trough.anims.getName() === 'fill_again') && food_trough.anims.getProgress() === 0) {
             this.time.delayedCall(1000, function () {oats_eat.play()});

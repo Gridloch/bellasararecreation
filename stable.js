@@ -1,4 +1,4 @@
-// Variable to be used throughout scene
+// Variables to be used throughout scene
 play_music = true;
 const hand = {
     empty: 'empty',
@@ -16,7 +16,6 @@ waterfilled = false;
 foodfilled = false;
 brushlevel = 0
 strawclean = false
-done = false;
 
 horse = null
 trough = null
@@ -119,7 +118,7 @@ class Stable extends Phaser.Scene
         this.load.atlas('brush_small', './images/stable/brush_small.png', './images/stable/brush_small.json');
         this.load.atlas('hoofpick', './images/stable/hoofpick.png', './images/stable/hoofpick.json');
 
-        this.load.spine('horse', `./images/horse/${horse_name}/horse.json`, [`./images/horse/${horse_name}/horse.atlas`], true);
+        this.load.spine('horse', `./images/horse/${horse_name}/skeleton.json`, [`./images/horse/${horse_name}/skeleton.atlas`], true);
         this.load.image('horse_image', `./images/horse/${horse_name}/card_image.jpg`);
         this.load.spritesheet('hooves', './images/stable/hooves.png', { frameWidth: 53, frameHeight: 53 });
 
@@ -962,6 +961,13 @@ class Stable extends Phaser.Scene
         else {
             clearCursor()
         }
+
+        horse.on('complete', (spine) => {
+            console.log(`Completed ${horse.state}`)
+            this.time.delayedCall(8000, function () {
+                horse.play('idle');
+            });
+        });
 
         if (trough.anims.getName() === 'fill_water' && trough.anims.getProgress() === 0) {
             this.time.delayedCall(2800, function () {

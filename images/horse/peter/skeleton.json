@@ -1,11 +1,11 @@
 {
 "skeleton": {
-	"hash": "M1gJKVkif0A",
+	"hash": "rlt2cH3eJEA",
 	"spine": "4.1.24",
-	"x": -435.06,
-	"y": -284.73,
-	"width": 1148,
-	"height": 719,
+	"x": -229.45,
+	"y": -157.13,
+	"width": 420.41,
+	"height": 324.2,
 	"images": "./Peter/Parts/",
 	"audio": "C:/Users/antsg/OneDrive/Documents/Bella Sara Shennanigans/stables game/images/horse/peter"
 },
@@ -331,10 +331,22 @@
 	},
 	"idle": {
 		"bones": {
-			"HindLegR": {
+			"Head": {
 				"translate": [
-					{}
+					{ "time": 0.4 }
 				]
+			}
+		},
+		"attachments": {
+			"default": {
+				"Eye": {
+					"Eye1": {
+						"sequence": [
+							{ "mode": "loop", "delay": 0.0417 },
+							{ "time": 0.1667, "mode": "onceReverse" }
+						]
+					}
+				}
 			}
 		}
 	},

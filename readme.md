@@ -32,15 +32,14 @@ After starting a server locally, you can usually access it from http://localhost
 
 All the original textures, animations, sounds and the gameplay itself were taken from the horse care game on Bella Sara and belong to the Bella Sara Company, LLC.
 
-- Screen recordings and screenshots of the game have been taken from the following and have been edited / cleaned up to remake the assets for the game:
+- Most of the spritees, animations and sounds come from a recovered cache of many of the original game files was recovered by Crystallinetearz and extracted by Mewfantasy and al_2713 (from the North of North discord)
+- Additional screen recordings and screenshots of the game have been taken from the following and have been used / referenced whilst remaking the game:
   - The [Bella Sara Wiki](https://bellasara.wiki.gg/wiki/Bella_Sara_Wiki) has many  different screenshots of the stable and different horses.
-  - The game soundtrack was found [here](https://www.youtube.com/watch?v=KwJBx4gI1uw&list=PLE_maQWjY0W55azSzRqAEwgmo-8Nl2jfn&index=9).
-  - [This video](https://www.youtube.com/watch?v=uaQ2FjKgHKQ&t=627s) shows care of some different horses and has music off (i.e. clearer sounds).
-  - [This video](https://www.youtube.com/watch?v=DVlLQOMo2Ow) shows most of the animations (played all animations available in menu for classic horses) and shows the whole screen.
-  - [This video](https://www.youtube.com/watch?v=nw-J5skHzrE) has clear sounds from the foal version, many of which are the same, and no music.
+  - [This video](https://www.youtube.com/watch?v=uaQ2FjKgHKQ&t=627s) was heavily referenced for recreating the actual gameplay.
 - Other tools used:
   - The [Phaser](https://phaser.io/) game framework has been used to keep most of the coding pretty simple.
   - The [Leshy Sprite Sheet Tool](https://www.leshylabs.com/apps/sstool/) and [Codeshack Sprite Sheet Generator](https://codeshack.io/images-sprite-sheet-generator/) have been used to generate the texture atlas files and sprite sheets.
+  - [This](https://fpscalculator.com/frames-to-time-calculator/) frame to time calculator was used to calculate timings and delays
   - [Spine Animations](https://blog.ourcade.co/posts/2020/phaser-3-parcel-typescript-spine/) are used for the horse
 
 ## Progress
@@ -53,7 +52,7 @@ All the original textures, animations, sounds and the gameplay itself were taken
   - [x] fill water
   - [x] give food
   - [x] apple
-  - [ ] click card for positive message
+  - [x] click card for positive message
   - [x] click horseshoe for good luck
   - [ ] awards?
   - [x] music on/off
@@ -127,7 +126,7 @@ All the original textures, animations, sounds and the gameplay itself were taken
   - [x] small brush
   - [x] use hoofpick
   - [x] good luck
-  - [ ] rear / neigh
+  - [x] rear / neigh
   - [ ] pawing
   - [ ] hooves shifting
   - [ ] ...

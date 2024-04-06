@@ -16,6 +16,8 @@ waterfilled = false;
 foodfilled = false;
 brushlevel = 0
 strawclean = false
+play_inspiration = true
+can_play_inspiration = false
 
 horse = null
 trough = null
@@ -141,13 +143,14 @@ class Stable extends Phaser.Scene
         this.load.audio('hover1', ['./sounds/hover1.mp3']);
         this.load.audio('hover2', ['./sounds/hover1.mp3']);
         this.load.audio('inspiration_hover', ['./sounds/inspiration_hover.mp3']);
-        this.load.audio('inspiration', ['./sounds/inspiration.mp3']);
+        this.load.audio('inspiration_sound', ['./sounds/inspiration.mp3']);
         this.load.audio('luck_sound', ['./sounds/luck_sound.mp3']);
         this.load.audio('oats_eat', ['./sounds/oats_eat.mp3']);
         this.load.audio('pickup', ['./sounds/pickup.mp3']);
         this.load.audio('shovel_sound', ['./sounds/shovel_sound.mp3']);
         this.load.audio('water_sound', ['./sounds/water_sound.mp3']);
         this.load.audio('water_drink', ['./sounds/water_drink.mp3']);
+        this.load.audio('rear_sound', ['./sounds/rear.mp3']);
     }
 
     create ()
@@ -655,6 +658,7 @@ class Stable extends Phaser.Scene
 
         // Horse
         horse = this.add.spine(418, 295, 'horse', 'idle').setAngle(90);
+        const rear_sound = this.sound.add('rear_sound');
         const horse_interactive = this.add.graphics().setInteractive(new Phaser.Geom.Rectangle(230, 100, 356, 256), Phaser.Geom.Rectangle.Contains);
             // interact with horse
             horse_interactive.on('pointerdown', function (pointer)
@@ -673,6 +677,7 @@ class Stable extends Phaser.Scene
                     }
                     else if (brushlevel === 2) {
                         brushlevel += 1;
+                        rear_sound.play();
                         horse.play('rear')
                         updateBar(cleanlinessBar, 1/3)
                         updateBar(happinessBar, 1/6)
@@ -688,6 +693,7 @@ class Stable extends Phaser.Scene
                     }
                     else if (brushlevel === 2) {
                         brushlevel += 1;
+                        rear_sound.play();
                         horse.play('rear');
                         updateBar(cleanlinessBar, 1/3)
                         updateBar(happinessBar, 1/6)
@@ -719,13 +725,22 @@ class Stable extends Phaser.Scene
         const frame = this.add.sprite(516, 118, 'frame', 'idle').setScale(.93);
         this.add.image(517, 126, 'horse_image').setScale(.32);
         const inspiration_hover = this.sound.add('inspiration_hover');
+        const inspiration_sound = this.sound.add('inspiration_sound');
         const frame_interactive = this.add.graphics().setInteractive(new Phaser.Geom.Rectangle(478, 65, 75, 110), Phaser.Geom.Rectangle.Contains);
             frame_interactive.on('pointerover', function (pointer)
             {
-                frame.setFrame('hover');
-                inspiration_hover.play()
+                if (can_play_inspiration) {
+                    frame.setFrame('hover');
+                    inspiration_hover.play()
+                }
             });
             frame_interactive.on('pointerout', function (pointer) { frame.setFrame('idle') });
+            frame_interactive.on('pointerdown', function (pointer) { 
+                if (can_play_inspiration) {
+                    play_inspiration = true 
+                    inspiration_sound.play()
+                }
+            })
 
 
         // Lucky Horseshoe
@@ -770,7 +785,8 @@ class Stable extends Phaser.Scene
         inspiration = this.add.image(430, 150, 'inspiration').setScale(.93).setVisible(false);
         inspiration_message = this.add.text(431, 133, 'Static Text Object', { fontFamily: 'Arial', fontSize: 56, color: '#ffffff', align: 'center' }).setVisible(false);
         inspiration_message.text = horse_data.message;
-        inspiration_message.setPosition(431-inspiration_message.width/2, 133-inspiration_message.height/2)
+        inspiration_message.setPosition(431-inspiration_message.width/2, 133-inspiration_message.height/2);
+        inspiration_message.setShadow(2, 2, '#000000', 7, true, true)
 
 
 
@@ -963,8 +979,7 @@ class Stable extends Phaser.Scene
         }
 
         horse.on('complete', (spine) => {
-            console.log(`Completed ${horse.state}`)
-            this.time.delayedCall(8000, function () {
+            this.time.delayedCall(12000, function () {
                 horse.play('idle');
             });
         });
@@ -983,6 +998,39 @@ class Stable extends Phaser.Scene
         if (hoofpick_held_sprite.anims.getName() === 'hoofpick_use' && hoofpick_held_sprite.anims.getProgress() === 0) {
             this.time.delayedCall(80, function () {hoofpick1.play()});
             this.time.delayedCall(380, function () {hoofpick2.play()});
+        }
+
+        // Displays inspirational message
+        if (play_inspiration) {
+            play_inspiration = false
+            can_play_inspiration = false
+            inspiration.setVisible(true).setAlpha(0)
+            inspiration_message.setVisible(true).setAlpha(0)
+            this.time.delayedCall(40, function () {inspiration.setAlpha(.1); inspiration_message.setAlpha(0.1)});
+            this.time.delayedCall(80, function () {inspiration.setAlpha(.2); inspiration_message.setAlpha(0.2)});
+            this.time.delayedCall(120, function () {inspiration.setAlpha(.3); inspiration_message.setAlpha(0.3)});
+            this.time.delayedCall(160, function () {inspiration.setAlpha(.4); inspiration_message.setAlpha(0.4)});
+            this.time.delayedCall(200, function () {inspiration.setAlpha(.5); inspiration_message.setAlpha(0.5)});
+            this.time.delayedCall(240, function () {inspiration.setAlpha(.6); inspiration_message.setAlpha(0.6)});
+            this.time.delayedCall(280, function () {inspiration.setAlpha(.7); inspiration_message.setAlpha(0.7)});
+            this.time.delayedCall(320, function () {inspiration.setAlpha(.8); inspiration_message.setAlpha(0.8)});
+            this.time.delayedCall(360, function () {inspiration.setAlpha(.9); inspiration_message.setAlpha(0.9)});
+            this.time.delayedCall(400, function () {inspiration.setAlpha(1); inspiration_message.setAlpha(1)});
+            this.time.delayedCall(2960, function () {inspiration.setAlpha(.9); inspiration_message.setAlpha(0.9)});
+            this.time.delayedCall(3000, function () {inspiration.setAlpha(.8); inspiration_message.setAlpha(0.8)});
+            this.time.delayedCall(3040, function () {inspiration.setAlpha(.7); inspiration_message.setAlpha(0.7)});
+            this.time.delayedCall(3080, function () {inspiration.setAlpha(.6); inspiration_message.setAlpha(0.6)});
+            this.time.delayedCall(3120, function () {inspiration.setAlpha(.5); inspiration_message.setAlpha(0.5)});
+            this.time.delayedCall(3160, function () {inspiration.setAlpha(.4); inspiration_message.setAlpha(0.4)});
+            this.time.delayedCall(3200, function () {inspiration.setAlpha(.3); inspiration_message.setAlpha(0.3)});
+            this.time.delayedCall(3240, function () {inspiration.setAlpha(.2); inspiration_message.setAlpha(0.2)});
+            this.time.delayedCall(3280, function () {inspiration.setAlpha(.1); inspiration_message.setAlpha(0.1)});
+            this.time.delayedCall(3320, function () {
+                inspiration.setAlpha(0); 
+                inspiration_message.setAlpha(0); 
+                can_play_inspiration = true;
+            });
+            
         }
     }
 }

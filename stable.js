@@ -110,6 +110,7 @@ class Stable extends Phaser.Scene
         this.load.atlas('hay_loft', './images/stable/hay_loft.png', './images/stable/hay_loft.json');
 
         this.load.atlas('trough', './images/stable/water.png', './images/stable/water.json');
+        this.load.atlas('trough_mask', './images/stable/water_mask.png', './images/stable/water_mask.json');
         this.load.atlas('food_trough', './images/stable/food.png', './images/stable/food.json');
         this.load.atlas('grain_bin', './images/stable/grain_bin.png', './images/stable/grain_bin.json');
         this.load.image('grain_scoop', './images/stable/grain_scoop.png');
@@ -299,6 +300,7 @@ class Stable extends Phaser.Scene
                 if (!waterfilled && handcurrent === hand.empty) {
                     waterfilled = true;
                     this.play('fill_water');
+                    trough_mask.play('mask_fill_water');
                     water_sound.play()
                     updateBar(hungerBar, 1.5)
                 }
@@ -719,6 +721,30 @@ class Stable extends Phaser.Scene
             }
             hooves1.on('pointerdown', function (pointer) { clean_hooves(hooves1) });
             hooves2.on('pointerdown', function (pointer) { clean_hooves(hooves2) });
+
+        
+        const trough_mask = this.add.sprite(153, 455, 'trough_mask', 'water0000');
+            this.anims.create({
+                key: 'mask_fill_water',
+                frames: this.anims.generateFrameNumbers('trough_mask', { frames: [
+                    'water0011', 'water0011', 'water0011',
+                    'water0014', 'water0014',
+                    'water0016', 'water0016',
+                    'water0018', 'water0019', 'water0020', 'water0021', 'water0022', 'water0023', 'water0024', 'water0025', 'water0025',
+                    'water0027', 'water0028', 'water0029', 'water0030', 'water0031', 'water0032', 'water0033', 'water0034', 'water0035',
+                    'water0036', 'water0037', 'water0038', 'water0039', 'water0040', 'water0041', 'water0042', 'water0043', 'water0044',
+                    'water0045', 'water0046', 'water0047', 'water0048', 'water0049', 'water0050', 'water0051', 'water0052', 'water0053',
+                    'water0054', 'water0055', 'water0056', 'water0057', 'water0058', 'water0059', 'water0060',
+                    'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060',
+                    'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060',
+                    'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060',
+                    'water0092', 'water0093', 'water0094', 'water0095', 'water0096', 'water0097', 'water0098', 'water0099', 'water0100',
+                    'water0101', 'water0102', 'water0103', 'water0104', 'water0105', 'water0106', 'water0107', 'water0108', 'water0109', 'water0110',
+                    'water0111', 'water0112', 'water0113', 'water0114', 'water0115', 'water0116', 'water0117', 'water0118', 'water0119', 'water0120',
+                    'water0121', 'water0121', 'water0122', 'water0123', 'water0124', 'water0125', 'water0126'
+                ] }),
+                frameRate: 24
+            });
 
 
         // Inspirational message frame

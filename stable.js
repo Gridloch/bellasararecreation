@@ -37,13 +37,14 @@ hoofpick_held_sprite = null
 apple_held_sprite = null
 
 // Gets info about the horse from data.json file
+const horse_name = 'peter'
 let horse_data
 const xmlhttp = new XMLHttpRequest();
 xmlhttp.onload = function() {
   const myObj = JSON.parse(this.responseText);
   horse_data = myObj
 }
-xmlhttp.open("GET", "./images/horse/peter/data.json");
+xmlhttp.open("GET", `./images/horse/${horse_name}/data.json`);
 xmlhttp.send();
 
 
@@ -83,7 +84,7 @@ class Stable extends Phaser.Scene
 
     preload ()
     {  
-        // Loading Bar
+        // Display Loading Bar
         this.load.on('progress', function (value) {
             progressBar.clear();
             progressBar.fillStyle(0x35a3d5, 1);
@@ -118,13 +119,13 @@ class Stable extends Phaser.Scene
         this.load.atlas('brush_small', './images/stable/brush_small.png', './images/stable/brush_small.json');
         this.load.atlas('hoofpick', './images/stable/hoofpick.png', './images/stable/hoofpick.json');
 
-        this.load.spine('horse', './images/horse/peter/horse.json', ['./images/horse/peter/horse.atlas'], true);
-        this.load.image('horse_image', './images/horse/peter/image.jpg');
-        this.load.image('inspiration', './images/stable/inspiration.png');
+        this.load.spine('horse', `./images/horse/${horse_name}/horse.json`, [`./images/horse/${horse_name}/horse.atlas`], true);
+        this.load.image('horse_image', `./images/horse/${horse_name}/card_image.jpg`);
         this.load.spritesheet('hooves', './images/stable/hooves.png', { frameWidth: 53, frameHeight: 53 });
 
         this.load.atlas('luck', './images/stable/luck.png', './images/stable/luck.json');
         this.load.atlas('frame', './images/stable/frame.png', './images/stable/frame.json');
+        this.load.image('inspiration', './images/stable/inspiration.png');
 
         this.load.atlas('music_button', './images/stable/music.png', './images/stable/music.json');
         this.load.atlas('help_button', './images/stable/help.png', './images/stable/help.json');
@@ -165,21 +166,23 @@ class Stable extends Phaser.Scene
         const hover2 = this.sound.add('hover2');
         const pickup = this.sound.add('pickup');
 
+
+        // Straw (on floor)
         const straw2 = this.add.sprite(539, 439, 'straw2', 'frame0000').setScale(0.8);
-        this.anims.create({
-            key: 'straw2_pickup',
-            frames: this.anims.generateFrameNumbers('straw2', { frames: [
-                'frame0000', 'frame0001', 'frame0002', 'frame0003', 'frame0004', 'frame0005', 'frame0006'
-            ] }),
-            frameRate: 24
-        });
-        this.anims.create({
-            key: 'straw2_place',
-            frames: this.anims.generateFrameNumbers('straw2', { frames: [
-                'frame0006', 'frame0007', 'frame0008', 'frame0009', 'frame0010', 'frame0011', 'frame0012'
-            ] }),
-            frameRate: 24
-        });
+            this.anims.create({
+                key: 'straw2_pickup',
+                frames: this.anims.generateFrameNumbers('straw2', { frames: [
+                    'frame0000', 'frame0001', 'frame0002', 'frame0003', 'frame0004', 'frame0005', 'frame0006'
+                ] }),
+                frameRate: 24
+            });
+            this.anims.create({
+                key: 'straw2_place',
+                frames: this.anims.generateFrameNumbers('straw2', { frames: [
+                    'frame0006', 'frame0007', 'frame0008', 'frame0009', 'frame0010', 'frame0011', 'frame0012'
+                ] }),
+                frameRate: 24
+            });
         const straw1 = this.add.sprite(351, 420, 'straw1', 'frame0000').setScale(0.65);
             this.anims.create({
                 key: 'straw1_pickup',
@@ -214,7 +217,13 @@ class Stable extends Phaser.Scene
         const straw2_interactive = this.add.graphics().setInteractive(new Phaser.Geom.Rectangle(419, 309, 170, 170), Phaser.Geom.Rectangle.Contains);
         const straw3_interactive = this.add.graphics().setInteractive(new Phaser.Geom.Rectangle(589, 309, 170, 170), Phaser.Geom.Rectangle.Contains);
 
-        // pick up dirty straw and place clean straw
+        /**
+         * Picks up dirty straw when shovel is used on dirty straw and places clean straw when a
+         * full pitchfork is used on an empty section of floor.
+         * @param {sprite} straw The sprite for the straw being interacted with.
+         * @param {string} pickup_anim The name of the animation to play for picking up the straw.
+         * @param {string} place_anim The name of the animation to play for placing the straw.
+         */
         function clean_straw(straw, pickup_anim, place_anim) {
             if (handcurrent === hand.shovel && straw.frame.name === 'frame0000') {
                 straw.play(pickup_anim);
@@ -236,6 +245,8 @@ class Stable extends Phaser.Scene
         straw2_interactive.on('pointerdown', function (pointer) {clean_straw(straw2, 'straw2_pickup', 'straw2_place')});
         straw3_interactive.on('pointerdown', function (pointer) {clean_straw(straw3, 'straw3_pickup', 'straw3_place')});
 
+
+        // Hay loft
         const hay_loft = this.add.sprite(350, 56, 'hay_loft', 'idle').setInteractive().setScale(.88);
             this.anims.create({
                 key: 'get_hay',
@@ -257,7 +268,7 @@ class Stable extends Phaser.Scene
 
 
         // Water Trough
-        trough = this.add.sprite(153, 455, 'trough', 'idle0000').setInteractive({ pixelPerfect: true });
+        trough = this.add.sprite(153, 455, 'trough', 'idle').setInteractive({ pixelPerfect: true });
         const water_sound = this.sound.add('water_sound');
         water_drink = this.sound.add('water_drink');
             this.anims.create({
@@ -293,14 +304,14 @@ class Stable extends Phaser.Scene
             trough.on('pointerover', function (pointer)
             {
                 if (!waterfilled && handcurrent === hand.empty) {
-                    this.setFrame('hover0004');
+                    this.setFrame('hover');
                     hover1.play();
                 }
             });
             trough.on('pointerout', function (pointer)
             {
                 if (!waterfilled && handcurrent === hand.empty) {
-                    this.setFrame('idle0000');
+                    this.setFrame('idle');
                 }
             });
 
@@ -340,9 +351,26 @@ class Stable extends Phaser.Scene
                 }
             });
 
-        // horse
-        horse = this.add.spine(418, 295, 'horse', 'idle').setAngle(90);
-        const horse_interactive = this.add.graphics().setInteractive(new Phaser.Geom.Rectangle(230, 100, 356, 256), Phaser.Geom.Rectangle.Contains);
+        /**
+         * Displays the 'hover' frame of a sprite and plays the hover sound if the hand is empty
+         * @param {sprite} sprite The sprite to change
+         * @param {audio} hover_sound The sound to play on hover
+         */
+        function pointerover(sprite, hover_sound) {
+            if (handcurrent === hand.empty) {
+                sprite.setFrame('hover')
+                hover_sound.play();
+            }
+        }
+        /**
+         * Displays the 'idle' frame of a sprite if the hand is empty
+         * @param {sprite} sprite The sprite to change
+         */
+        function pointerout(sprite) {
+            if (handcurrent === hand.empty) {
+                sprite.setFrame('idle')
+            }
+        }
 
 
         // Pitchfork
@@ -382,12 +410,7 @@ class Stable extends Phaser.Scene
                     hover2.play();
                 }
             });
-            fork.on('pointerout', function (pointer)
-            {
-                if (handcurrent === hand.empty) {
-                    this.setFrame('idle');
-                }
-            });
+            fork.on('pointerout', function (pointer) { pointerout(fork) });
             fork.on('pointerdown', function (pointer)
             {
                 if (handcurrent === hand.empty) {
@@ -433,12 +456,7 @@ class Stable extends Phaser.Scene
                     hover2.play();
                 }
             });
-            shovel.on('pointerout', function (pointer)
-            {
-                if (handcurrent === hand.empty) {
-                    this.setFrame('idle');
-                }
-            });
+            shovel.on('pointerout', function (pointer) { pointerout (shovel) });
             shovel.on('pointerdown', function (pointer)
             {
                 if (handcurrent === hand.empty) {
@@ -454,24 +472,15 @@ class Stable extends Phaser.Scene
 
 
         // Apple Bin
-        const apple_bin = this.add.image(680, 505, 'apple_bin', 'apple_bin').setInteractive();
+        const apple_bin = this.add.image(680, 505, 'apple_bin', 'idle').setInteractive();
         const apple_munch = this.sound.add('apple_munch');
-            apple_bin.on('pointerover', function (pointer)
-            {
-                if (handcurrent === hand.empty) {
-                    apple_bin.setFrame('apple_bin_hover')
-                    hover1.play();
-                }
-            });
-            apple_bin.on('pointerout', function (pointer)
-            {
-                apple_bin.setFrame('apple_bin')
-            });
+            apple_bin.on('pointerover', function (pointer) { pointerover (apple_bin, hover1) });
+            apple_bin.on('pointerout', function (pointer) { apple_bin.setFrame('idle') });
             apple_bin.on('pointerdown', function (pointer)
             {
                 if (handcurrent === hand.empty) {
                     handcurrent = hand.apple;
-                    apple_bin.setFrame('apple_bin')
+                    apple_bin.setFrame('idle')
                     pickup.play();
                 }
             });
@@ -498,13 +507,7 @@ class Stable extends Phaser.Scene
                 ] }),
                 frameRate: 24
             });
-            grain_bin.on('pointerover', function (pointer)
-            {
-                if (handcurrent === hand.empty) {
-                    grain_bin.setFrame('hover')
-                    hover2.play();
-                }
-            });
+            grain_bin.on('pointerover', function (pointer) { pointerover (grain_bin, hover2) });
             grain_bin.on('pointerout', function (pointer)
             {
                 if (handcurrent === hand.grain_scoop) {
@@ -565,80 +568,56 @@ class Stable extends Phaser.Scene
                     brush.play('brush_place')
                 }
             });
-            brush_interactive.on('pointerover', function (pointer)
-            {
-                if (handcurrent === hand.empty) {
-                    brush.setFrame('hover')
-                    hover1.play();
-                }
-            });
-            brush_interactive.on('pointerout', function (pointer)
-            {
-                if (handcurrent === hand.empty) {
-                    brush.setFrame('idle')
-                }
-            });
+            brush_interactive.on('pointerover', function (pointer) { pointerover (brush, hover1)});
+            brush_interactive.on('pointerout', function (pointer) { pointerout (brush)});
 
-            // Small Brush
-            const brush_small = this.add.sprite(746, 64, 'brush_small', 'idle');
-            const brush_small_interactive = this.add.graphics().setInteractive(new Phaser.Geom.Rectangle(753, 54, 40, 28), Phaser.Geom.Rectangle.Contains);
-            const brush_sound_small = this.sound.add('brush_sound_small');
-                this.anims.create({
-                    key: 'brush_pickup_small',
-                    frames: this.anims.generateFrameNumbers('brush_small', { frames: [
-                        'pickup0000', 'pickup0001', 'pickup0002', 'pickup0003', 'pickup0004', 'pickup0005',
-                        'in_use'
-                    ] }),
-                    frameRate: 24
-                });
-                this.anims.create({
-                    key: 'brush_small',
-                    frames: this.anims.generateFrameNumbers('brush_small', { frames: [
-                        'hold',
-                        'brush0000', 'brush0001', 'brush0002', 'brush0003', 'brush0004', 'brush0005', 'brush0006', 'brush0007', 'brush0008', 'brush0009', 'brush0010',
-                        'hold'
-                    ] }),
-                    frameRate: 24
-                });
-                this.anims.create({
-                    key: 'brush_place_small',
-                    frames: this.anims.generateFrameNumbers('brush_small', { frames: [
-                        'place0000', 'place0001', 'place0002', 'place0003', 'place0004', 'place0005',
-                        'idle'
-                    ] }),
-                    frameRate: 24
-                });
-                brush_small_interactive.on('pointerdown', function (pointer)
-                {
-                    if (handcurrent === hand.empty) {
-                        handcurrent = hand.brush_small;
-                        brush_small.play('brush_pickup_small')
-                        pickup.play();
-                    }
-                    else if (handcurrent === hand.brush_small) {
-                        handcurrent = hand.empty;
-                        brush_small.play('brush_place_small')
-                    }
-                });
-                brush_small_interactive.on('pointerover', function (pointer)
-                {
-                    if (handcurrent === hand.empty) {
-                        brush_small.setFrame('hover')
-                        hover1.play();
-                    }
-                });
-                brush_small_interactive.on('pointerout', function (pointer)
-                {
-                    if (handcurrent === hand.empty) {
-                        brush_small.setFrame('idle')
-                    }
-                });
+        // Small Brush
+        const brush_small = this.add.sprite(746, 64, 'brush_small', 'idle');
+        const brush_small_interactive = this.add.graphics().setInteractive(new Phaser.Geom.Rectangle(753, 54, 40, 28), Phaser.Geom.Rectangle.Contains);
+        const brush_sound_small = this.sound.add('brush_sound_small');
+            this.anims.create({
+                key: 'brush_pickup_small',
+                frames: this.anims.generateFrameNumbers('brush_small', { frames: [
+                    'pickup0000', 'pickup0001', 'pickup0002', 'pickup0003', 'pickup0004', 'pickup0005',
+                    'in_use'
+                ] }),
+                frameRate: 24
+            });
+            this.anims.create({
+                key: 'brush_small',
+                frames: this.anims.generateFrameNumbers('brush_small', { frames: [
+                    'hold',
+                    'brush0000', 'brush0001', 'brush0002', 'brush0003', 'brush0004', 'brush0005', 'brush0006', 'brush0007', 'brush0008', 'brush0009', 'brush0010',
+                    'hold'
+                ] }),
+                frameRate: 24
+            });
+            this.anims.create({
+                key: 'brush_place_small',
+                frames: this.anims.generateFrameNumbers('brush_small', { frames: [
+                    'place0000', 'place0001', 'place0002', 'place0003', 'place0004', 'place0005',
+                    'idle'
+                ] }),
+                frameRate: 24
+            });
+            brush_small_interactive.on('pointerdown', function (pointer)
+            {
+                if (handcurrent === hand.empty) {
+                    handcurrent = hand.brush_small;
+                    brush_small.play('brush_pickup_small')
+                    pickup.play();
+                }
+                else if (handcurrent === hand.brush_small) {
+                    handcurrent = hand.empty;
+                    brush_small.play('brush_place_small')
+                }
+            });
+            brush_small_interactive.on('pointerover', function (pointer){ pointerover (brush_small, hover1) });
+            brush_small_interactive.on('pointerout', function (pointer) { pointerout (brush_small) });
 
         // Hoofpick
         const hoofpick = this.add.sprite(823, 80, 'hoofpick', 'idle').setScale(0.75);
         const hoofpick_interactive = this.add.graphics().setInteractive(new Phaser.Geom.Rectangle(801, 60, 26, 75), Phaser.Geom.Rectangle.Contains);
-        const hooves1 = this.add.sprite(316, 445, 'hooves', 0).setInteractive().setScale(.84).setVisible(false);
-        const hooves2 = this.add.sprite(531, 445, 'hooves', 0).setInteractive().setScale(.84).setVisible(false);
         hoofpick1 = this.sound.add('hoofpick1');
         hoofpick2 = this.sound.add('hoofpick2');
             this.anims.create({
@@ -671,20 +650,60 @@ class Stable extends Phaser.Scene
                 hooves1.setVisible(handcurrent === hand.hoofpick)
                 hooves2.setVisible(handcurrent === hand.hoofpick)
             });
-            hoofpick_interactive.on('pointerover', function (pointer)
+            hoofpick_interactive.on('pointerover', function (pointer) { pointerover (hoofpick, hover1) });
+            hoofpick_interactive.on('pointerout', function (pointer) { pointerout (hoofpick)});
+
+
+        // Horse
+        horse = this.add.spine(418, 295, 'horse', 'idle').setAngle(90);
+        const horse_interactive = this.add.graphics().setInteractive(new Phaser.Geom.Rectangle(230, 100, 356, 256), Phaser.Geom.Rectangle.Contains);
+            // interact with horse
+            horse_interactive.on('pointerdown', function (pointer)
             {
-                if (handcurrent === hand.empty) {
-                    hoofpick.setFrame('hover')
-                    hover1.play();
+                if (handcurrent === hand.apple) {
+                    handcurrent = hand.empty;
+                    apple_munch.play();
+                }
+                else if (handcurrent === hand.brush) {
+                    brush_held_sprite.play('brush')
+                    brush_sound.play();
+                    if (brushlevel < 2) {
+                        brushlevel += 1;
+                        updateBar(cleanlinessBar, 1/3)
+                        updateBar(happinessBar, 1/6)
+                    }
+                    else if (brushlevel === 2) {
+                        brushlevel += 1;
+                        horse.play('rear')
+                        updateBar(cleanlinessBar, 1/3)
+                        updateBar(happinessBar, 1/6)
+                    }
+                }
+                else if (handcurrent === hand.brush_small) {
+                    brush_small_held_sprite.play('brush_small')
+                    brush_sound_small.play();
+                    if (brushlevel < 2) {
+                        brushlevel += 1;
+                        updateBar(cleanlinessBar, 1/3)
+                        updateBar(happinessBar, 1/6)
+                    }
+                    else if (brushlevel === 2) {
+                        brushlevel += 1;
+                        horse.play('rear');
+                        updateBar(cleanlinessBar, 1/3)
+                        updateBar(happinessBar, 1/6)
+                    }
                 }
             });
-            hoofpick_interactive.on('pointerout', function (pointer)
-            {
-                if (handcurrent === hand.empty) {
-                    hoofpick.setFrame('idle')
-                }
-            });
-            // clean hooves
+
+        // Hoof highlight circles
+        const hooves1 = this.add.sprite(316, 445, 'hooves', 0).setInteractive().setScale(.84).setVisible(false);
+        const hooves2 = this.add.sprite(531, 445, 'hooves', 0).setInteractive().setScale(.84).setVisible(false);
+            /**
+             * Updates the hoofpick highlight circle to show the next stage, plays the hoofpick use animation
+             * and updates the hhorse stat bars if the hooves (at the highlight sprite) need to be cleaned.
+             * @param {sprite} sprite The hoof highlight sprite being interacted with
+             */
             function clean_hooves(sprite) {
                 if (sprite.frame.name <2 && handcurrent === hand.hoofpick) {
                     sprite.setFrame(sprite.frame.name + 1)
@@ -696,47 +715,8 @@ class Stable extends Phaser.Scene
             hooves1.on('pointerdown', function (pointer) { clean_hooves(hooves1) });
             hooves2.on('pointerdown', function (pointer) { clean_hooves(hooves2) });
 
-        // interact with horse
-        horse_interactive.on('pointerdown', function (pointer)
-        {
-            if (handcurrent === hand.apple) {
-                handcurrent = hand.empty;
-                apple_munch.play();
-            }
-            else if (handcurrent === hand.brush) {
-                brush_held_sprite.play('brush')
-                brush_sound.play();
-                if (brushlevel < 2) {
-                    brushlevel += 1;
-                    updateBar(cleanlinessBar, 1/3)
-                    updateBar(happinessBar, 1/6)
-                }
-                else if (brushlevel === 2) {
-                    brushlevel += 1;
-                    horse.play('rear')
-                    updateBar(cleanlinessBar, 1/3)
-                    updateBar(happinessBar, 1/6)
-                }
-            }
-            else if (handcurrent === hand.brush_small) {
-                brush_small_held_sprite.play('brush_small')
-                brush_sound_small.play();
-                if (brushlevel < 2) {
-                    brushlevel += 1;
-                    updateBar(cleanlinessBar, 1/3)
-                    updateBar(happinessBar, 1/6)
-                }
-                else if (brushlevel === 2) {
-                    brushlevel += 1;
-                    horse.play('rear');
-                    updateBar(cleanlinessBar, 1/3)
-                    updateBar(happinessBar, 1/6)
-                }
-            }
-        });
 
-
-        // Inspirational message
+        // Inspirational message frame
         const frame = this.add.sprite(516, 118, 'frame', 'idle').setScale(.93);
         this.add.image(517, 126, 'horse_image').setScale(.32);
         const inspiration_hover = this.sound.add('inspiration_hover');
@@ -746,57 +726,56 @@ class Stable extends Phaser.Scene
                 frame.setFrame('hover');
                 inspiration_hover.play()
             });
-            frame_interactive.on('pointerout', function (pointer)
-            {
-                frame.setFrame('idle')
-            });
+            frame_interactive.on('pointerout', function (pointer) { frame.setFrame('idle') });
 
 
         // Lucky Horseshoe
         const luck = this.add.sprite(453, 268, 'luck', 'idle').setInteractive({ pixelPerfect: true });
         const luck_sound = this.sound.add('luck_sound');
-        this.anims.create({
-            key: 'good_luck',
-            frames: this.anims.generateFrameNumbers('luck', { frames: [
-                'idle',
-                'good_luck0000', 'good_luck0001', 'good_luck0002', 'good_luck0003', 'good_luck0004', 'good_luck0005', 'good_luck0006', 'good_luck0007', 'good_luck0008', 'good_luck0009',
-                'good_luck0010', 'good_luck0011', 'good_luck0012', 'good_luck0013', 'good_luck0014', 'good_luck0015', 'good_luck0016', 'good_luck0017', 'good_luck0018', 'good_luck0019',
-                'good_luck0020', 'good_luck0021', 'good_luck0022', 'good_luck0023', 'good_luck0024', 'good_luck0025', 'good_luck0026', 'good_luck0027', 'good_luck0028', 'good_luck0029',
-                'good_luck0030', 'good_luck0031', 'good_luck0032', 'good_luck0033', 'good_luck0034', 'good_luck0035', 'good_luck0036', 'good_luck0037', 'good_luck0038', 'good_luck0039',
-                'good_luck0040', 'good_luck0041', 'good_luck0042',
-                'idle'
-            ] }),
-            frameRate: 24
-        });
-        luck.on('pointerdown', function (pointer)
-        {
-            if (luck.frame.name === 'hover') {
-                luck.play('good_luck')
-                luck_sound.play()
-            }
-        });
-        luck.on('pointerover', function (pointer)
-        {
-            if (luck.frame.name === 'idle') {
-                luck.setFrame('hover')
-                hover1.play();
-            }
-        });
-        luck.on('pointerout', function (pointer)
-        {
-            if (luck.frame.name === 'hover') {
-                luck.setFrame('idle')
-            }
-        });
+            this.anims.create({
+                key: 'good_luck',
+                frames: this.anims.generateFrameNumbers('luck', { frames: [
+                    'idle',
+                    'good_luck0000', 'good_luck0001', 'good_luck0002', 'good_luck0003', 'good_luck0004', 'good_luck0005', 'good_luck0006', 'good_luck0007', 'good_luck0008', 'good_luck0009',
+                    'good_luck0010', 'good_luck0011', 'good_luck0012', 'good_luck0013', 'good_luck0014', 'good_luck0015', 'good_luck0016', 'good_luck0017', 'good_luck0018', 'good_luck0019',
+                    'good_luck0020', 'good_luck0021', 'good_luck0022', 'good_luck0023', 'good_luck0024', 'good_luck0025', 'good_luck0026', 'good_luck0027', 'good_luck0028', 'good_luck0029',
+                    'good_luck0030', 'good_luck0031', 'good_luck0032', 'good_luck0033', 'good_luck0034', 'good_luck0035', 'good_luck0036', 'good_luck0037', 'good_luck0038', 'good_luck0039',
+                    'good_luck0040', 'good_luck0041', 'good_luck0042',
+                    'idle'
+                ] }),
+                frameRate: 24
+            });
+            luck.on('pointerdown', function (pointer)
+            {
+                if (luck.frame.name === 'hover') {
+                    luck.play('good_luck')
+                    luck_sound.play()
+                }
+            });
+            luck.on('pointerover', function (pointer)
+            {
+                if (luck.frame.name === 'idle') {
+                    luck.setFrame('hover')
+                    hover1.play();
+                }
+            });
+            luck.on('pointerout', function (pointer)
+            {
+                if (luck.frame.name === 'hover') {
+                    luck.setFrame('idle')
+                }
+            });
 
 
+        // Inspirational message
         inspiration = this.add.image(430, 150, 'inspiration').setScale(.93).setVisible(false);
-
         inspiration_message = this.add.text(431, 133, 'Static Text Object', { fontFamily: 'Arial', fontSize: 56, color: '#ffffff', align: 'center' }).setVisible(false);
         inspiration_message.text = horse_data.message;
         inspiration_message.setPosition(431-inspiration_message.width/2, 133-inspiration_message.height/2)
 
-        // Stable foreground and UI
+
+
+        // ---------- Stable foreground and UI ---------- //
         this.add.image(444, 261, 'stable_fg');
 
         // Horse name
@@ -805,89 +784,83 @@ class Stable extends Phaser.Scene
         horse_name.setPosition(444-horse_name.width/2, 478-horse_name.height/2)
 
         // Buttons
+        // music button
         const music_button = this.add.sprite(867, 498, 'music_button', 'music_on').setInteractive({ pixelPerfect: true });
+            music_button.on('pointerdown', function (pointer)
+            {
+                if (play_music) {
+                    backgroundMusic.stop()
+                    this.setFrame('music_off_hover')
+                }
+                else {
+                    backgroundMusic.play()
+                    this.setFrame('music_on_hover')
+                }
+                play_music = !play_music
+            });
+            music_button.on('pointerover', function (pointer) { this.setFrame(`music_${play_music ? 'on' : 'off'}_hover`) });
+            music_button.on('pointerout', function (pointer) { this.setFrame(`music_${play_music ? 'on' : 'off'}`) });
+        // help button
         const help_button = this.add.sprite(444, 261, 'help_button', 'idle').setInteractive(this.input.makePixelPerfect(150));
-        // Music button
-        music_button.on('pointerdown', function (pointer)
-        {
-            if (play_music) {
-                backgroundMusic.stop()
-                this.setFrame('music_off_hover')
-            }
-            else {
-                backgroundMusic.play()
-                this.setFrame('music_on_hover')
-            }
-            play_music = !play_music
-        });
-        music_button.on('pointerover', function (pointer)
-        {
-            this.setFrame(`music_${play_music ? 'on' : 'off'}_hover`)
-        });
-        music_button.on('pointerout', function (pointer)
-        {
-            this.setFrame(`music_${play_music ? 'on' : 'off'}`)
-        });
-        // Help Button
-        help_button.on('pointerover', function (pointer)
-        {
-            this.setFrame('help')
-        });
-        help_button.on('pointerout', function (pointer)
-        {
-            this.setFrame('idle')
-        });
+            help_button.on('pointerover', function (pointer) { this.setFrame('help') });
+            help_button.on('pointerout', function (pointer) { this.setFrame('idle') });
 
-        // progress bars
+
+        // Progress bars
         const bar = 13
         // hunger
         const hunger_level = 1.5
         const hunger_pos = 353 - 32 + (hunger_level*bar/2)
         const hunger_width = 1 + hunger_level*bar
         this.add.rectangle(353, 505, 66, 2, 0x5f2041);
-        const hungerBar = {
-            x: 353,
-            leftShine: this.add.rectangle(hunger_pos - hunger_width/2 - 1, 510, 3, 10, 0xfabad0),
-            rightShade: this.add.rectangle(hunger_pos + hunger_width/2 + 1, 510, 3, 10, 0x983657),
-            topShine: this.add.rectangle(hunger_pos, 506, hunger_width, 3, 0xfabad0),
-            bottomShade: this.add.rectangle(hunger_pos, 514, hunger_width, 2, 0x983657),
-            progress: this.add.rectangle(hunger_pos, 510, hunger_width, 7, 0xff6699),
-            level: hunger_level
-        }
-        this.add.image(351, 509, 'hunger_scale');
+            const hungerBar = {
+                x: 353,
+                leftShine: this.add.rectangle(hunger_pos - hunger_width/2 - 1, 510, 3, 10, 0xfabad0),
+                rightShade: this.add.rectangle(hunger_pos + hunger_width/2 + 1, 510, 3, 10, 0x983657),
+                topShine: this.add.rectangle(hunger_pos, 506, hunger_width, 3, 0xfabad0),
+                bottomShade: this.add.rectangle(hunger_pos, 514, hunger_width, 2, 0x983657),
+                progress: this.add.rectangle(hunger_pos, 510, hunger_width, 7, 0xff6699),
+                level: hunger_level
+            }
+            this.add.image(351, 509, 'hunger_scale');
 
         // cleanliness
         const cleanliness_level = 1
         const cleanliness_pos = 446 - 32 + (cleanliness_level*bar/2)
         const cleanliness_width = 1 + cleanliness_level*bar
         this.add.rectangle(446, 505, 66, 2, 0x123625);
-        const cleanlinessBar = {
-            x: 446,
-            leftShine: this.add.rectangle(cleanliness_pos - cleanliness_width/2 - 1, 510, 3, 10, 0xb2f3b1),
-            rightShade: this.add.rectangle(cleanliness_pos + cleanliness_width/2 + 1, 510, 3, 10, 0x1d7429),
-            topShine: this.add.rectangle(cleanliness_pos, 506, cleanliness_width, 3, 0xb2f3b1),
-            bottomShade: this.add.rectangle(cleanliness_pos, 514, cleanliness_width, 2, 0x1d7429),
-            progress: this.add.rectangle(cleanliness_pos, 510, cleanliness_width, 7, 0x2fce30),
-            level: cleanliness_level
-        }
-        this.add.image(444, 509, 'cleanliness_scale');
+            const cleanlinessBar = {
+                x: 446,
+                leftShine: this.add.rectangle(cleanliness_pos - cleanliness_width/2 - 1, 510, 3, 10, 0xb2f3b1),
+                rightShade: this.add.rectangle(cleanliness_pos + cleanliness_width/2 + 1, 510, 3, 10, 0x1d7429),
+                topShine: this.add.rectangle(cleanliness_pos, 506, cleanliness_width, 3, 0xb2f3b1),
+                bottomShade: this.add.rectangle(cleanliness_pos, 514, cleanliness_width, 2, 0x1d7429),
+                progress: this.add.rectangle(cleanliness_pos, 510, cleanliness_width, 7, 0x2fce30),
+                level: cleanliness_level
+            }
+            this.add.image(444, 509, 'cleanliness_scale');
 
         // happiness
         const happiness_level = 1.75
         const happiness_pos = 542 - 32 + (happiness_level*bar/2)
         const happiness_width = 1 + happiness_level*bar
         this.add.rectangle(542, 505, 66, 2, 0x002353);
-        const happinessBar = {
-            x: 542,
-            leftShine: this.add.rectangle(happiness_pos - happiness_width/2 - 1, 510, 3, 10, 0xb4e2fb),
-            rightShade: this.add.rectangle(happiness_pos + happiness_width/2 + 1, 510, 3, 10, 0x004673),
-            topShine: this.add.rectangle(happiness_pos, 506, happiness_width, 3, 0xb4e2fb),
-            bottomShade: this.add.rectangle(happiness_pos, 514, happiness_width, 2, 0x004673),
-            progress: this.add.rectangle(happiness_pos, 510, happiness_width, 7, 0x0099ff),
-            level: happiness_level
-        }
-        this.add.image(540, 509, 'happiness_scale');
+            const happinessBar = {
+                x: 542,
+                leftShine: this.add.rectangle(happiness_pos - happiness_width/2 - 1, 510, 3, 10, 0xb4e2fb),
+                rightShade: this.add.rectangle(happiness_pos + happiness_width/2 + 1, 510, 3, 10, 0x004673),
+                topShine: this.add.rectangle(happiness_pos, 506, happiness_width, 3, 0xb4e2fb),
+                bottomShade: this.add.rectangle(happiness_pos, 514, happiness_width, 2, 0x004673),
+                progress: this.add.rectangle(happiness_pos, 510, happiness_width, 7, 0x0099ff),
+                level: happiness_level
+            }
+            this.add.image(540, 509, 'happiness_scale');
 
+        /**
+         * Adds additional progress to the provided stat bar.
+         * @param {*} progressBar The bar to update
+         * @param {number} progressAdd The amount of progress to add (1 = 1 mini bar = 1/5 of full bar)
+         */
         function updateBar(progressBar, progressAdd) {
             progressBar.level += progressAdd
 
@@ -904,7 +877,7 @@ class Stable extends Phaser.Scene
         }
 
 
-        // held items
+        // ---------- Held items ---------- //
         fork_held_sprite = this.add.sprite(735, 240, 'fork').setVisible(false);
         shovel_held_sprite = this.add.sprite(759, 272, 'shovel').setVisible(false);
         grain_held_sprite = this.add.image(759, 272, 'grain_scoop').setVisible(false);

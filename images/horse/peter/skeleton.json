@@ -1,11 +1,11 @@
 {
 "skeleton": {
-	"hash": "6a83HxcpFf0",
+	"hash": "CUni/wKfOoI",
 	"spine": "4.1.24",
-	"x": -434.32,
-	"y": -285.36,
-	"width": 1148,
-	"height": 719,
+	"x": -241.59,
+	"y": -164.97,
+	"width": 536.65,
+	"height": 332.03,
 	"images": "./Peter/Parts/",
 	"audio": "C:/Users/antsg/OneDrive/Documents/Bella Sara Shennanigans/stables game/images/horse/peter"
 },
@@ -30,9 +30,11 @@
 	{ "name": "Mane", "parent": "Neck", "length": 120, "rotation": 9.79, "x": 5.14, "y": -30.85 },
 	{ "name": "Ear", "parent": "Head", "length": 15, "rotation": -127.71, "x": -12.33, "y": -15.42 },
 	{ "name": "Jaw", "parent": "Head", "length": 15, "x": 48.13, "y": 8.84 },
-	{ "name": "Apple", "parent": "Head", "length": 15, "x": 47.75, "y": 3.35 }
+	{ "name": "Apple", "parent": "Head", "length": 15, "x": 47.75, "y": 3.35 },
+	{ "name": "Shadow", "parent": "root", "x": 40 }
 ],
 "slots": [
+	{ "name": "Shadow1", "bone": "Shadow", "attachment": "Shadow1" },
 	{ "name": "Tail", "bone": "Tail", "attachment": "Tail" },
 	{ "name": "LowerHR", "bone": "LowerHindR", "attachment": "LowerHR" },
 	{ "name": "UpperHR", "bone": "HindLegR", "attachment": "UpperHR" },
@@ -122,6 +124,9 @@
 			},
 			"Neck": {
 				"Neck": { "x": 45.29, "y": -6.92, "rotation": -134.84, "width": 155, "height": 123 }
+			},
+			"Shadow1": {
+				"Shadow1": { "x": 171.03, "y": 21.35, "rotation": 90, "width": 410, "height": 38 }
 			},
 			"Tail": {
 				"Tail": { "x": 83.6, "y": 10.21, "rotation": 65.46, "width": 106, "height": 180 }

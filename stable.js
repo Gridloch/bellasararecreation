@@ -24,7 +24,9 @@ const horse_states = {
     busy: 'busy',
     idle: 'idle',
     drink: 'drink',
-    rear: 'rear'
+    rear: 'rear',
+    eating_food: 'eat_food',
+    eating_apple: 'eat_apple'
 }
 horse_state = horse_states.idle
 
@@ -35,6 +37,7 @@ water_drink = null
 rear_sound = null
 food_trough = null
 oats_eat = null
+apple_munch = null
 hoofpick1 = null
 hoofpick2 = null
 inspiration = null
@@ -364,6 +367,7 @@ class Stable extends Phaser.Scene
                     grain_bin.play('place');
                     this.play(foodfilled ? 'fill_again' : 'fill')
                     grain_sound.play()
+                    horse_state = horse_states.eating_food
                     if (!foodfilled) {
                         updateBar(hungerBar, 2)
                         updateBar(happinessBar, 1.05)
@@ -494,7 +498,7 @@ class Stable extends Phaser.Scene
 
         // Apple Bin
         const apple_bin = this.add.image(680, 505, 'apple_bin', 'idle').setInteractive();
-        const apple_munch = this.sound.add('apple_munch');
+        apple_munch = this.sound.add('apple_munch');
             apple_bin.on('pointerover', function (pointer) { pointerover (apple_bin, hover1) });
             apple_bin.on('pointerout', function (pointer) { apple_bin.setFrame('idle') });
             apple_bin.on('pointerdown', function (pointer)
@@ -684,7 +688,7 @@ class Stable extends Phaser.Scene
             {
                 if (handcurrent === hand.apple) {
                     handcurrent = hand.empty;
-                    apple_munch.play();
+                    horse_state = horse_states.eating_apple
                 }
                 else if (handcurrent === hand.brush) {
                     brush_held_sprite.play('brush')
@@ -715,7 +719,7 @@ class Stable extends Phaser.Scene
                     updateBar(happinessBar, 1/6)
                 }
             }
-            
+
 
         // Hoof highlight circles
         const hooves1 = this.add.sprite(316, 445, 'hooves', 0).setInteractive().setScale(.84).setVisible(false);
@@ -1024,9 +1028,6 @@ class Stable extends Phaser.Scene
         }
 
 
-        if ((food_trough.anims.getName() === 'fill' || food_trough.anims.getName() === 'fill_again') && food_trough.anims.getProgress() === 0) {
-            this.time.delayedCall(1000, function () {oats_eat.play()});
-        }
         if (hoofpick_held_sprite.anims.getName() === 'hoofpick_use' && hoofpick_held_sprite.anims.getProgress() === 0) {
             this.time.delayedCall(80, function () {hoofpick1.play()});
             this.time.delayedCall(380, function () {hoofpick2.play()});
@@ -1046,9 +1047,10 @@ class Stable extends Phaser.Scene
             horse_busy = false
             console.log(horse_state)
         }
+
         function randomIntFromInterval(min, max) { // min and max included 
             return Math.floor(Math.random() * (max - min + 1) + min)
-          }
+        }
 
         if (horse_busy === false && horse_state === horse_states.rear) {
             start_animation()
@@ -1058,7 +1060,7 @@ class Stable extends Phaser.Scene
                 end_animation()
              });
         } 
-        else if  (horse_busy === false && horse_state === horse_states.drink) {
+        else if (horse_busy === false && horse_state === horse_states.drink) {
             start_animation()
             this.time.delayedCall(2800, function () {
                 trough_mask.setVisible(true)
@@ -1076,11 +1078,27 @@ class Stable extends Phaser.Scene
                 end_animation()
             });
         }
+        else if (horse_busy === false && horse_state === horse_states.eating_food) {
+            start_animation()
+            this.time.delayedCall(800, function () {horse.play('eat_food')});
+            this.time.delayedCall(1000, function () {oats_eat.play()});
+            this.time.delayedCall(3000, function () { 
+                end_animation()
+            });
+        }
+        else if (horse_busy === false && horse_state === horse_states.eating_apple) {
+            start_animation()
+            apple_munch.play();
+            horse.play('eat_apple')
+            this.time.delayedCall(3000, function () { 
+                end_animation()
+            });
+        }
         else if (horse_state === horse_states.idle && !horse_busy) {
             horse_state = horse_states.busy
-            this.time.delayedCall(randomIntFromInterval(5000, 6000), function () {
+            this.time.delayedCall(randomIntFromInterval(3000, 5000), function () {
                 if ( horse_state === horse_states.busy && !horse_busy) {
-                    const horse_idle_animations = ['idle', 'ear_twitch', 'nod', 'tail_swish']
+                    const horse_idle_animations = ['idle', 'ear_twitch', 'flank_twitch', 'head_shake', 'head_turn', 'nod', 'paw_ground', 'shift_weight', 'tail_swish']
                     horse.play(horse_idle_animations[Math.floor(Math.random()*horse_idle_animations.length)]);
                     if (horse_state === horse_states.busy) {
                         horse_state = horse_states.idle; 

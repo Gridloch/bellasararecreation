@@ -19,9 +19,20 @@ strawclean = false
 play_inspiration = true
 can_play_inspiration = false
 
+horse_busy = false
+const horse_states = {
+    busy: 'busy',
+    idle: 'idle',
+    drink: 'drink',
+    rear: 'rear'
+}
+horse_state = horse_states.idle
+
 horse = null
 trough = null
+trough_mask = null
 water_drink = null
+rear_sound = null
 food_trough = null
 oats_eat = null
 hoofpick1 = null
@@ -284,9 +295,14 @@ class Stable extends Phaser.Scene
                     'water0027', 'water0028', 'water0029', 'water0030', 'water0031', 'water0032', 'water0033', 'water0034', 'water0035',
                     'water0036', 'water0037', 'water0038', 'water0039', 'water0040', 'water0041', 'water0042', 'water0043', 'water0044',
                     'water0045', 'water0046', 'water0047', 'water0048', 'water0049', 'water0050', 'water0051', 'water0052', 'water0053',
-                    'water0054', 'water0055', 'water0056', 'water0057', 'water0058', 'water0059', 'water0060',
-                    'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060',
-                    'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060',
+                    'water0054', 'water0055', 'water0056', 'water0057', 'water0058', 'water0059', 'water0060'
+                ] }),
+                frameRate: 24
+            });
+            this.anims.create({
+                key: 'water_trough_drink',
+                frames: this.anims.generateFrameNumbers('trough', { frames: [
+                    'water0060', 'water0060', 'water0060',
                     'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060',
                     'water0092', 'water0093', 'water0094', 'water0095', 'water0096', 'water0097', 'water0098', 'water0099', 'water0100',
                     'water0101', 'water0102', 'water0103', 'water0104', 'water0105', 'water0106', 'water0107', 'water0108', 'water0109', 'water0110',
@@ -302,6 +318,7 @@ class Stable extends Phaser.Scene
                     this.play('fill_water');
                     trough_mask.play('mask_fill_water');
                     water_sound.play()
+                    horse_state = horse_states.drink
                     updateBar(hungerBar, 1.5)
                 }
             });
@@ -660,7 +677,7 @@ class Stable extends Phaser.Scene
 
         // Horse
         horse = this.add.spine(418, 295, 'horse', 'idle').setAngle(90);
-        const rear_sound = this.sound.add('rear_sound');
+        rear_sound = this.sound.add('rear_sound');
         const horse_interactive = this.add.graphics().setInteractive(new Phaser.Geom.Rectangle(230, 100, 356, 256), Phaser.Geom.Rectangle.Contains);
             // interact with horse
             horse_interactive.on('pointerdown', function (pointer)
@@ -672,36 +689,33 @@ class Stable extends Phaser.Scene
                 else if (handcurrent === hand.brush) {
                     brush_held_sprite.play('brush')
                     brush_sound.play();
-                    if (brushlevel < 2) {
-                        brushlevel += 1;
-                        updateBar(cleanlinessBar, 1/3)
-                        updateBar(happinessBar, 1/6)
-                    }
-                    else if (brushlevel === 2) {
-                        brushlevel += 1;
-                        rear_sound.play();
-                        horse.play('rear')
-                        updateBar(cleanlinessBar, 1/3)
-                        updateBar(happinessBar, 1/6)
-                    }
+                    horse_brushed();
                 }
                 else if (handcurrent === hand.brush_small) {
                     brush_small_held_sprite.play('brush_small')
                     brush_sound_small.play();
-                    if (brushlevel < 2) {
-                        brushlevel += 1;
-                        updateBar(cleanlinessBar, 1/3)
-                        updateBar(happinessBar, 1/6)
-                    }
-                    else if (brushlevel === 2) {
-                        brushlevel += 1;
-                        rear_sound.play();
-                        horse.play('rear');
-                        updateBar(cleanlinessBar, 1/3)
-                        updateBar(happinessBar, 1/6)
-                    }
+                    horse_brushed()
                 }
             });
+
+            /**
+             * Updates the horse stats, increments the count of how many times the horse has been brushed
+             * and makes the horse rear when clean
+             */
+            function horse_brushed() {
+                if (brushlevel < 2) {
+                    brushlevel += 1;
+                    updateBar(cleanlinessBar, 1/3)
+                    updateBar(happinessBar, 1/6)
+                }
+                else if (brushlevel === 2) {
+                    brushlevel += 1;
+                    horse_state = horse_states.rear
+                    updateBar(cleanlinessBar, 1/3)
+                    updateBar(happinessBar, 1/6)
+                }
+            }
+            
 
         // Hoof highlight circles
         const hooves1 = this.add.sprite(316, 445, 'hooves', 0).setInteractive().setScale(.84).setVisible(false);
@@ -723,7 +737,7 @@ class Stable extends Phaser.Scene
             hooves2.on('pointerdown', function (pointer) { clean_hooves(hooves2) });
 
         
-        const trough_mask = this.add.sprite(153, 455, 'trough_mask', 'water0000');
+        trough_mask = this.add.sprite(153, 455, 'trough_mask', 'water0000').setVisible(false);
             this.anims.create({
                 key: 'mask_fill_water',
                 frames: this.anims.generateFrameNumbers('trough_mask', { frames: [
@@ -734,9 +748,14 @@ class Stable extends Phaser.Scene
                     'water0027', 'water0028', 'water0029', 'water0030', 'water0031', 'water0032', 'water0033', 'water0034', 'water0035',
                     'water0036', 'water0037', 'water0038', 'water0039', 'water0040', 'water0041', 'water0042', 'water0043', 'water0044',
                     'water0045', 'water0046', 'water0047', 'water0048', 'water0049', 'water0050', 'water0051', 'water0052', 'water0053',
-                    'water0054', 'water0055', 'water0056', 'water0057', 'water0058', 'water0059', 'water0060',
-                    'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060',
-                    'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060',
+                    'water0054', 'water0055', 'water0056', 'water0057', 'water0058', 'water0059', 'water0060'
+                ] }),
+                frameRate: 24
+            });
+            this.anims.create({
+                key: 'mask_water_trough_drink',
+                frames: this.anims.generateFrameNumbers('trough_mask', { frames: [
+                    'water0060', 'water0060', 'water0060',
                     'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060',
                     'water0092', 'water0093', 'water0094', 'water0095', 'water0096', 'water0097', 'water0098', 'water0099', 'water0100',
                     'water0101', 'water0102', 'water0103', 'water0104', 'water0105', 'water0106', 'water0107', 'water0108', 'water0109', 'water0110',
@@ -1004,26 +1023,70 @@ class Stable extends Phaser.Scene
             clearCursor()
         }
 
-        horse.on('complete', (spine) => {
-            this.time.delayedCall(12000, function () {
-                horse.play('idle');
-            });
-        });
 
-        if (trough.anims.getName() === 'fill_water' && trough.anims.getProgress() === 0) {
-            this.time.delayedCall(2800, function () {
-                horse.play('drink')
-            });
-            this.time.delayedCall(3330, function () {
-                water_drink.play()
-            });
-        }
         if ((food_trough.anims.getName() === 'fill' || food_trough.anims.getName() === 'fill_again') && food_trough.anims.getProgress() === 0) {
             this.time.delayedCall(1000, function () {oats_eat.play()});
         }
         if (hoofpick_held_sprite.anims.getName() === 'hoofpick_use' && hoofpick_held_sprite.anims.getProgress() === 0) {
             this.time.delayedCall(80, function () {hoofpick1.play()});
             this.time.delayedCall(380, function () {hoofpick2.play()});
+        }
+
+
+        function start_animation() {
+            horse_state = horse_states.busy
+            horse_busy = true
+        }
+        function end_animation() {
+            // only change state if no other animation is queued
+            if (horse_state === horse_states.busy) {
+                horse_state = horse_states.idle; 
+            }
+            // allow next animation to play
+            horse_busy = false
+            console.log(horse_state)
+        }
+        function randomIntFromInterval(min, max) { // min and max included 
+            return Math.floor(Math.random() * (max - min + 1) + min)
+          }
+
+        if (horse_busy === false && horse_state === horse_states.rear) {
+            start_animation()
+            rear_sound.play();
+            horse.play('rear');
+            this.time.delayedCall(3000, function () { 
+                end_animation()
+             });
+        } 
+        else if  (horse_busy === false && horse_state === horse_states.drink) {
+            start_animation()
+            this.time.delayedCall(2800, function () {
+                trough_mask.setVisible(true)
+                trough.play('water_trough_drink')
+                trough_mask.play('mask_water_trough_drink')
+                horse.play('drink')
+            });
+            this.time.delayedCall(3330, function () {
+                water_drink.play()
+            });
+            this.time.delayedCall(5000, function () {
+                trough_mask.setVisible(false)
+            });
+            this.time.delayedCall(6000, function () { 
+                end_animation()
+            });
+        }
+        else if (horse_state === horse_states.idle && !horse_busy) {
+            horse_state = horse_states.busy
+            this.time.delayedCall(randomIntFromInterval(5000, 6000), function () {
+                if ( horse_state === horse_states.busy && !horse_busy) {
+                    const horse_idle_animations = ['idle', 'ear_twitch', 'nod', 'tail_swish']
+                    horse.play(horse_idle_animations[Math.floor(Math.random()*horse_idle_animations.length)]);
+                    if (horse_state === horse_states.busy) {
+                        horse_state = horse_states.idle; 
+                    }
+                };
+            })
         }
 
         // Displays inspirational message

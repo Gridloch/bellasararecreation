@@ -1,8 +1,11 @@
 // list of all horses
 const horses = [
     'peter',
+    'cantaro',
+    'colour',
     'fiona',
     'jewel',
+    'sarah',
     'thunder'
 ]
 const display_horses = Array.apply(null, Array(10)) // creates an all null array of length 3 -> change to 10 for final

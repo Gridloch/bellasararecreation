@@ -378,11 +378,7 @@ class Stable extends Phaser.Scene
             });
 
 
-            // Horse
-            horse = this.add.spine(418, 295, 'horse', 'idle').setAngle(90);
-            horse_dirty = this.add.spine(418, 295, 'horse_dirty', 'idle').setAngle(90);
-            horse_overlay = this.add.spine(418, 295, 'horse_overlay', 'idle').setAngle(90);
-            rear_sound = this.sound.add('rear_sound');
+            // Horse hit box
             const horse_interactive = this.add.graphics().setInteractive(new Phaser.Geom.Rectangle(230, 100, 356, 256), Phaser.Geom.Rectangle.Contains);
                 // interact with horse
                 horse_interactive.on('pointerdown', function (pointer)
@@ -422,6 +418,35 @@ class Stable extends Phaser.Scene
                         horse_dirty.setAlpha(0)
                     }
                 }
+
+
+            // Inspirational message frame
+            const frame = this.add.sprite(516, 118, 'frame', 'idle').setScale(.93);
+            this.add.image(517, 126, 'horse_image').setScale(.32);
+            const inspiration_hover = this.sound.add('inspiration_hover');
+            const inspiration_sound = this.sound.add('inspiration_sound');
+            const frame_interactive = this.add.graphics().setInteractive(new Phaser.Geom.Rectangle(478, 65, 75, 110), Phaser.Geom.Rectangle.Contains);
+                frame_interactive.on('pointerover', function (pointer)
+                {
+                    if (can_play_inspiration) {
+                        frame.setFrame('hover');
+                        inspiration_hover.play()
+                    }
+                });
+                frame_interactive.on('pointerout', function (pointer) { frame.setFrame('idle') });
+                frame_interactive.on('pointerdown', function (pointer) { 
+                    if (can_play_inspiration) {
+                        play_inspiration = true 
+                        inspiration_sound.play()
+                    }
+                })
+
+
+            // Horse
+            horse = this.add.spine(418, 295, 'horse', 'idle').setAngle(90);
+            horse_dirty = this.add.spine(418, 295, 'horse_dirty', 'idle').setAngle(90);
+            horse_overlay = this.add.spine(418, 295, 'horse_overlay', 'idle').setAngle(90);
+            rear_sound = this.sound.add('rear_sound');
 
         /**
          * Displays the 'hover' frame of a sprite and plays the hover sound if the hand is empty
@@ -775,28 +800,6 @@ class Stable extends Phaser.Scene
             });
 
 
-        // Inspirational message frame
-        const frame = this.add.sprite(516, 118, 'frame', 'idle').setScale(.93);
-        this.add.image(517, 126, 'horse_image').setScale(.32);
-        const inspiration_hover = this.sound.add('inspiration_hover');
-        const inspiration_sound = this.sound.add('inspiration_sound');
-        const frame_interactive = this.add.graphics().setInteractive(new Phaser.Geom.Rectangle(478, 65, 75, 110), Phaser.Geom.Rectangle.Contains);
-            frame_interactive.on('pointerover', function (pointer)
-            {
-                if (can_play_inspiration) {
-                    frame.setFrame('hover');
-                    inspiration_hover.play()
-                }
-            });
-            frame_interactive.on('pointerout', function (pointer) { frame.setFrame('idle') });
-            frame_interactive.on('pointerdown', function (pointer) { 
-                if (can_play_inspiration) {
-                    play_inspiration = true 
-                    inspiration_sound.play()
-                }
-            })
-
-
         // Lucky Horseshoe
         const luck = this.add.sprite(453, 268, 'luck', 'idle').setInteractive({ pixelPerfect: true });
         const luck_sound = this.sound.add('luck_sound');
@@ -1080,7 +1083,7 @@ class Stable extends Phaser.Scene
             this.time.delayedCall(3330, function () {
                 water_drink.play()
             });
-            this.time.delayedCall(5000, function () {
+            this.time.delayedCall(5500, function () {
                 trough_mask.setVisible(false)
             });
             this.time.delayedCall(6000, function () { 

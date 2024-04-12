@@ -1,7 +1,11 @@
 // list of all horses
 const horses = [
     'peter',
+    'aphaia',
+    'beran',
     'cantaro',
+    'chitra',
+    'clio',
     'colour',
     'fiona',
     'jewel',
@@ -116,7 +120,6 @@ class Selector extends Phaser.Scene
             }
         }
         setDisplayHorses()
-        console.log(display_horses)
 
 
         // Horse display cards

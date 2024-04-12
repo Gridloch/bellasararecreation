@@ -838,17 +838,18 @@ class Stable extends Phaser.Scene
             });
 
 
+
+        // ---------- Stable foreground and UI ---------- //
+        this.add.image(444, 261, 'stable_fg');
+
+
         // Inspirational message
         inspiration = this.add.image(430, 150, 'inspiration').setScale(.93).setVisible(false);
-        inspiration_message = this.add.text(431, 133, 'Static Text Object', { fontFamily: 'Arial', fontSize: 56, color: '#ffffff', align: 'center' }).setVisible(false);
+        inspiration_message = this.add.text(431, 133, 'Static Text Object', { fontFamily: 'Arial', fontSize: 55, color: '#ffffff', align: 'center' }).setVisible(false);
         inspiration_message.text = horse_data.message;
         inspiration_message.setPosition(431-inspiration_message.width/2, 133-inspiration_message.height/2);
         inspiration_message.setShadow(2, 2, '#000000', 7, true, true)
 
-
-
-        // ---------- Stable foreground and UI ---------- //
-        this.add.image(444, 261, 'stable_fg');
 
         // Horse name
         const horse_name = this.add.text(444, 133, 'Static Text Object', { fontFamily: 'Arial', fontSize: 12, color: '#ffffff', align: 'center' });

@@ -7,10 +7,22 @@ const horses = [
     'chitra',
     'clio',
     'colour',
+    'epona',
+    'falcha',
+    'faxon',
     'fiona',
+    'hercules',
+    'ivy',
     'jewel',
+    'juno',
+    'mellonie',
+    'persephone',
     'sarah',
-    'thunder'
+    'savros',
+    'starunna',
+    'thunder',
+    'vesta',
+    'virstan'
 ]
 const display_horses = Array.apply(null, Array(10)) // creates an all null array of length 3 -> change to 10 for final
 let card0 = null

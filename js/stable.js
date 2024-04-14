@@ -845,9 +845,9 @@ class Stable extends Phaser.Scene
 
         // Inspirational message
         inspiration = this.add.image(430, 150, 'inspiration').setScale(.93).setVisible(false);
-        inspiration_message = this.add.text(431, 133, 'Static Text Object', { fontFamily: 'Arial', fontSize: 55, color: '#ffffff', align: 'center' }).setVisible(false);
+        inspiration_message = this.add.text(444, 133, 'Static Text Object', { fontFamily: 'Arial', fontSize: 55, color: '#ffffff', align: 'center' }).setVisible(false);
         inspiration_message.text = horse_data.message;
-        inspiration_message.setPosition(431-inspiration_message.width/2, 133-inspiration_message.height/2);
+        inspiration_message.setPosition(444-inspiration_message.width/2, 133-inspiration_message.height/2);
         inspiration_message.setShadow(2, 2, '#000000', 7, true, true)
 
 

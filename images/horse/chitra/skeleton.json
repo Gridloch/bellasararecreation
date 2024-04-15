@@ -1,6 +1,6 @@
 {
 "skeleton": {
-	"hash": "RmMvOiB2/bA",
+	"hash": "2TL0xdA4WIM",
 	"spine": "4.1.24",
 	"x": -333.78,
 	"y": -170.92,
@@ -63,7 +63,7 @@
 				"HeadJaw": { "x": -25.27, "y": 19.87, "rotation": 136.03, "width": 323, "height": 201 }
 			},
 			"HeadUpper": {
-				"HeadUpper": { "x": 16.81, "y": -1.06, "rotation": 135.68, "width": 81, "height": 93 }
+				"HeadUpper": { "x": 16.47, "y": -0.86, "rotation": 135.68, "width": 81, "height": 93 }
 			},
 			"LowerFL": {
 				"LowerFL": { "x": 36.42, "y": 0.58, "rotation": 94.38, "width": 78, "height": 110 }

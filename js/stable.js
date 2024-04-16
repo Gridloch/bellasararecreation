@@ -87,12 +87,12 @@ class Stable extends Phaser.Scene
     constructor ()
     {
         super({
-            key: 'Stable',
-            pack: {
-                files: [
-                    { type: 'scenePlugin', key: 'SpinePlugin', url: './SpinePluginDebug.js', sceneKey: 'spine' }
-                ]
-            }
+            key: 'Stable'//,
+            // pack: {
+            //     files: [
+            //         { type: 'scenePlugin', key: 'SpinePlugin', url: './SpinePluginDebug.js', sceneKey: 'spine' }
+            //     ]
+            // }
         });
     }
 
@@ -134,9 +134,17 @@ class Stable extends Phaser.Scene
         this.load.atlas('brush_small', './images/stable/brush_small.png', './images/stable/brush_small.json');
         this.load.atlas('hoofpick', './images/stable/hoofpick.png', './images/stable/hoofpick.json');
 
-        this.load.spine('horse', `./images/horse/${horse_name}/skeleton.json`, [`./images/horse/${horse_name}/skeleton.atlas`], true);
-        this.load.spine('horse_overlay', `./images/horse/${horse_name}/skeleton_overlay.json`, [`./images/horse/${horse_name}/skeleton_overlay.atlas`], true);
-        this.load.spine('horse_dirty', `./images/stable/horse_dirty/dirt_skeleton.json`, [`./images/stable/horse_dirty/dirt_skeleton.atlas`], true);
+        // this.load.spine('horse', `./images/horse/${horse_name}/skeleton.json`, [`./images/horse/${horse_name}/skeleton.atlas`], true);
+        // this.load.spine('horse_overlay', `./images/horse/${horse_name}/skeleton_overlay.json`, [`./images/horse/${horse_name}/skeleton_overlay.atlas`], true);
+        // this.load.spine('horse_dirty', `./images/stable/horse_dirty/dirt_skeleton.json`, [`./images/stable/horse_dirty/dirt_skeleton.atlas`], true);
+        
+        this.load.spineAtlas("horse-atlas", `./images/horse/${horse_name}/skeleton.atlas`);
+        this.load.spineAtlas("horse_overlay-atlas", `./images/horse/${horse_name}/skeleton_overlay.atlas`);
+        this.load.spineAtlas("horse_dirty-atlas", `./images/stable/horse_dirty/dirt_skeleton.atlas`);
+        this.load.spineJson("horse-json", `./images/horse/${horse_name}/skeleton.json`);
+        this.load.spineJson("horse_overlay-json", `./images/horse/${horse_name}/skeleton_overlay.json`);
+        this.load.spineJson("horse_dirty-json", `./images/stable/horse_dirty/dirt_skeleton.json`);
+
         this.load.image('horse_image', `./images/horse/${horse_name}/card_image.jpg`);
         this.load.spritesheet('hooves', './images/stable/hooves.png', { frameWidth: 53, frameHeight: 53 });
 
@@ -408,7 +416,8 @@ class Stable extends Phaser.Scene
                         brushlevel += 1;
                         updateBar(cleanlinessBar, 1/3)
                         updateBar(happinessBar, 1/6)
-                        horse_dirty.setAlpha(0.25 * (4 - brushlevel))
+                        // horse_dirty.setAlpha(0.25 * (4 - brushlevel))
+                        horse_dirty.skeleton.color.a = 0.25 * (4 - brushlevel)
                     }
                     else if (brushlevel === 2) {
                         brushlevel += 1;
@@ -443,10 +452,22 @@ class Stable extends Phaser.Scene
 
 
             // Horse
-            horse = this.add.spine(418, 295, 'horse', 'idle').setAngle(90);
-            horse_dirty = this.add.spine(418, 295, 'horse_dirty', 'idle').setAngle(90);
-            horse_overlay = this.add.spine(418, 295, 'horse_overlay', 'idle').setAngle(90);
+            horse = this.add.spine(418, 295, 'horse-json', 'horse-atlas')//.setAngle(90);
+            horse.animationState.setAnimation(0, "idle", false)
+            horse_dirty = this.add.spine(418, 295, 'horse_dirty-json', 'horse_dirty-atlas')//.setAngle(90);
+            horse_dirty.animationState.setAnimation(0, "idle", false)
+            horse_overlay = this.add.spine(418, 295, 'horse_overlay-json', 'horse_overlay-atlas')//.setAngle(90);
+            horse_overlay.animationState.addAnimation(1, "idle", false)
+            addConstantAnimation()
             rear_sound = this.sound.add('rear_sound');
+
+            function addConstantAnimation() {
+                for (let index = 0; index < horse_overlay.skeleton.data.animations.length; index++) {
+                    if (horse_overlay.skeleton.data.animations[index].name === "constant") {
+                        horse_overlay.animationState.setAnimation(0, "constant", true)
+                    }
+                }
+            }
 
         /**
          * Displays the 'hover' frame of a sprite and plays the hover sound if the hand is empty
@@ -1064,9 +1085,9 @@ class Stable extends Phaser.Scene
         if (horse_busy === false && horse_state === horse_states.rear) {
             start_animation()
             rear_sound.play();
-            horse.play('rear');
-            horse_dirty.play('rear');
-            horse_overlay.play('rear');
+            horse.animationState.addAnimation(0, 'rear', false);
+            horse_dirty.animationState.addAnimation(0, 'rear', false);
+            horse_overlay.animationState.addAnimation(1, 'rear', false);
             this.time.delayedCall(3000, function () { 
                 end_animation()
              });
@@ -1077,9 +1098,9 @@ class Stable extends Phaser.Scene
                 trough_mask.setVisible(true)
                 trough.play('water_trough_drink')
                 trough_mask.play('mask_water_trough_drink')
-                horse.play('drink')
-                horse_dirty.play('drink')
-                horse_overlay.play('drink')
+                horse.animationState.addAnimation(0, 'drink', false);
+                horse_dirty.animationState.addAnimation(0, 'drink', false);
+                horse_overlay.animationState.addAnimation(1, 'drink', false);
             });
             this.time.delayedCall(3330, function () {
                 water_drink.play()
@@ -1094,9 +1115,9 @@ class Stable extends Phaser.Scene
         else if (horse_busy === false && horse_state === horse_states.eating_food) {
             start_animation()
             this.time.delayedCall(800, function () {
-                horse.play('eat_food'); 
-                horse_dirty.play('eat_food'); 
-                horse_overlay.play('eat_food')});
+                horse.animationState.addAnimation(0, 'eat_food', false);
+                horse_dirty.animationState.addAnimation(0, 'eat_food', false);
+                horse_overlay.animationState.addAnimation(1, 'eat_food', false);});
             this.time.delayedCall(1000, function () {oats_eat.play()});
             this.time.delayedCall(3000, function () { 
                 end_animation()
@@ -1105,9 +1126,9 @@ class Stable extends Phaser.Scene
         else if (horse_busy === false && horse_state === horse_states.eating_apple) {
             start_animation()
             apple_munch.play();
-            horse.play('eat_apple')
-            horse_dirty.play('eat_apple')
-            horse_overlay.play('eat_apple')
+            horse.animationState.addAnimation(0, 'eat_apple', false);
+            horse_dirty.animationState.addAnimation(0, 'eat_apple', false);
+            horse_overlay.animationState.addAnimation(1, 'eat_apple', false);
             this.time.delayedCall(3000, function () { 
                 end_animation()
             });
@@ -1119,9 +1140,9 @@ class Stable extends Phaser.Scene
                 if ( horse_state === horse_states.busy && !horse_busy) {
                     const horse_idle_animations = ['ear_twitch', 'flank_twitch', 'head_shake', 'head_turn', 'nod', 'paw_ground', 'shift_weight', 'tail_swish']
                     let animation = horse_idle_animations[Math.floor(Math.random()*horse_idle_animations.length)]
-                    horse.play(animation);
-                    horse_dirty.play(animation);
-                    horse_overlay.play(animation);
+                    horse.animationState.addAnimation(0, animation, false);
+                    horse_dirty.animationState.addAnimation(0, animation, false);
+                    horse_overlay.animationState.addAnimation(1, animation, false);
                     if (horse_state === horse_states.busy) {
                         horse_state = horse_states.idle; 
                     }

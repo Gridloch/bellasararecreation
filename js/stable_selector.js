@@ -160,27 +160,27 @@ class Selector extends Phaser.Scene
         card4text = this.add.text(761, 228, horse_names[4], { fontFamily: 'Arial', fontSize: 18, color: '#ffffff', align: 'center' })
         card4text.setPosition(761-card4text.width/2, 240-card4text.height/2);
 
-        card5 = this.add.image(122, 368, display_horses[5]).setInteractive()
+        card5 = this.add.image(122, 370, display_horses[5]).setInteractive()
         nameplate5 = this.add.image(122, 488, 'nameplate').setInteractive()
         card5text = this.add.text(122, 488, horse_names[5], { fontFamily: 'Arial', fontSize: 18, color: '#ffffff', align: 'center' })
         card5text.setPosition(122-card5text.width/2, 488-card5text.height/2);
 
-        card6 = this.add.image(280, 368, display_horses[6]).setInteractive()
+        card6 = this.add.image(280, 370, display_horses[6]).setInteractive()
         nameplate6 = this.add.image(280, 488, 'nameplate').setInteractive()
         card6text = this.add.text(280, 488, horse_names[6], { fontFamily: 'Arial', fontSize: 18, color: '#ffffff', align: 'center' })
         card6text.setPosition(280-card6text.width/2, 488-card6text.height/2);
 
-        card7 = this.add.image(440, 368, display_horses[7]).setInteractive()
+        card7 = this.add.image(440, 370, display_horses[7]).setInteractive()
         nameplate7 = this.add.image(440, 488, 'nameplate').setInteractive()
         card7text = this.add.text(440, 488, horse_names[7], { fontFamily: 'Arial', fontSize: 18, color: '#ffffff', align: 'center' })
         card7text.setPosition(440-card7text.width/2, 488-card7text.height/2);
 
-        card8 = this.add.image(601, 368, display_horses[8]).setInteractive()
+        card8 = this.add.image(601, 370, display_horses[8]).setInteractive()
         nameplate8 = this.add.image(601, 488, 'nameplate').setInteractive()
         card8text = this.add.text(601, 488, horse_names[8], { fontFamily: 'Arial', fontSize: 18, color: '#ffffff', align: 'center' })
         card8text.setPosition(601-card8text.width/2, 488-card8text.height/2);
 
-        card9 = this.add.image(761, 368, display_horses[9]).setInteractive()
+        card9 = this.add.image(761, 370, display_horses[9]).setInteractive()
         nameplate9 = this.add.image(761, 488, 'nameplate').setInteractive()
         card9text = this.add.text(761, 488, horse_names[9], { fontFamily: 'Arial', fontSize: 18, color: '#ffffff', align: 'center' })
         card9text.setPosition(761-card9text.width/2, 488-card9text.height/2);
@@ -262,11 +262,11 @@ class Selector extends Phaser.Scene
         setupCard(card2, nameplate2, 2, 440, 124)
         setupCard(card3, nameplate3, 3, 601, 124)
         setupCard(card4, nameplate4, 4, 761, 124)
-        setupCard(card5, nameplate5, 5, 122, 368)
-        setupCard(card6, nameplate6, 6, 281, 368)
-        setupCard(card7, nameplate7, 7, 440, 368)
-        setupCard(card8, nameplate8, 8, 601, 368)
-        setupCard(card9, nameplate9, 9, 761, 368)
+        setupCard(card5, nameplate5, 5, 122, 370)
+        setupCard(card6, nameplate6, 6, 281, 370)
+        setupCard(card7, nameplate7, 7, 440, 370)
+        setupCard(card8, nameplate8, 8, 601, 370)
+        setupCard(card9, nameplate9, 9, 761, 370)
 
         function setupCard(card, nameplate, i, xPos, yPos) {
             hover_glow.setScale(1.05)
@@ -282,6 +282,9 @@ class Selector extends Phaser.Scene
                 if (display_horses[i] !== 'card_empty') {
                     window.open(`./stables.html?name=${display_horses[i]}`, '_self');
                 }
+                else if (i === 9) {
+                    window.open(`./stables.html?name=nostalgia`, '_self');
+                }
             });
             card.on('pointerdown', () => {
                 if (display_horses[i] !== 'card_empty') {
@@ -293,6 +296,10 @@ class Selector extends Phaser.Scene
                     hover_sound.play()
                     hover_glow.setPosition(xPos, yPos).setVisible(true)
                     sparkle.setPosition(xPos, yPos).setVisible(true)
+                }
+                else if (i === 9) {
+                    hover_sound.play()
+                    sparkle.setPosition(xPos, yPos + 15).setVisible(true)
                 }
             });
             card.on('pointerout', () => {
@@ -347,7 +354,7 @@ class Selector extends Phaser.Scene
                 nameplate.setVisible(false)
                 text.setVisible(false)
             } else if (display_horses[cardNumber] !== 'card_empty') {
-                card.setY(370).setScale(1)
+                card.setY(371).setScale(1)
                 nameplate.setVisible(true)
                 text.setVisible(true)
                 const textMove = text.width

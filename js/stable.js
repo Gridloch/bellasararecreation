@@ -20,7 +20,6 @@ play_inspiration = true
 can_play_inspiration = false
 
 horse_busy = false
-horse_busy_idling = false
 const horse_states = {
     busy: 'busy',
     idle: 'idle',
@@ -421,10 +420,15 @@ class Stable extends Phaser.Scene
                     }
                     else if (brushlevel === 2) {
                         brushlevel += 1;
-                        horse_state = horse_states.rear
+                        checkClean()
                         updateBar(cleanlinessBar, 1/3)
                         updateBar(happinessBar, 1/6)
                         horse_dirty.setAlpha(0)
+                    }
+                }
+                function checkClean() {
+                    if (brushlevel === 3 && hooves1.frame.name === 2 && hooves2.frame.name === 2) {
+                        horse_state = horse_states.rear
                     }
                 }
 
@@ -468,6 +472,43 @@ class Stable extends Phaser.Scene
                     }
                 }
             }
+
+            /**
+             * Generates a random integer between two values
+             * @param {number} min The minimum number that could be returned
+             * @param {number} max The maximum number that could be returned
+             * @returns 
+             */
+            function randomIntFromInterval(min, max) { // min and max included 
+                return Math.floor(Math.random() * (max - min + 1) + min)
+            }
+
+            horse.animationState.addListener({
+                // start: (entry) => console.log(`Started animation ${entry.animation.name}`),
+                // interrupt: (entry) => console.log(`Interrupted animation ${entry.animation.name}`),
+                // end: (entry) => console.log(`Ended animation ${entry.animation.name}`),
+                // dispose: (entry) => console.log(`Disposed animation ${entry.animation.name}`),
+                complete: function endAnimation(entry) { 
+                    if (horse_state === horse_states.idle) {
+                        const horse_idle_animations = ['ear_twitch', 'flank_twitch', 'head_shake', 'head_turn', 'nod', 'paw_ground', 'shift_weight', 'tail_swish']
+                        let animation = horse_idle_animations[Math.floor(Math.random()*horse_idle_animations.length)]
+                        
+                        const delay = randomIntFromInterval(3, 5)
+                        horse.animationState.addAnimation(0, animation, false, delay);
+                        horse_dirty.animationState.addAnimation(0, animation, false, delay);
+                        horse_overlay.animationState.addAnimation(1, animation, false, delay);
+                    }
+                    // only change state if no other animation is queued
+                    if (horse_state === horse_states.busy) {
+                        horse_state = horse_states.idle; 
+                    }
+                    // allow next animation to play
+                    horse_busy = false
+                }
+                // event: (entry, event) => console.log(`Custom event for ${entry.animation.name}: ${event.data.name}`)          
+             })
+
+
 
         /**
          * Displays the 'hover' frame of a sprite and plays the hover sound if the hand is empty
@@ -726,6 +767,7 @@ class Stable extends Phaser.Scene
             function clean_hooves(sprite) {
                 if (sprite.frame.name <2 && handcurrent === hand.hoofpick) {
                     sprite.setFrame(sprite.frame.name + 1)
+                    checkClean()
                     hoofpick_held_sprite.play('hoofpick_use')
                     updateBar(cleanlinessBar, 0.25)
                     updateBar(happinessBar, 1/8)
@@ -1065,32 +1107,16 @@ class Stable extends Phaser.Scene
 
 
         function start_animation() {
-            horse_state = horse_states.busy
+            horse_state = horse_states.idle
             horse_busy = true
-        }
-        function end_animation() {
-            // only change state if no other animation is queued
-            if (horse_state === horse_states.busy) {
-                horse_state = horse_states.idle; 
-            }
-            // allow next animation to play
-            horse_busy = false
-            horse_busy_idling = false
-        }
-
-        function randomIntFromInterval(min, max) { // min and max included 
-            return Math.floor(Math.random() * (max - min + 1) + min)
         }
 
         if (horse_busy === false && horse_state === horse_states.rear) {
             start_animation()
             rear_sound.play();
-            horse.animationState.addAnimation(0, 'rear', false);
-            horse_dirty.animationState.addAnimation(0, 'rear', false);
-            horse_overlay.animationState.addAnimation(1, 'rear', false);
-            this.time.delayedCall(3000, function () { 
-                end_animation()
-             });
+            horse.animationState.setAnimation(0, 'rear', false);
+            horse_dirty.animationState.setAnimation(0, 'rear', false);
+            horse_overlay.animationState.setAnimation(1, 'rear', false);
         } 
         else if (horse_busy === false && horse_state === horse_states.drink) {
             start_animation()
@@ -1098,9 +1124,9 @@ class Stable extends Phaser.Scene
                 trough_mask.setVisible(true)
                 trough.play('water_trough_drink')
                 trough_mask.play('mask_water_trough_drink')
-                horse.animationState.addAnimation(0, 'drink', false);
-                horse_dirty.animationState.addAnimation(0, 'drink', false);
-                horse_overlay.animationState.addAnimation(1, 'drink', false);
+                horse.animationState.setAnimation(0, 'drink', false);
+                horse_dirty.animationState.setAnimation(0, 'drink', false);
+                horse_overlay.animationState.setAnimation(1, 'drink', false);
             });
             this.time.delayedCall(3330, function () {
                 water_drink.play()
@@ -1108,47 +1134,21 @@ class Stable extends Phaser.Scene
             this.time.delayedCall(5500, function () {
                 trough_mask.setVisible(false)
             });
-            this.time.delayedCall(6000, function () { 
-                end_animation()
-            });
         }
         else if (horse_busy === false && horse_state === horse_states.eating_food) {
             start_animation()
             this.time.delayedCall(800, function () {
-                horse.animationState.addAnimation(0, 'eat_food', false);
-                horse_dirty.animationState.addAnimation(0, 'eat_food', false);
-                horse_overlay.animationState.addAnimation(1, 'eat_food', false);});
+                horse.animationState.setAnimation(0, 'eat_food', false);
+                horse_dirty.animationState.setAnimation(0, 'eat_food', false);
+                horse_overlay.animationState.setAnimation(1, 'eat_food', false);});
             this.time.delayedCall(1000, function () {oats_eat.play()});
-            this.time.delayedCall(3000, function () { 
-                end_animation()
-            });
         }
         else if (horse_busy === false && horse_state === horse_states.eating_apple) {
             start_animation()
             apple_munch.play();
-            horse.animationState.addAnimation(0, 'eat_apple', false);
-            horse_dirty.animationState.addAnimation(0, 'eat_apple', false);
-            horse_overlay.animationState.addAnimation(1, 'eat_apple', false);
-            this.time.delayedCall(3000, function () { 
-                end_animation()
-            });
-        }
-        else if (horse_state === horse_states.idle && !horse_busy && !horse_busy_idling) {
-            horse_state = horse_states.busy
-            horse_busy_idling = true
-            this.time.delayedCall(randomIntFromInterval(3000, 5000), function () {
-                if ( horse_state === horse_states.busy && !horse_busy) {
-                    const horse_idle_animations = ['ear_twitch', 'flank_twitch', 'head_shake', 'head_turn', 'nod', 'paw_ground', 'shift_weight', 'tail_swish']
-                    let animation = horse_idle_animations[Math.floor(Math.random()*horse_idle_animations.length)]
-                    horse.animationState.addAnimation(0, animation, false);
-                    horse_dirty.animationState.addAnimation(0, animation, false);
-                    horse_overlay.animationState.addAnimation(1, animation, false);
-                    if (horse_state === horse_states.busy) {
-                        horse_state = horse_states.idle; 
-                    }
-                    horse_busy_idling = false
-                };
-            })
+            horse.animationState.setAnimation(0, 'eat_apple', false);
+            horse_dirty.animationState.setAnimation(0, 'eat_apple', false);
+            horse_overlay.animationState.setAnimation(1, 'eat_apple', false);
         }
 
         // Displays inspirational message

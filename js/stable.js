@@ -28,7 +28,7 @@ const horse_states = {
     eating_food: 'eat_food',
     eating_apple: 'eat_apple'
 }
-horse_state = horse_states.idle
+horseAnimationQueue = []
 
 horse = null
 horse_dirty = null
@@ -329,7 +329,7 @@ class Stable extends Phaser.Scene
                     this.play('fill_water');
                     trough_mask.play('mask_fill_water');
                     water_sound.play()
-                    horse_state = horse_states.drink
+                    horseAnimationQueue.push(horse_states.drink)
                     updateBar(hungerBar, 1.5)
                 }
             });
@@ -375,7 +375,7 @@ class Stable extends Phaser.Scene
                     grain_bin.play('place');
                     this.play(foodfilled ? 'fill_again' : 'fill')
                     grain_sound.play()
-                    horse_state = horse_states.eating_food
+                    horseAnimationQueue.push(horse_states.eating_food)
                     if (!foodfilled) {
                         updateBar(hungerBar, 2)
                         updateBar(happinessBar, 1.05)
@@ -392,7 +392,7 @@ class Stable extends Phaser.Scene
                 {
                     if (handcurrent === hand.apple) {
                         handcurrent = hand.empty;
-                        horse_state = horse_states.eating_apple
+                        horseAnimationQueue.push(horse_states.eating_apple)
                     }
                     else if (handcurrent === hand.brush) {
                         brush_held_sprite.play('brush')
@@ -428,7 +428,7 @@ class Stable extends Phaser.Scene
                 }
                 function checkClean() {
                     if (brushlevel === 3 && hooves1.frame.name === 2 && hooves2.frame.name === 2) {
-                        horse_state = horse_states.rear
+                        horseAnimationQueue.push(horse_states.rear)
                     }
                 }
 
@@ -489,7 +489,7 @@ class Stable extends Phaser.Scene
                 // end: (entry) => console.log(`Ended animation ${entry.animation.name}`),
                 // dispose: (entry) => console.log(`Disposed animation ${entry.animation.name}`),
                 complete: function endAnimation(entry) { 
-                    if (horse_state === horse_states.idle) {
+                    if (horseAnimationQueue.length === 0) {
                         const horse_idle_animations = ['ear_twitch', 'flank_twitch', 'head_shake', 'head_turn', 'nod', 'paw_ground', 'shift_weight', 'tail_swish']
                         let animation = horse_idle_animations[Math.floor(Math.random()*horse_idle_animations.length)]
                         
@@ -497,10 +497,6 @@ class Stable extends Phaser.Scene
                         horse.animationState.addAnimation(0, animation, false, delay);
                         horse_dirty.animationState.addAnimation(0, animation, false, delay);
                         horse_overlay.animationState.addAnimation(1, animation, false, delay);
-                    }
-                    // only change state if no other animation is queued
-                    if (horse_state === horse_states.busy) {
-                        horse_state = horse_states.idle; 
                     }
                     // allow next animation to play
                     horse_busy = false
@@ -1106,50 +1102,47 @@ class Stable extends Phaser.Scene
         }
 
 
-        function start_animation() {
-            horse_state = horse_states.idle
+        if (horse_busy === false && horseAnimationQueue.length > 0) {
+            const animation = horseAnimationQueue.shift()
             horse_busy = true
-        }
 
-        if (horse_busy === false && horse_state === horse_states.rear) {
-            start_animation()
-            rear_sound.play();
-            horse.animationState.setAnimation(0, 'rear', false);
-            horse_dirty.animationState.setAnimation(0, 'rear', false);
-            horse_overlay.animationState.setAnimation(1, 'rear', false);
-        } 
-        else if (horse_busy === false && horse_state === horse_states.drink) {
-            start_animation()
-            this.time.delayedCall(2800, function () {
-                trough_mask.setVisible(true)
-                trough.play('water_trough_drink')
-                trough_mask.play('mask_water_trough_drink')
-                horse.animationState.setAnimation(0, 'drink', false);
-                horse_dirty.animationState.setAnimation(0, 'drink', false);
-                horse_overlay.animationState.setAnimation(1, 'drink', false);
-            });
-            this.time.delayedCall(3330, function () {
-                water_drink.play()
-            });
-            this.time.delayedCall(5500, function () {
-                trough_mask.setVisible(false)
-            });
+            if (animation === horse_states.rear) {
+                rear_sound.play();
+                horse.animationState.setAnimation(0, 'rear', false);
+                horse_dirty.animationState.setAnimation(0, 'rear', false);
+                horse_overlay.animationState.setAnimation(1, 'rear', false);
+            } 
+            else if (animation === horse_states.drink) {
+                this.time.delayedCall(2800, function () {
+                    trough_mask.setVisible(true)
+                    trough.play('water_trough_drink')
+                    trough_mask.play('mask_water_trough_drink')
+                    horse.animationState.setAnimation(0, 'drink', false);
+                    horse_dirty.animationState.setAnimation(0, 'drink', false);
+                    horse_overlay.animationState.setAnimation(1, 'drink', false);
+                });
+                this.time.delayedCall(3330, function () {
+                    water_drink.play()
+                });
+                this.time.delayedCall(5500, function () {
+                    trough_mask.setVisible(false)
+                });
+            }
+            else if (animation === horse_states.eating_food) {
+                this.time.delayedCall(800, function () {
+                    horse.animationState.setAnimation(0, 'eat_food', false);
+                    horse_dirty.animationState.setAnimation(0, 'eat_food', false);
+                    horse_overlay.animationState.setAnimation(1, 'eat_food', false);});
+                this.time.delayedCall(1000, function () {oats_eat.play()});
+            }
+            else if (animation === horse_states.eating_apple) {
+                apple_munch.play();
+                horse.animationState.setAnimation(0, 'eat_apple', false);
+                horse_dirty.animationState.setAnimation(0, 'eat_apple', false);
+                horse_overlay.animationState.setAnimation(1, 'eat_apple', false);
+            }
         }
-        else if (horse_busy === false && horse_state === horse_states.eating_food) {
-            start_animation()
-            this.time.delayedCall(800, function () {
-                horse.animationState.setAnimation(0, 'eat_food', false);
-                horse_dirty.animationState.setAnimation(0, 'eat_food', false);
-                horse_overlay.animationState.setAnimation(1, 'eat_food', false);});
-            this.time.delayedCall(1000, function () {oats_eat.play()});
-        }
-        else if (horse_busy === false && horse_state === horse_states.eating_apple) {
-            start_animation()
-            apple_munch.play();
-            horse.animationState.setAnimation(0, 'eat_apple', false);
-            horse_dirty.animationState.setAnimation(0, 'eat_apple', false);
-            horse_overlay.animationState.setAnimation(1, 'eat_apple', false);
-        }
+        
 
         // Displays inspirational message
         if (play_inspiration) {

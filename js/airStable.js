@@ -1,16 +1,16 @@
 // Variables to be used throughout scene
 playMusic = true;
-const HAND = {
-    empty: 'empty',
-    shovel: 'shovel',
-    fork: 'fork',
-    forkFilled: 'fork_filled',
-    brush: 'brush',
-    brushSmall: 'small_brush',
-    hoofpick: 'hoofpick',
-    apple: 'apple',
-    grainScoop: 'grain_scoop'
-}
+// const HAND = {
+//     empty: 'empty',
+//     shovel: 'shovel',
+//     fork: 'fork',
+//     forkFilled: 'fork_filled',
+//     brush: 'brush',
+//     brushSmall: 'small_brush',
+//     hoofpick: 'hoofpick',
+//     apple: 'apple',
+//     grainScoop: 'grain_scoop'
+// }
 handCurrent = HAND.empty;
 waterFilled = false;
 foodFilled = false;
@@ -19,22 +19,22 @@ playInspiration = true
 canPlayInspiration = false
 
 horseBusy = false
-const HORSE_STATES = {
-    busy: 'busy',
-    idle: 'idle',
-    drink: 'drink',
-    rear: 'rear',
-    eatingFood: 'eat_food',
-    eatingApple: 'eat_apple'
-}
+// const HORSE_STATES = {
+//     busy: 'busy',
+//     idle: 'idle',
+//     drink: 'drink',
+//     rear: 'rear',
+//     eatingFood: 'eat_food',
+//     eatingApple: 'eat_apple'
+// }
 horseAnimationQueue = []
 
 horse = null
 horseDirty = null
 horseOverlay= null
 
-trough = null
-troughMask = null
+fountain = null
+// troughMask = null
 waterDrink = null
 rearSound = null
 foodTrough = null
@@ -56,12 +56,12 @@ appleHeldSprite = null
 
 
 // Actual game start
-class Stable extends Phaser.Scene
+class AirStable extends Phaser.Scene
 {
     constructor ()
     {
         super({
-            key: 'Stable'
+            key: 'airStable'
         });
     }
 
@@ -78,47 +78,47 @@ class Stable extends Phaser.Scene
         const progressBar = this.add.graphics();
             
         // Load in images and sounds
-        this.load.image('stable_bg', './images/landStable/stable-bg.png');
-        this.load.image('stable_fg', './images/landStable/stable-fg.png');
-        this.load.image('hunger_scale', './images/landStable/hunger.png');
-        this.load.image('cleanliness_scale', './images/landStable/cleanliness.png');
-        this.load.image('happiness_scale', './images/landStable/happiness.png');
+        this.load.image('stable_bg', './images/airStable/stable-bg.png');
+        this.load.image('stable_fg', './images/airStable/stable-fg.png');
+        this.load.image('hunger_scale', './images/airStable/hunger.png');
+        this.load.image('cleanliness_scale', './images/airStable/cleanliness.png');
+        this.load.image('happiness_scale', './images/airStable/happiness.png');
 
-        this.load.atlas('shovel', './images/landStable/shovel.png', './images/landStable/shovel.json');
-        this.load.atlas('fork', './images/landStable/fork.png', './images/landStable/fork.json');
-        this.load.atlas('straw1', './images/landStable/straw1.png', './images/landStable/straw1.json');
-        this.load.atlas('straw2', './images/landStable/straw2.png', './images/landStable/straw2.json');
-        this.load.atlas('straw3', './images/landStable/straw3.png', './images/landStable/straw3.json');
-        this.load.atlas('hay_loft', './images/landStable/hay_loft.png', './images/landStable/hay_loft.json');
+        this.load.atlas('shovel', './images/airStable/shovel.png', './images/airStable/shovel.json');
+        this.load.atlas('fork', './images/airStable/fork.png', './images/airStable/fork.json');
+        this.load.atlas('straw1', './images/airStable/straw1.png', './images/airStable/straw1.json');
+        this.load.atlas('straw2', './images/airStable/straw2.png', './images/airStable/straw2.json');
+        this.load.atlas('straw3', './images/airStable/straw3.png', './images/airStable/straw3.json');
+        this.load.atlas('hay_loft', './images/airStable/hay_loft.png', './images/airStable/hay_loft.json');
 
-        this.load.atlas('trough', './images/landStable/water.png', './images/landStable/water.json');
-        this.load.atlas('trough_mask', './images/landStable/water_mask.png', './images/landStable/water_mask.json');
-        this.load.atlas('food_trough', './images/landStable/food.png', './images/landStable/food.json');
-        this.load.atlas('grain_bin', './images/landStable/grain_bin.png', './images/landStable/grain_bin.json');
-        this.load.image('grain_scoop', './images/landStable/grain_scoop.png');
-        this.load.atlas('apple_bin', './images/landStable/apples.png','./images/landStable/apples.json');
-        this.load.image('apple_held', './images/landStable/apple.png');
+        this.load.atlas('fountain', './images/airStable/fountain.png', './images/airStable/fountain.json');
+        // this.load.atlas('trough_mask', './images/airStable/water_mask.png', './images/airStable/water_mask.json');
+        this.load.atlas('food_trough', './images/airStable/food.png', './images/airStable/food.json');
+        this.load.atlas('grain_bin', './images/airStable/grain_bin.png', './images/airStable/grain_bin.json');
+        this.load.image('grain_scoop', './images/airStable/grain_scoop.png');
+        this.load.atlas('apple_bin', './images/airStable/apples.png','./images/airStable/apples.json');
+        this.load.image('apple_held', './images/airStable/apple.png');
         
-        this.load.atlas('brush', './images/landStable/brush.png', './images/landStable/brush.json');
-        this.load.atlas('brush_small', './images/landStable/brush_small.png', './images/landStable/brush_small.json');
-        this.load.atlas('hoofpick', './images/landStable/hoofpick.png', './images/landStable/hoofpick.json');
+        this.load.atlas('brush', './images/airStable/brush.png', './images/airStable/brush.json');
+        this.load.atlas('brush_small', './images/airStable/brush_small.png', './images/airStable/brush_small.json');
+        this.load.atlas('hoofpick', './images/airStable/hoofpick.png', './images/airStable/hoofpick.json');
         
         this.load.spineAtlas("horse-atlas", `./images/horse/${horseName}/skeleton.atlas`);
         this.load.spineAtlas("horse_overlay-atlas", `./images/horse/${horseName}/skeleton_overlay.atlas`);
-        this.load.spineAtlas("horse_dirty-atlas", `./images/landStable/horse_dirty/dirt_skeleton.atlas`);
+        this.load.spineAtlas("horse_dirty-atlas", `./images/airStable/horse_dirty/dirt_skeleton.atlas`);
         this.load.spineJson("horse-json", `./images/horse/${horseName}/skeleton.json`);
         this.load.spineJson("horse_overlay-json", `./images/horse/${horseName}/skeleton_overlay.json`);
-        this.load.spineJson("horse_dirty-json", `./images/landStable/horse_dirty/dirt_skeleton.json`);
+        this.load.spineJson("horse_dirty-json", `./images/airStable/horse_dirty/dirt_skeleton.json`);
 
         this.load.image('horse_image', `./images/horse/${horseName}/card_image.jpg`);
-        this.load.spritesheet('hooves', './images/landStable/hooves.png', { frameWidth: 53, frameHeight: 53 });
+        this.load.spritesheet('hooves', './images/airStable/hooves.png', { frameWidth: 53, frameHeight: 53 });
 
-        this.load.atlas('luck', './images/landStable/luck.png', './images/landStable/luck.json');
-        this.load.atlas('frame', './images/landStable/frame.png', './images/landStable/frame.json');
-        this.load.image('inspiration', './images/landStable/inspiration.png');
+        this.load.atlas('luck', './images/airStable/luck.png', './images/airStable/luck.json');
+        this.load.atlas('frame', './images/airStable/frame.png', './images/airStable/frame.json');
+        this.load.image('inspiration', './images/airStable/inspiration.png');
 
-        this.load.atlas('music_button', './images/landStable/music.png', './images/landStable/music.json');
-        this.load.atlas('help_button', './images/landStable/help.png', './images/landStable/help.json');
+        this.load.atlas('music_button', './images/airStable/music.png', './images/airStable/music.json');
+        this.load.atlas('help_button', './images/airStable/help.png', './images/airStable/help.json');
 
         this.load.audio('background_music', ['./sounds/stable_soundtrack.mp3']);
         this.load.audio('apple_munch', ['./sounds/apple_munch.mp3']);
@@ -257,55 +257,60 @@ class Stable extends Phaser.Scene
             });
 
 
-        // Water Trough
-        trough = this.add.sprite(153, 455, 'trough', 'idle').setInteractive({ pixelPerfect: true });
+        // Water Fountain
+        fountain = this.add.sprite(188, 348, 'fountain', 'idle').setInteractive({ pixelPerfect: true });
         const waterSound = this.sound.add('water_sound');
         waterDrink = this.sound.add('water_drink');
             this.anims.create({
                 key: 'fill_water',
-                frames: this.anims.generateFrameNumbers('trough', { frames: [
-                    'water0011', 'water0011', 'water0011',
-                    'water0014', 'water0014',
-                    'water0016', 'water0016',
-                    'water0018', 'water0019', 'water0020', 'water0021', 'water0022', 'water0023', 'water0024', 'water0025', 'water0025',
-                    'water0027', 'water0028', 'water0029', 'water0030', 'water0031', 'water0032', 'water0033', 'water0034', 'water0035',
-                    'water0036', 'water0037', 'water0038', 'water0039', 'water0040', 'water0041', 'water0042', 'water0043', 'water0044',
-                    'water0045', 'water0046', 'water0047', 'water0048', 'water0049', 'water0050', 'water0051', 'water0052', 'water0053',
-                    'water0054', 'water0055', 'water0056', 'water0057', 'water0058', 'water0059', 'water0060'
+                frames: this.anims.generateFrameNumbers('fountain', { frames: [
+                    '10',
+                    '11', '12', '13', '14', '15', '16', '17', '18', '19', '20',
+                    '21', '22', '23', '24', '25', '26', '27', '28', '29', '30',
+                    '31', '32', '33', '34', '35', '36', '37', '38', '39', '40',
+                    '41', '42', '43', '44', '45', '46', '47', '48', '49', '50',
+                    '51', '52', '53', '54', '55', '56', '57', '58', '59', '60',
+                    '61', '62', '63', '64', '65', '66', '67', '68', '69', '70',
+                    '71', '72', '73', '74', '75', '76', '77', '78', '79', '80',
+                    '81', '82', '83', '84', '85', '86', '87', '88', '89', '90',
+                    '91', '92', '93', '94', '95', '96', '96', '96', '96', 
                 ] }),
                 frameRate: 24
             });
             this.anims.create({
-                key: 'water_trough_drink',
-                frames: this.anims.generateFrameNumbers('trough', { frames: [
-                    'water0060', 'water0060', 'water0060',
-                    'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060',
-                    'water0092', 'water0093', 'water0094', 'water0095', 'water0096', 'water0097', 'water0098', 'water0099', 'water0100',
-                    'water0101', 'water0102', 'water0103', 'water0104', 'water0105', 'water0106', 'water0107', 'water0108', 'water0109', 'water0110',
-                    'water0111', 'water0112', 'water0113', 'water0114', 'water0115', 'water0116', 'water0117', 'water0118', 'water0119', 'water0120',
-                    'water0121', 'water0121', 'water0122', 'water0123', 'water0124', 'water0125', 'water0126'
+                key: 'water_fountain_drink',
+                frames: this.anims.generateFrameNumbers('fountain', { frames: [
+                    '100', '100', '100', '100', '100', '100', '100', '100', '100', '100',
+                    '100', '100', '100', '100', '100', '100', '100', '100', '100', '100',
+                    '100', '100', '100', '100', '100', '100',
+                    '125', '126', '127', '128', '129', '130',
+                    '131', '132', '133', '134', '135', '136', '137', '138', '139', '140',
+                    '141', '142', '143', '144', '145', '146', '147', '148', '149', '150',
+                    '151', '152', '153', '154', '155', '156', '157', '158', '159', '160',
+                    '161', '162', '163', '164', '165', '166', '167', '168', '169', '170',
+                    '171', '172', '173', '174', '175', '176'
                 ] }),
                 frameRate: 24
             });
-            trough.on('pointerdown', function (pointer)
+            fountain.on('pointerdown', function (pointer)
             {
                 if (!waterFilled && handCurrent === HAND.empty) {
                     waterFilled = true;
                     this.play('fill_water');
-                    troughMask.play('mask_fill_water');
+                    // troughMask.play('mask_fill_water');
                     waterSound.play()
                     horseAnimationQueue.push(HORSE_STATES.drink)
                     updateBar(hungerBar, 1.5)
                 }
             });
-            trough.on('pointerover', function (pointer)
+            fountain.on('pointerover', function (pointer)
             {
                 if (!waterFilled && handCurrent === HAND.empty) {
                     this.setFrame('hover');
                     hover1.play();
                 }
             });
-            trough.on('pointerout', function (pointer)
+            fountain.on('pointerout', function (pointer)
             {
                 if (!waterFilled && handCurrent === HAND.empty) {
                     this.setFrame('idle');
@@ -794,33 +799,33 @@ class Stable extends Phaser.Scene
                 });
 
         
-        troughMask = this.add.sprite(153, 455, 'trough_mask', 'water0000').setVisible(false);
-            this.anims.create({
-                key: 'mask_fill_water',
-                frames: this.anims.generateFrameNumbers('trough_mask', { frames: [
-                    'water0011', 'water0011', 'water0011',
-                    'water0014', 'water0014',
-                    'water0016', 'water0016',
-                    'water0018', 'water0019', 'water0020', 'water0021', 'water0022', 'water0023', 'water0024', 'water0025', 'water0025',
-                    'water0027', 'water0028', 'water0029', 'water0030', 'water0031', 'water0032', 'water0033', 'water0034', 'water0035',
-                    'water0036', 'water0037', 'water0038', 'water0039', 'water0040', 'water0041', 'water0042', 'water0043', 'water0044',
-                    'water0045', 'water0046', 'water0047', 'water0048', 'water0049', 'water0050', 'water0051', 'water0052', 'water0053',
-                    'water0054', 'water0055', 'water0056', 'water0057', 'water0058', 'water0059', 'water0060'
-                ] }),
-                frameRate: 24
-            });
-            this.anims.create({
-                key: 'mask_water_trough_drink',
-                frames: this.anims.generateFrameNumbers('trough_mask', { frames: [
-                    'water0060', 'water0060', 'water0060',
-                    'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060',
-                    'water0092', 'water0093', 'water0094', 'water0095', 'water0096', 'water0097', 'water0098', 'water0099', 'water0100',
-                    'water0101', 'water0102', 'water0103', 'water0104', 'water0105', 'water0106', 'water0107', 'water0108', 'water0109', 'water0110',
-                    'water0111', 'water0112', 'water0113', 'water0114', 'water0115', 'water0116', 'water0117', 'water0118', 'water0119', 'water0120',
-                    'water0121', 'water0121', 'water0122', 'water0123', 'water0124', 'water0125', 'water0126'
-                ] }),
-                frameRate: 24
-            });
+        // troughMask = this.add.sprite(153, 455, 'trough_mask', 'water0000').setVisible(false);
+        //     this.anims.create({
+        //         key: 'mask_fill_water',
+        //         frames: this.anims.generateFrameNumbers('trough_mask', { frames: [
+        //             'water0011', 'water0011', 'water0011',
+        //             'water0014', 'water0014',
+        //             'water0016', 'water0016',
+        //             'water0018', 'water0019', 'water0020', 'water0021', 'water0022', 'water0023', 'water0024', 'water0025', 'water0025',
+        //             'water0027', 'water0028', 'water0029', 'water0030', 'water0031', 'water0032', 'water0033', 'water0034', 'water0035',
+        //             'water0036', 'water0037', 'water0038', 'water0039', 'water0040', 'water0041', 'water0042', 'water0043', 'water0044',
+        //             'water0045', 'water0046', 'water0047', 'water0048', 'water0049', 'water0050', 'water0051', 'water0052', 'water0053',
+        //             'water0054', 'water0055', 'water0056', 'water0057', 'water0058', 'water0059', 'water0060'
+        //         ] }),
+        //         frameRate: 24
+        //     });
+        //     this.anims.create({
+        //         key: 'mask_water_trough_drink',
+        //         frames: this.anims.generateFrameNumbers('trough_mask', { frames: [
+        //             'water0060', 'water0060', 'water0060',
+        //             'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060', 'water0060',
+        //             'water0092', 'water0093', 'water0094', 'water0095', 'water0096', 'water0097', 'water0098', 'water0099', 'water0100',
+        //             'water0101', 'water0102', 'water0103', 'water0104', 'water0105', 'water0106', 'water0107', 'water0108', 'water0109', 'water0110',
+        //             'water0111', 'water0112', 'water0113', 'water0114', 'water0115', 'water0116', 'water0117', 'water0118', 'water0119', 'water0120',
+        //             'water0121', 'water0121', 'water0122', 'water0123', 'water0124', 'water0125', 'water0126'
+        //         ] }),
+        //         frameRate: 24
+        //     });
 
 
         // Lucky Horseshoe
@@ -1077,19 +1082,19 @@ class Stable extends Phaser.Scene
                 horseOverlay.animationState.setAnimation(1, 'rear', false);
             } 
             else if (animation === HORSE_STATES.drink) {
-                this.time.delayedCall(2800, function () {
-                    troughMask.setVisible(true)
-                    trough.play('water_trough_drink')
-                    troughMask.play('mask_water_trough_drink')
+                this.time.delayedCall(3500, function () {
+                    // troughMask.setVisible(true)
+                    fountain.play('water_fountain_drink')
+                    // troughMask.play('mask_water_trough_drink')
                     horse.animationState.setAnimation(0, 'drink', false);
                     horseDirty.animationState.setAnimation(0, 'drink', false);
                     horseOverlay.animationState.setAnimation(1, 'drink', false);
                 });
-                this.time.delayedCall(3330, function () {
+                this.time.delayedCall(4030, function () {
                     waterDrink.play()
                 });
-                this.time.delayedCall(5500, function () {
-                    troughMask.setVisible(false)
+                this.time.delayedCall(6200, function () {
+                    // troughMask.setVisible(false)
                 });
             }
             else if (animation === HORSE_STATES.eatingFood) {

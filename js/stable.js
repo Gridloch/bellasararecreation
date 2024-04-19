@@ -53,30 +53,6 @@ brushSmallHeldSprite = null
 hoofpickHeldSprite = null
 appleHeldSprite = null
 
-// Gets info about the horse from data.json file
-const queryString = window.location.search;
-const urlParams = new URLSearchParams(queryString);
-horseName = urlParams.get('name')
-
-function urlExists(url)
-{
-    var http = new XMLHttpRequest();
-    http.open('HEAD', url, false);
-    http.send();
-    return http.status!=404;
-}
-
-if (!horseName || !urlExists(`./images/horse/${horseName}`)) {
-    horseName ='peter'
-}
-let horseData
-const xmlhttp = new XMLHttpRequest();
-xmlhttp.onload = function() {
-  const myObj = JSON.parse(this.responseText);
-  horseData = myObj
-}
-xmlhttp.open("GET", `./images/horse/${horseName}/data.json`);
-xmlhttp.send();
 
 
 // Actual game start
@@ -102,47 +78,47 @@ class Stable extends Phaser.Scene
         const progressBar = this.add.graphics();
             
         // Load in images and sounds
-        this.load.image('stable_bg', './images/stable/stable-bg.png');
-        this.load.image('stable_fg', './images/stable/stable-fg.png');
-        this.load.image('hunger_scale', './images/stable/hunger.png');
-        this.load.image('cleanliness_scale', './images/stable/cleanliness.png');
-        this.load.image('happiness_scale', './images/stable/happiness.png');
+        this.load.image('stable_bg', './images/landStable/stable-bg.png');
+        this.load.image('stable_fg', './images/landStable/stable-fg.png');
+        this.load.image('hunger_scale', './images/landStable/hunger.png');
+        this.load.image('cleanliness_scale', './images/landStable/cleanliness.png');
+        this.load.image('happiness_scale', './images/landStable/happiness.png');
 
-        this.load.atlas('shovel', './images/stable/shovel.png', './images/stable/shovel.json');
-        this.load.atlas('fork', './images/stable/fork.png', './images/stable/fork.json');
-        this.load.atlas('straw1', './images/stable/straw1.png', './images/stable/straw1.json');
-        this.load.atlas('straw2', './images/stable/straw2.png', './images/stable/straw2.json');
-        this.load.atlas('straw3', './images/stable/straw3.png', './images/stable/straw3.json');
-        this.load.atlas('hay_loft', './images/stable/hay_loft.png', './images/stable/hay_loft.json');
+        this.load.atlas('shovel', './images/landStable/shovel.png', './images/landStable/shovel.json');
+        this.load.atlas('fork', './images/landStable/fork.png', './images/landStable/fork.json');
+        this.load.atlas('straw1', './images/landStable/straw1.png', './images/landStable/straw1.json');
+        this.load.atlas('straw2', './images/landStable/straw2.png', './images/landStable/straw2.json');
+        this.load.atlas('straw3', './images/landStable/straw3.png', './images/landStable/straw3.json');
+        this.load.atlas('hay_loft', './images/landStable/hay_loft.png', './images/landStable/hay_loft.json');
 
-        this.load.atlas('trough', './images/stable/water.png', './images/stable/water.json');
-        this.load.atlas('trough_mask', './images/stable/water_mask.png', './images/stable/water_mask.json');
-        this.load.atlas('food_trough', './images/stable/food.png', './images/stable/food.json');
-        this.load.atlas('grain_bin', './images/stable/grain_bin.png', './images/stable/grain_bin.json');
-        this.load.image('grain_scoop', './images/stable/grain_scoop.png');
-        this.load.atlas('apple_bin', './images/stable/apples.png','./images/stable/apples.json');
-        this.load.image('apple_held', './images/stable/apple.png');
+        this.load.atlas('trough', './images/landStable/water.png', './images/landStable/water.json');
+        this.load.atlas('trough_mask', './images/landStable/water_mask.png', './images/landStable/water_mask.json');
+        this.load.atlas('food_trough', './images/landStable/food.png', './images/landStable/food.json');
+        this.load.atlas('grain_bin', './images/landStable/grain_bin.png', './images/landStable/grain_bin.json');
+        this.load.image('grain_scoop', './images/landStable/grain_scoop.png');
+        this.load.atlas('apple_bin', './images/landStable/apples.png','./images/landStable/apples.json');
+        this.load.image('apple_held', './images/landStable/apple.png');
         
-        this.load.atlas('brush', './images/stable/brush.png', './images/stable/brush.json');
-        this.load.atlas('brush_small', './images/stable/brush_small.png', './images/stable/brush_small.json');
-        this.load.atlas('hoofpick', './images/stable/hoofpick.png', './images/stable/hoofpick.json');
+        this.load.atlas('brush', './images/landStable/brush.png', './images/landStable/brush.json');
+        this.load.atlas('brush_small', './images/landStable/brush_small.png', './images/landStable/brush_small.json');
+        this.load.atlas('hoofpick', './images/landStable/hoofpick.png', './images/landStable/hoofpick.json');
         
         this.load.spineAtlas("horse-atlas", `./images/horse/${horseName}/skeleton.atlas`);
         this.load.spineAtlas("horse_overlay-atlas", `./images/horse/${horseName}/skeleton_overlay.atlas`);
-        this.load.spineAtlas("horse_dirty-atlas", `./images/stable/horse_dirty/dirt_skeleton.atlas`);
+        this.load.spineAtlas("horse_dirty-atlas", `./images/landStable/horse_dirty/dirt_skeleton.atlas`);
         this.load.spineJson("horse-json", `./images/horse/${horseName}/skeleton.json`);
         this.load.spineJson("horse_overlay-json", `./images/horse/${horseName}/skeleton_overlay.json`);
-        this.load.spineJson("horse_dirty-json", `./images/stable/horse_dirty/dirt_skeleton.json`);
+        this.load.spineJson("horse_dirty-json", `./images/landStable/horse_dirty/dirt_skeleton.json`);
 
         this.load.image('horse_image', `./images/horse/${horseName}/card_image.jpg`);
-        this.load.spritesheet('hooves', './images/stable/hooves.png', { frameWidth: 53, frameHeight: 53 });
+        this.load.spritesheet('hooves', './images/landStable/hooves.png', { frameWidth: 53, frameHeight: 53 });
 
-        this.load.atlas('luck', './images/stable/luck.png', './images/stable/luck.json');
-        this.load.atlas('frame', './images/stable/frame.png', './images/stable/frame.json');
-        this.load.image('inspiration', './images/stable/inspiration.png');
+        this.load.atlas('luck', './images/landStable/luck.png', './images/landStable/luck.json');
+        this.load.atlas('frame', './images/landStable/frame.png', './images/landStable/frame.json');
+        this.load.image('inspiration', './images/landStable/inspiration.png');
 
-        this.load.atlas('music_button', './images/stable/music.png', './images/stable/music.json');
-        this.load.atlas('help_button', './images/stable/help.png', './images/stable/help.json');
+        this.load.atlas('music_button', './images/landStable/music.png', './images/landStable/music.json');
+        this.load.atlas('help_button', './images/landStable/help.png', './images/landStable/help.json');
 
         this.load.audio('background_music', ['./sounds/stable_soundtrack.mp3']);
         this.load.audio('apple_munch', ['./sounds/apple_munch.mp3']);
@@ -589,7 +565,7 @@ class Stable extends Phaser.Scene
             });
             shovel.on('pointerover', function (pointer)
             {
-                if (handCurrent === hand.empty) {
+                if (handCurrent === HAND.empty) {
                     if (straw1.frame.name === 1 || straw2.frame.name === 1 || straw3.frame.name === 1) {
                         this.setFrame('hover_done');
                     }

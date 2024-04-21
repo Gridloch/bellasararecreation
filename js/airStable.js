@@ -40,6 +40,7 @@ waterDrink = null
 waterFlow = null
 rearSound = null
 foodTrough = null
+branch = null
 oatsEat = null
 appleMunch = null
 inspiration = null
@@ -407,7 +408,7 @@ class AirStable extends Phaser.Scene
             });
 
             // Food Trough
-            const branch = this.add.spine(-35, 230, 'branch-json', 'branch-atlas').setScale(.35)//.setAngle(90);
+            branch = this.add.spine(-35, 230, 'branch-json', 'branch-atlas').setScale(.35)//.setAngle(90);
             this.add.image(92, 285, 'left_tree');
             foodTrough = this.add.sprite(-164, 299, 'food_interactive', 'idle').setInteractive({ pixelPerfect: true });
             oatsEat = this.sound.add('oats_eat');
@@ -426,7 +427,6 @@ class AirStable extends Phaser.Scene
                         // this.play(foodFilled ? 'fill_again' : 'fill')
                         // grainSound.play()
                         this.play('pull_back')
-                        branch.animationState.setAnimation(0, 'animation', false);
                         horseAnimationQueue.push(HORSE_STATES.eatingFood)
                         if (!foodFilled) {
                             updateBar(hungerBar, 2)
@@ -560,11 +560,11 @@ class AirStable extends Phaser.Scene
 
             // Horse
             horse = this.add.spine(430, 295, 'horse-json', 'horse-atlas')//.setAngle(90);
-            horse.animationState.addAnimation(1, "idle", false)
+            horse.animationState.setAnimation(0, "idle", false)
             horseDirty = this.add.spine(430, 295, 'horse_dirty-json', 'horse_dirty-atlas')//.setAngle(90);
-            horseDirty.animationState.addAnimation(1, "idle", false)
+            horseDirty.animationState.setAnimation(0, "idle", false)
             horseOverlay = this.add.spine(430, 295, 'horse_overlay-json', 'horse_overlay-atlas')//.setAngle(90);
-            horseOverlay.animationState.addAnimation(1, "idle", false)
+            horseOverlay.animationState.setAnimation(0, "idle", false)
             addConstantAnimation()
             rearSound = this.sound.add('rear_sound');
 
@@ -574,10 +574,10 @@ class AirStable extends Phaser.Scene
             function addConstantAnimation() {
                 for (let index = 0; index < horseOverlay.skeleton.data.animations.length; index++) {
                     if (horse.skeleton.data.animations[index].name === "constant") {
-                        horse.animationState.setAnimation(0, "constant", true)
+                        horse.animationState.addAnimation(1, "constant", true)
                     }
                     if (horseOverlay.skeleton.data.animations[index].name === "constant") {
-                        horseOverlay.animationState.setAnimation(0, "constant", true)
+                        horseOverlay.animationState.addAnimation(1, "constant", true)
                     }
                 }
             }
@@ -603,9 +603,9 @@ class AirStable extends Phaser.Scene
                         let animation = horseIdleAnimations[Math.floor(Math.random()*horseIdleAnimations.length)]
                         
                         const delay = randomIntFromInterval(3, 5)
-                        horse.animationState.addAnimation(1, animation, false, delay);
-                        horseDirty.animationState.addAnimation(1, animation, false, delay);
-                        horseOverlay.animationState.addAnimation(1, animation, false, delay);
+                        horse.animationState.addAnimation(0, animation, false, delay);
+                        horseDirty.animationState.addAnimation(0, animation, false, delay);
+                        horseOverlay.animationState.addAnimation(0, animation, false, delay);
                     }
                     // allow next animation to play
                     horseBusy = false
@@ -956,33 +956,34 @@ class AirStable extends Phaser.Scene
 
             if (animation === HORSE_STATES.rear) {
                 rearSound.play();
-                horse.animationState.setAnimation(1, 'rear', false);
-                horseDirty.animationState.setAnimation(1, 'rear', false);
-                horseOverlay.animationState.setAnimation(1, 'rear', false);
+                horse.animationState.setAnimation(0, 'rear', false);
+                horseDirty.animationState.setAnimation(0, 'rear', false);
+                horseOverlay.animationState.setAnimation(0, 'rear', false);
             } 
             else if (animation === HORSE_STATES.drink) {
                 this.time.delayedCall(3500, function () {
                     trough.play('water_fountain_drink')
-                    horse.animationState.setAnimation(1, 'drink', false);
-                    horseDirty.animationState.setAnimation(1, 'drink', false);
-                    horseOverlay.animationState.setAnimation(1, 'drink', false);
+                    horse.animationState.setAnimation(0, 'drink', false);
+                    horseDirty.animationState.setAnimation(0, 'drink', false);
+                    horseOverlay.animationState.setAnimation(0, 'drink', false);
                 });
                 this.time.delayedCall(4030, function () {
                     waterDrink.play()
                 });
             }
             else if (animation === HORSE_STATES.eatingFood) {
+                branch.animationState.setAnimation(0, 'animation', false);
                 this.time.delayedCall(800, function () {
-                    horse.animationState.setAnimation(1, 'eat_food', false);
-                    horseDirty.animationState.setAnimation(1, 'eat_food', false);
-                    horseOverlay.animationState.setAnimation(1, 'eat_food', false);});
+                    horse.animationState.setAnimation(0, 'eat_food', false);
+                    horseDirty.animationState.setAnimation(0, 'eat_food', false);
+                    horseOverlay.animationState.setAnimation(0, 'eat_food', false);});
                 this.time.delayedCall(1000, function () {oatsEat.play()});
             }
             else if (animation === HORSE_STATES.eatingApple) {
                 appleMunch.play();
-                horse.animationState.setAnimation(1, 'eat_apple', false);
-                horseDirty.animationState.setAnimation(1, 'eat_apple', false);
-                horseOverlay.animationState.setAnimation(1, 'eat_apple', false);
+                horse.animationState.setAnimation(0, 'eat_apple', false);
+                horseDirty.animationState.setAnimation(0, 'eat_apple', false);
+                horseOverlay.animationState.setAnimation(0, 'eat_apple', false);
             }
         }
         

@@ -1,6 +1,7 @@
 // list of all horses
 const horses = [
     'peter',
+    'anemone',
     'aphaia',
     'beran',
     'cantaro',
@@ -16,11 +17,13 @@ const horses = [
     'jewel',
     'juno',
     'mellonie',
+    'nike',
     'persephone',
     'sarah',
     'savros',
     'starunna',
     'thunder',
+    'uranus',
     'vesta',
     'virstan'
 ]

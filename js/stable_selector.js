@@ -16,6 +16,7 @@ const horses = [
     'jewel',
     'juno',
     'mellonie',
+    'nike',
     'persephone',
     'sarah',
     'savros',

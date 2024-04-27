@@ -3,6 +3,6 @@
 docker stop dockersite-container
 docker rm dockersite-container  
 docker build -t dockersite .
-docker run -dit --name dockersite-container -p 8080:80 dockersite
+docker run -dit --name dockersite-container -p 0.0.0.0:80:80 dockersite
 
 echo "updated container"

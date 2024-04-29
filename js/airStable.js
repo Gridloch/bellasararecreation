@@ -409,43 +409,7 @@ class AirStable extends Phaser.Scene
 
             // Food Trough
             branch = this.add.spine(-35, 230, 'branch-json', 'branch-atlas').setScale(.35)//.setAngle(90);
-            this.add.image(92, 285, 'left_tree');
-            foodTrough = this.add.sprite(-164, 299, 'food_interactive', 'idle').setInteractive({ pixelPerfect: true });
             oatsEat = this.sound.add('oats_eat');
-                this.anims.create({
-                    key: 'pull_back',
-                    frames: this.anims.generateFrameNumbers('food_interactive', { frames: [
-                        'bounce0000', 'bounce0001', 'bounce0002', 'bounce0003', 'bounce0004', 'bounce0005', 'bounce0006', 'bounce0007', 'bounce0008',
-                        'idle'
-                    ] }),
-                    frameRate: 24
-                });
-                foodTrough.on('pointerdown', function (pointer)
-                {
-                    if (handCurrent === HAND.empty) {
-                        // grainBin.play('place');
-                        // this.play(foodFilled ? 'fill_again' : 'fill')
-                        // grainSound.play()
-                        this.play('pull_back')
-                        horseAnimationQueue.push(HORSE_STATES.eatingFood)
-                        if (!foodFilled) {
-                            updateBar(hungerBar, 2)
-                            updateBar(happinessBar, 1.05)
-                        }
-                        foodFilled = true;
-                    }
-                });
-                foodTrough.on('pointerover', function (pointer) { 
-                    if (foodTrough.frame.name === 'idle') {
-                        this.setFrame('hover')
-                    }
-                });
-                foodTrough.on('pointerout', function (pointer)
-                {
-                    if (foodTrough.frame.name === 'hover') {
-                        this.setFrame('idle')
-                    }
-                });
 
 
             // Horse hit box
@@ -612,6 +576,42 @@ class AirStable extends Phaser.Scene
                 }
                 // event: (entry, event) => console.log(`Custom event for ${entry.animation.name}: ${event.data.name}`)          
              })
+
+             
+        this.add.image(92, 285, 'left_tree');
+        foodTrough = this.add.sprite(-164, 299, 'food_interactive', 'idle').setInteractive({ pixelPerfect: true });
+            this.anims.create({
+                key: 'pull_back',
+                frames: this.anims.generateFrameNumbers('food_interactive', { frames: [
+                    'bounce0000', 'bounce0001', 'bounce0002', 'bounce0003', 'bounce0004', 'bounce0005', 'bounce0006', 'bounce0007', 'bounce0008',
+                    'idle'
+                ] }),
+                frameRate: 24
+            });
+            foodTrough.on('pointerdown', function (pointer)
+            {
+                if (handCurrent === HAND.empty) {
+                    this.play('pull_back')
+                    horseAnimationQueue.push(HORSE_STATES.eatingFood)
+                    if (!foodFilled) {
+                        updateBar(hungerBar, 2)
+                        updateBar(happinessBar, 1.05)
+                    }
+                    foodFilled = true;
+                }
+            });
+            foodTrough.on('pointerover', function (pointer) { 
+                if (foodTrough.frame.name === 'idle') {
+                    this.setFrame('hover')
+                }
+            });
+            foodTrough.on('pointerout', function (pointer)
+            {
+                if (foodTrough.frame.name === 'hover') {
+                    this.setFrame('idle')
+                }
+            });
+
 
 
 

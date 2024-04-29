@@ -13,7 +13,7 @@ class Load extends Phaser.Scene
 
     create ()
     { 
-        if (loadInto === "Stable") {
+        if (loadInto === "Stables") {
             loadInto = `${horseData.type}Stable`
         }
         this.scene.start(loadInto);

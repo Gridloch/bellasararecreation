@@ -4,23 +4,29 @@ const horses = [
     'anemone',
     'aphaia',
     'beran',
+    'blossom',
     'cantaro',
     'chitra',
     'clio',
     'colour',
+    'cosima',
     'epona',
     'falcha',
     'faxon',
     'fiona',
     'hercules',
+    'icarus',
     'ivy',
     'jewel',
     'juno',
+    'kendra',
+    'lillova',
     'mellonie',
     'nike',
     'persephone',
     'sarah',
     'savros',
+    'socorro',
     'starunna',
     'thunder',
     'uranus',
@@ -66,13 +72,13 @@ let page = 0
 // Gets the actual horse names
 let horseNames = []
 for (let index = 0; index < horses.length; index++) {
-    const xmlhttp = new XMLHttpRequest();
-    xmlhttp.onload = function() {
+    const xmlHttp = new XMLHttpRequest();
+    xmlHttp.onload = function() {
         const myObj = JSON.parse(this.responseText);
         horseNames[index] = myObj.name
     }
-    xmlhttp.open("GET", `./images/horse/${horses[index]}/data.json`);
-    xmlhttp.send();
+    xmlHttp.open("GET", `./images/horses/${horses[index]}/data.json`);
+    xmlHttp.send();
 };
 
 
@@ -103,7 +109,7 @@ class Selector extends Phaser.Scene
         this.load.atlas('sparkle', './images/selector/sparkle.png', './images/selector/sparkle.json');
 
         horses.forEach(horse => {
-            this.load.image(`${horse}`, `./images/horse/${horse}/card_image.jpg`);
+            this.load.image(`${horse}`, `./images/horses/${horse}/card_image.jpg`);
         });
 
         this.load.atlas('next', './images/selector/next.png', './images/selector/next.json');

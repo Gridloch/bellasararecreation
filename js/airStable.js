@@ -128,6 +128,7 @@ class AirStable extends Phaser.Scene
         this.load.audio('hover2', ['./sounds/hover1.mp3']);
         this.load.audio('inspiration_hover', ['./sounds/inspiration_hover.mp3']);
         this.load.audio('inspiration_sound', ['./sounds/inspiration.mp3']);
+        this.load.audio('inspiration_close', ['./sounds/inspiration_close.mp3']);
         this.load.audio('oats_eat', ['./sounds/oats_eat.mp3']);
         this.load.audio('pickup', ['./sounds/pickup.mp3']);
         this.load.audio('shovel_sound', ['./sounds/shovel_sound.mp3']);
@@ -329,6 +330,7 @@ class AirStable extends Phaser.Scene
         const frame = this.add.sprite(165, 73, 'frame', 'idle').setInteractive();
         const inspirationHover = this.sound.add('inspiration_hover');
         const inspirationSound = this.sound.add('inspiration_sound');
+        inspirationCloseSound = this.sound.add('inspiration_close');
         // const frameInteractive = this.add.graphics().setInteractive(new Phaser.Geom.Rectangle(478, 65, 75, 110), Phaser.Geom.Rectangle.Contains);
             frame.on('pointerover', function (pointer)
             {
@@ -1004,7 +1006,7 @@ class AirStable extends Phaser.Scene
             this.time.delayedCall(320, function () {inspiration.setAlpha(.8); inspirationMessage.setAlpha(0.8)});
             this.time.delayedCall(360, function () {inspiration.setAlpha(.9); inspirationMessage.setAlpha(0.9)});
             this.time.delayedCall(400, function () {inspiration.setAlpha(1); inspirationMessage.setAlpha(1)});
-            this.time.delayedCall(2960, function () {inspiration.setAlpha(.9); inspirationMessage.setAlpha(0.9)});
+            this.time.delayedCall(2960, function () {inspiration.setAlpha(.9); inspirationMessage.setAlpha(0.9); inspirationCloseSound.play()});
             this.time.delayedCall(3000, function () {inspiration.setAlpha(.8); inspirationMessage.setAlpha(0.8)});
             this.time.delayedCall(3040, function () {inspiration.setAlpha(.7); inspirationMessage.setAlpha(0.7)});
             this.time.delayedCall(3080, function () {inspiration.setAlpha(.6); inspirationMessage.setAlpha(0.6)});

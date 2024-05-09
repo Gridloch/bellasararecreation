@@ -41,9 +41,11 @@ splash2Sound = null
 splash3Sound = null
 // foodTrough = null
 // branch = null
+treatDispenser = null
 oatsEat = null
 appleMunch = null
 inspiration = null
+// inspirationCloseSound = null
 inspirationMessage = null
 drainWater = null
 water = null
@@ -51,6 +53,7 @@ oxygen = null
 bubbleSound = null
 bubbleReplaceSound = null
 foodDispenseSound = null
+treatDispenseSound = null
 
 brushHeldSprite = null
 brushSmallHeldSprite = null
@@ -130,7 +133,9 @@ class WaterStable extends Phaser.Scene
         this.load.audio('hover2', ['./sounds/hover1.mp3']);
         this.load.audio('inspiration_hover', ['./sounds/inspiration_hover.mp3']);
         this.load.audio('inspiration_sound', ['./sounds/inspiration.mp3']);
+        this.load.audio('inspiration_close', ['./sounds/inspiration_close.mp3']);
         this.load.audio('food_dispense_sound', ['./sounds/food_drop.mp3']);
+        this.load.audio('treat_dispense_sound', ['./sounds/treat_dispense.mp3']);
         this.load.audio('pickup', ['./sounds/pickup.mp3']);
 
         this.load.audio('oats_eat', ['./sounds/oats_eat.mp3']);
@@ -488,6 +493,7 @@ class WaterStable extends Phaser.Scene
         const frame = this.add.image(54, 266, 'frame').setInteractive();
         const inspirationHover = this.sound.add('inspiration_hover');
         const inspirationSound = this.sound.add('inspiration_sound');
+        inspirationCloseSound = this.sound.add('inspiration_close');
         // const frameInteractive = this.add.graphics().setInteractive(new Phaser.Geom.Rectangle(478, 65, 75, 110), Phaser.Geom.Rectangle.Contains);
             frame.on('pointerover', function (pointer)
             {
@@ -696,8 +702,9 @@ class WaterStable extends Phaser.Scene
 
 
         // Treats
-        const treatDispenser = this.add.sprite(52, 435, 'treat_dispenser', 'idle').setInteractive();
-        appleMunch = this.sound.add('apple_munch');
+        treatDispenser = this.add.sprite(52, 435, 'treat_dispenser', 'idle').setInteractive();
+            treatDispenseSound = this.sound.add('treat_dispense_sound');
+            appleMunch = this.sound.add('apple_munch');
             this.anims.create({
                 key: 'treat_pickup',
                 frames: this.anims.generateFrameNumbers('treat_dispenser', { frames: [
@@ -993,6 +1000,9 @@ class WaterStable extends Phaser.Scene
         if (foodTrough.frame.name === 'feed0006') {
             foodDispenseSound.play();
         }
+        if (treatDispenser.frame.name === 'dispense0006') {
+            treatDispenseSound.play();
+        }
 
 
         if (horseBusy === false && horseAnimationQueue.length > 0) {
@@ -1037,7 +1047,7 @@ class WaterStable extends Phaser.Scene
             this.time.delayedCall(320, function () {inspiration.setAlpha(.8); inspirationMessage.setAlpha(0.8)});
             this.time.delayedCall(360, function () {inspiration.setAlpha(.9); inspirationMessage.setAlpha(0.9)});
             this.time.delayedCall(400, function () {inspiration.setAlpha(1); inspirationMessage.setAlpha(1)});
-            this.time.delayedCall(2960, function () {inspiration.setAlpha(.9); inspirationMessage.setAlpha(0.9)});
+            this.time.delayedCall(2960, function () {inspiration.setAlpha(.9); inspirationMessage.setAlpha(0.9); inspirationCloseSound.play()});
             this.time.delayedCall(3000, function () {inspiration.setAlpha(.8); inspirationMessage.setAlpha(0.8)});
             this.time.delayedCall(3040, function () {inspiration.setAlpha(.7); inspirationMessage.setAlpha(0.7)});
             this.time.delayedCall(3080, function () {inspiration.setAlpha(.6); inspirationMessage.setAlpha(0.6)});

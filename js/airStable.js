@@ -775,7 +775,9 @@ class AirStable extends Phaser.Scene
                     sootheSound.play();
                     sootheSoundLength.play();
                     sootheSoundLength.on('complete', function (sound) {
-                        backgroundMusic.play()
+                        if (playMusic) {
+                            backgroundMusic.play()
+                        }
                     });
                     updateBar(happinessBar, 0.5 + 0.1)
                 }

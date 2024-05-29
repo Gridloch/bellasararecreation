@@ -213,8 +213,13 @@ class Selector extends Phaser.Scene
             });
         const nextButton = this.add.sprite(864, 498, 'next', 'idle').setScale(.75).setInteractive({ pixelPerfect: true });
             nextButton.on('pointerdown', function (pointer) {
+                // Add extra page if the number of horses is divisible by 10
+                let addNumber = 1
+                if (horses.length % 10 === 0) {
+                    addNumber = 0
+                }
                 // Change the page being displayed
-                if (horses.length > (page + 1)*displayHorses.length) {
+                if (horses.length > (page + addNumber)*displayHorses.length) {
                     page += 1
                 }
                 checkNext()

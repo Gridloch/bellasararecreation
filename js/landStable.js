@@ -77,6 +77,13 @@ class LandStable extends Phaser.Scene
         this.add.image(444, 261, 'card_back');  
         this.add.graphics().fillStyle(0x000000).fillRect(386, 334, 116, 12);
         const progressBar = this.add.graphics();
+        // Display file names whilst loading
+        this.load.on('fileprogress', function (file) {
+            if (urlParameters.get('debug')) {
+                progressText.text = file.src;
+            }
+        });
+        const progressText = this.add.text(344, 133, '', { fontFamily: 'Arial', fontSize: 12, color: '#ffffff', align: 'center' });
             
         // Load in images and sounds
         this.load.image('stable_bg', './images/landStable/stable-bg.png');
@@ -106,10 +113,15 @@ class LandStable extends Phaser.Scene
         
         this.load.spineAtlas("horse-atlas", `./images/horses/${horseName}/skeleton.atlas`);
         this.load.spineAtlas("horse_overlay-atlas", `./images/horses/${horseName}/skeleton_overlay.atlas`);
-        this.load.spineAtlas("horse_dirty-atlas", `./images/landStable/horse_dirty/dirt_skeleton.atlas`);
         this.load.spineJson("horse-json", `./images/horses/${horseName}/skeleton.json`);
         this.load.spineJson("horse_overlay-json", `./images/horses/${horseName}/skeleton_overlay.json`);
-        this.load.spineJson("horse_dirty-json", `./images/landStable/horse_dirty/dirt_skeleton.json`);
+        if (horseName === "skeleton") {
+            this.load.spineAtlas("horse_dirty-atlas", `./images/landStable/skeleton_dirty/dirt_skeleton.atlas`);
+            this.load.spineJson("horse_dirty-json", `./images/landStable/skeleton_dirty/dirt_skeleton.json`);
+        } else {
+            this.load.spineAtlas("horse_dirty-atlas", `./images/landStable/horse_dirty/dirt_skeleton.atlas`);
+            this.load.spineJson("horse_dirty-json", `./images/landStable/horse_dirty/dirt_skeleton.json`);
+        }
 
         this.load.image('horse_image', `./images/horses/${horseName}/card_image.jpg`);
         this.load.spritesheet('hooves', './images/landStable/hooves.png', { frameWidth: 53, frameHeight: 53 });
@@ -425,6 +437,7 @@ class LandStable extends Phaser.Scene
             // Horse
             horse = this.add.spine(418, 295, 'horse-json', 'horse-atlas').setAngle(90);
             horse.animationState.setAnimation(0, "idle", false)
+
             horseDirty = this.add.spine(418, 295, 'horse_dirty-json', 'horse_dirty-atlas').setAngle(90);
             horseDirty.animationState.setAnimation(0, "idle", false)
             horseOverlay = this.add.spine(418, 295, 'horse_overlay-json', 'horse_overlay-atlas').setAngle(90);
